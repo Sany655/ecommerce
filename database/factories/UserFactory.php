@@ -19,10 +19,13 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name,
-            'email' => $this->faker->unique()->safeEmail,
-            'password' => Hash::make('password'), // or use bcrypt('password')
-            'role' => $this->faker->randomElement(['customer', 'admin']),
+            // 'name' => $this->faker->name,
+            'name' => "admin",
+            // 'email' => $this->faker->unique()->safeEmail,
+            'email' => "admin@example.com",
+            'password' => Hash::make('admin'), // or use bcrypt('password')
+            // 'role' => $this->faker->randomElement(['customer', 'admin']),
+            'role' => $this->faker->randomElement(['admin']),
             'address' => $this->faker->address,
             'phone_number' => $this->faker->phoneNumber,
             'remember_token' => Str::random(10),
