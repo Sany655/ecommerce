@@ -1,4 +1,5 @@
 import InputError from "@/Components/InputError";
+import InputLabel from "@/Components/InputLabel";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
@@ -18,7 +19,8 @@ function CategoryEditForm({ category, categories }) {
             name: category.name,
             description: category.description,
             parent_id: category.parent_id,
-            banner: null, // Explicitly set banner to null initially
+            banner: null, // Explicitly set banner to null initially,
+            status: category.status
         });
     }, [category]);
 
@@ -91,6 +93,11 @@ function CategoryEditForm({ category, categories }) {
                                 ))}
                             </SelectInput>
                         )}
+
+                        <div className="flex gap-2">
+                            <input type="checkbox" name="status" checked={data.status} id="status" onChange={(e) => setData('status', e.target.checked)} />
+                            <InputLabel htmlFor="status">Assign for display</InputLabel>
+                        </div>
 
                         <div className="flex justify-between items-center">
                             <SecondaryButton onClick={() => setCatEditModal(!catEditModal)}>

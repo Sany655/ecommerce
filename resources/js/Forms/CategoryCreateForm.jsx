@@ -1,4 +1,5 @@
 import InputError from "@/Components/InputError"
+import InputLabel from "@/Components/InputLabel"
 import Modal from "@/Components/Modal"
 import PrimaryButton from "@/Components/PrimaryButton"
 import SecondaryButton from "@/Components/SecondaryButton"
@@ -8,12 +9,13 @@ import TextInput from "@/Components/TextInput"
 import { useForm } from "@inertiajs/react"
 import { useState } from "react"
 
-function CategoryCreatForm({ categories }) {
+function CategoryCreateForm({ categories }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         description: '',
         banner: null,
         parent_id: null,
+        status: false
     });
     const [catCreateModal, setCatCreateModal] = useState(false)
 
@@ -43,7 +45,7 @@ function CategoryCreatForm({ categories }) {
                         <InputError message={errors.banner} className="mt-2" />
                         {categories.length > 0 && (
                             <>
-                                <SelectInput name="parent_id" onChange={(e) => setData('parent_id',e.target.value)}>
+                                <SelectInput name="parent_id" onChange={(e) => setData('parent_id', e.target.value)}>
                                     <option value="">Select Category to use it as subcategory</option>
                                     {
                                         categories.map((cat) => (
@@ -53,6 +55,10 @@ function CategoryCreatForm({ categories }) {
                                 </SelectInput>
                             </>
                         )}
+                        <div className="flex gap-2">
+                            <input type="checkbox" name="status" id="status" checked={data.status} onChange={(e) => setData('status', e.target.checked)} />
+                            <InputLabel htmlFor="status">Assign for display</InputLabel>
+                        </div>
                         <div className="flex justify-between items-center">
                             <SecondaryButton onClick={() => setCatCreateModal(!catCreateModal)}>Close</SecondaryButton>
                             <PrimaryButton disabled={processing}>Create</PrimaryButton>
@@ -63,4 +69,4 @@ function CategoryCreatForm({ categories }) {
         </>
     )
 }
-export default CategoryCreatForm
+export default CategoryCreateForm

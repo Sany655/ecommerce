@@ -4,24 +4,24 @@ import ProductEditForm from '@/Forms/ProductEditForm';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
 
-function ManageProduct(props) {
+function ManageOrder(props) {
     const { products, categories } = props;
 
-    const handleDeleteCat = (id) => {
-        if (window.confirm("Are you sure you want to delete this product?")) {
-            router.delete(`product/${id}`, { preserveScroll: true });
-        }
-    };
+    // const handleDeleteCat = (id) => {
+    //     if (window.confirm("Are you sure you want to delete this product?")) {
+    //         router.delete(`product/${id}`, { preserveScroll: true });
+    //     }
+    // };
 
     return (
         <AuthenticatedLayout
             auth={props.auth}
             errors={props.errors}
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Products</h2>}
+            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Orders</h2>}
         >
-            <Head title="Manage Products" />
+            <Head title="Manage Orders" />
 
-            <div className="bg-white rounded py-12 mt-2">
+            {/* <div className="bg-white rounded py-12 mt-2">
                 <div className="container mx-auto">
                     <div className="flex justify-between items-center mb-8">
                         <div className="flex items-center gap-2">
@@ -64,9 +64,9 @@ function ManageProduct(props) {
                         </>
                     ) : <p className="my-40 text-center">No product availabe</p>}
                 </div>
-            </div>
+            </div> */}
         </AuthenticatedLayout>
     );
 }
 
-export default ManageProduct;
+export default ManageOrder;

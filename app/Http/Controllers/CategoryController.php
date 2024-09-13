@@ -44,6 +44,7 @@ class CategoryController extends Controller
             'description' => 'nullable|string',
             'banner' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
             'parent_id' => 'nullable|exists:categories,id',
+            'status' => 'boolean',
         ]);
 
         $bannerPath = null;
@@ -58,6 +59,7 @@ class CategoryController extends Controller
             'description' => $request->description,
             'banner' => $bannerPath,
             'parent_id' => $request->parent_id,
+            'status' => $request->status,
         ]);
     }
 
@@ -69,7 +71,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        //
+        return Inertia::render('Admin/ManageCategoryProducts',['category' => $category, 'products' => $category->products]);
     }
 
     /**
@@ -98,9 +100,10 @@ class CategoryController extends Controller
             'description' => 'nullable|string',
             'banner' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
             'parent_id' => 'nullable|exists:categories,id',
+            'status' => 'boolean',
         ]);
 
-        // // Handle image upload
+        // Handle image upload
         if ($request->hasFile('banner')) {
             // Delete the old banner if it exists
             if ($category->banner) {
@@ -118,6 +121,7 @@ class CategoryController extends Controller
             'description' => $validated['description'],
             'banner' => $category->banner, // New banner or old banner
             'parent_id' => $validated['parent_id'] ?? null, // Set parent_id to null if not provided
+            'status' => $validated['status'], // Update status field
         ]);
     }
 

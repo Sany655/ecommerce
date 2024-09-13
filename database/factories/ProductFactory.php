@@ -21,10 +21,14 @@ class ProductFactory extends Factory
             'category_id' => Category::factory(),
             'name' => $this->faker->word,
             'description' => $this->faker->paragraph,
-            'price' => $this->faker->randomFloat(2, 10, 1000),
-            'quantity' => $this->faker->numberBetween(1, 100),
-            'image' => $this->faker->imageUrl(640, 480, 'products', true),
-            'discount' => $this->faker->optional()->randomFloat(2, 0, 50),
+            'image' => 'product/' . $this->faker->image(storage_path('app/public/product'), 640, 480, null, false),
+            'price' => $price = $this->faker->randomFloat(2, 10, 1000),
+            'discount_price' => $price * 0.90,
+            'coupon_price' => $price * 0.80,
+            'coupon_code' => $this->faker->optional()->word,
+            'sold' => $this->faker->numberBetween(0, 1000),
+            'views' => $this->faker->numberBetween(0, 1000),
+            'status' => true,
         ];
     }
 }

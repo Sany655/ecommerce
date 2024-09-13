@@ -1,4 +1,5 @@
 import InputError from "@/Components/InputError";
+import InputLabel from "@/Components/InputLabel";
 import Modal from "@/Components/Modal";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
@@ -8,7 +9,7 @@ import TextInput from "@/Components/TextInput";
 import { router, useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
-function ProductEditForm({ product, categories }) {
+function ProductEditForm({ product, categories = [] }) {
     const [prodEditModal, setProdEditModal] = useState(false);
     const { data, setData, post, processing, errors, reset } = useForm();
 
@@ -20,8 +21,10 @@ function ProductEditForm({ product, categories }) {
             category_id: product.category_id,
             image: null,
             price: product.price,
-            quantity: product.quantity,
-            discount: product.discount
+            discount_price: product.discount_price,
+            status: product.status,
+            coupon_code: product.coupon_code,
+            coupon_price: product.coupon_price
         });
     }, [product]);
 
@@ -48,23 +51,33 @@ function ProductEditForm({ product, categories }) {
                         <i className="fa fa-close" onClick={() => setProdEditModal(false)}></i>
                     </h3>
                     <form className="flex flex-col gap-5" onSubmit={UpdateProduct} encType="multipart/form-data">
-                        <TextInput
-                            required
-                            placeholder="Name"
-                            name="name"
-                            value={data.name}
-                            onChange={(e) => setData("name", e.target.value)}
-                        />
-                        <InputError message={errors.name} className="mt-2" />
+                        <div>
+                            <InputLabel htmlFor="name">Product Name</InputLabel>
+                            <TextInput
+                                className="w-full"
+                                id="name"
+                                required
+                                placeholder="Name"
+                                name="name"
+                                value={data.name}
+                                onChange={(e) => setData("name", e.target.value)}
+                            />
+                            <InputError message={errors.name} className="mt-2" />
+                        </div>
 
-                        <TextArea
-                            required
-                            name="description"
-                            placeholder="Description"
-                            value={data.description}
-                            onChange={(e) => setData("description", e.target.value)}
-                        ></TextArea>
-                        <InputError message={errors.description} className="mt-2" />
+                        <div className="">
+                            <InputLabel htmlFor="description">Product Description</InputLabel>
+                            <TextArea
+                                className="w-full"
+                                id="description"
+                                required
+                                name="description"
+                                placeholder="Description"
+                                value={data.description}
+                                onChange={(e) => setData("description", e.target.value)}
+                            ></TextArea>
+                            <InputError message={errors.description} className="mt-2" />
+                        </div>
 
                         <input
                             type="file"
@@ -81,46 +94,89 @@ function ProductEditForm({ product, categories }) {
                         <InputError message={errors.image} className="mt-2" />
 
                         {categories.length > 0 && (
-                            <SelectInput
-                                name="category_id"
-                                value={data.category_id || ""} // Set value for category_id
-                                onChange={(e) => setData("category_id", e.target.value)}
-                            >
-                                <option value={""}>Select Product to use it as subproduct</option>
-                                {categories.map((cat) => (
-                                    <option key={cat.id} value={cat.id}>
-                                        {cat.name}
-                                    </option>
-                                ))}
-                            </SelectInput>
+                            <div className="">
+                                <InputLabel htmlFor="category_id">Category</InputLabel>
+                                <SelectInput
+                                    className="w-full"
+                                    id="category_id"
+                                    name="category_id"
+                                    value={data.category_id || ""} // Set value for category_id
+                                    onChange={(e) => setData("category_id", e.target.value)}
+                                >
+                                    <option value={""}>Select Product to use it as subproduct</option>
+                                    {categories.map((cat) => (
+                                        <option key={cat.id} value={cat.id}>
+                                            {cat.name}
+                                        </option>
+                                    ))}
+                                </SelectInput>
+                            </div>
                         )}
 
-                        <TextInput
-                            required
-                            placeholder="Price"
-                            name="price"
-                            value={data.price}
-                            onChange={(e) => setData("price", e.target.value)}
-                        />
-                        <InputError message={errors.price} className="mt-2" />
 
-                        <TextInput
-                            required
-                            placeholder="discount"
-                            name="discount"
-                            value={data.discount}
-                            onChange={(e) => setData("discount", e.target.value)}
-                        />
-                        <InputError message={errors.discount} className="mt-2" />
+                        <div className="">
+                            <InputLabel htmlFor="price">Price</InputLabel>
+                            <TextInput
+                                className="w-full"
+                                id="price"
+                                required
+                                placeholder="Price"
+                                name="price"
+                                value={data.price}
+                                onChange={(e) => setData("price", e.target.value)}
+                            />
+                            <InputError message={errors.price} className="mt-2" />
+                        </div>
 
-                        <TextInput
-                            required
-                            placeholder="quantity"
-                            name="quantity"
-                            value={data.quantity}
-                            onChange={(e) => setData("quantity", e.target.value)}
-                        />
-                        <InputError message={errors.quantity} className="mt-2" />
+                        <div className="">
+                            <InputLabel htmlFor="discount_price">Discount Price</InputLabel>
+                            <TextInput
+                                className="w-full"
+                                id="discount_price"
+                                required
+                                placeholder="Discount Price"
+                                name="discount_price"
+                                value={data.discount_price}
+                                onChange={(e) => setData("discount_price", e.target.value)}
+                            />
+                            <InputError message={errors.discount_price} className="mt-2" />
+                        </div>
+
+                        <div className="">
+                            <InputLabel htmlFor="coupon_code">Coupon Code</InputLabel>
+                            <TextInput
+                                type="text"
+                                className="w-full"
+                                id="coupon_code"
+                                required={data.coupon_price !== ''}
+                                placeholder="Coupon Code"
+                                name="coupon_code"
+                                value={data.coupon_code}
+                                onChange={(e) => setData("coupon_code", e.target.value)}
+                            />
+                            <InputError message={errors.coupon_code} className="mt-2" />
+                        </div>
+
+
+                        <div className="">
+                            <InputLabel htmlFor="coupon_price">Coupon Price</InputLabel>
+                            <TextInput
+                                type="number"
+                                className="w-full"
+                                id="coupon_price"
+                                required={data.coupon_code !== ''}
+                                placeholder="Coupon Price"
+                                name="coupon_price"
+                                value={data.coupon_price}
+                                onChange={(e) => setData("coupon_price", e.target.value)}
+                            />
+                            <InputError message={errors.coupon_price} className="mt-2" />
+                        </div>
+
+                        <div className="flex gap-2">
+                            <input type="checkbox" name="status" checked={data.status} id="status" onChange={(e) => setData('status', e.target.checked)} />
+                            <InputLabel htmlFor="status">Assign for display</InputLabel>
+                        </div>
 
                         <div className="flex justify-between items-center">
                             <SecondaryButton onClick={() => setProdEditModal(!prodEditModal)}>

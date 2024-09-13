@@ -1,16 +1,16 @@
 import DangerButton from '@/Components/DangerButton';
 import PrimaryButton from '@/Components/PrimaryButton';
-import CategoryCreatForm from '@/Forms/CategoryCreatForm';
+import CategoryCreateForm from '@/Forms/CategoryCreateForm';
 import CategoryEditForm from '@/Forms/CategoryEditForm';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 
 function ManageCategory(props) {
     const { categories } = props;
 
     const handleDeleteCat = (id) => {
         if (window.confirm("Are you sure you want to delete this category?")) {
-            router.delete(`category/${id}`,{preserveScroll: true});
+            router.delete(`category/${id}`, { preserveScroll: true });
         }
     };
 
@@ -28,7 +28,7 @@ function ManageCategory(props) {
                         <div className="flex items-center flex-wrap gap-2">
                             <h2 className="text-lg font-semibold">Categories</h2>
                         </div>
-                        <CategoryCreatForm categories={categories} />
+                        <CategoryCreateForm categories={categories} />
                     </div>
                     {categories.length > 0 ? categories.map((category, i) => (
                         <div key={i} className="relative bg-cover bg-center h-64 mb-3" style={{ backgroundImage: `url('storage/${category.banner}')` }}>
@@ -38,8 +38,9 @@ function ManageCategory(props) {
                                     <h1 className="text-4xl font-bold mb-4">{category.name}</h1>
                                     <p className="text-lg mb-2">{category.description}</p>
                                     {/* <PrimaryButton onClick={()=>route('product.index')}>Manage Products</PrimaryButton> */}
-                                    <CategoryEditForm category={category} categories={categories}/>
-                                    <DangerButton onClick={()=>handleDeleteCat(category.id)}>Delete category with corresponding products</DangerButton>
+                                    <Link href={route('category.show', category.id)} className='border rounded'>Manage related products</Link>
+                                    <CategoryEditForm category={category} categories={categories} />
+                                    <DangerButton onClick={() => handleDeleteCat(category.id)}>Delete category with corresponding products</DangerButton>
                                 </div>
                             </div>
                         </div>

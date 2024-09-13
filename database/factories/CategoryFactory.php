@@ -20,7 +20,9 @@ class CategoryFactory extends Factory
         return [
             'name' => $this->faker->word,
             'description' => $this->faker->sentence,
+            'banner' => 'category/' . $this->faker->image(storage_path('app/public/category'), 640, 480, null, false),
             'parent_id' => $this->faker->optional()->randomElement(Category::pluck('id')->toArray()),
+            'status' => true,
         ];
     }
 }

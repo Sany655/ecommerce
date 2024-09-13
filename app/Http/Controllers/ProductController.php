@@ -11,7 +11,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Admin/ManageProduct', ['products' => Product::all(), 'categories' => \App\Models\Category::all()]);
+        return Inertia::render('Admin/ManageProduct', ['products' => Product::with('category')->paginate(10)]);
     }
 
     public function create()
@@ -25,10 +25,12 @@ class ProductController extends Controller
             'name' => 'required|string|max:255|unique:products,name',
             'description' => 'required|string',
             'price' => 'required|numeric',
-            'discount' => 'nullable|numeric',
-            'quantity' => 'required|integer',
+            'discount_price' => 'nullable|numeric',
             'category_id' => 'required|exists:categories,id',
             'image' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
+            'coupon_code' => 'nullable|string|max:255',
+            'coupon_price' => 'nullable|numeric',
+            'status' => 'boolean',
         ]);
 
         $imagePath = null;
@@ -41,10 +43,12 @@ class ProductController extends Controller
             'name' => $request->input('name'),
             'description' => $request->input('description'),
             'price' => $request->input('price'),
-            'discount' => $request->input('discount'),
-            'quantity' => $request->input('quantity'),
+            'discount_price' => $request->input('discount_price'),
             'category_id' => $request->input('category_id'),
-            'image' => $imagePath, // Include the uploaded image path
+            'image' => $imagePath,
+            'coupon_code' => $request->input('coupon_code'),
+            'coupon_price' => $request->input('coupon_price'),
+            'status' => $request->input('status'),
         ]);
         // return redirect()->route('product.index');
     }
@@ -65,10 +69,12 @@ class ProductController extends Controller
             'name' => 'required|string|max:255|unique:products,name,' . $product->id, // Exclude the current product from unique check
             'description' => 'required|string',
             'price' => 'required|numeric',
-            'discount' => 'nullable|numeric',
-            'quantity' => 'required|integer',
+            'discount_price' => 'nullable|numeric',
             'category_id' => 'required|exists:categories,id',
             'image' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
+            'coupon_code' => 'nullable|string|max:255',
+            'coupon_price' => 'nullable|numeric',
+            'status' => 'boolean',
         ]);
 
         // Handle image upload
@@ -88,10 +94,12 @@ class ProductController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
-            'discount' => $request->discount,
-            'quantity' => $request->quantity,
+            'discount_price' => $request->discount_price,
             'category_id' => $request->category_id,
-            'image' => $product->image ?? $product->image
+            'image' => $product->image ?? $product->image,
+            'coupon_code' => $request->coupon_code,
+            'coupon_price' => $request->coupon_price,
+            'status' => $request->status,
         ]);
     }
 

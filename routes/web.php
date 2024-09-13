@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\FrontController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -18,7 +21,19 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', fn() => Inertia::render('Index'));
+Route::get('/', [FrontController::class, 'index'])->name('home');;
+Route::get('/cat/{catId}', [FrontController::class, 'show'])->name('home.category_products');
+Route::get('/prod/{prodId}', [FrontController::class, 'show_product'])->name('home.product');
+Route::get('/related-products/{catId}', [FrontController::class, 'related_products'])->name('home.related_products');
+Route::post('/cart-products', [FrontController::class, 'cart'])->name('home.cart_products');
+
+Route::get('/cart', fn() => Inertia::render("CartPage"))->name('cart.index');
+Route::get('/cart-show', [CartController::class, 'showCart'])->name('cart.show');
+Route::post('/cart-add', [CartController::class, 'addToCart'])->name('cart.add');
+Route::delete('/cart-remove/{itemId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
+Route::delete('/cart-delete', [CartController::class, 'clearCart'])->name('cart.delete');
+Route::get('/checkout', fn() => Inertia::render("Checkout"))->name('home.checkout');
+Route::post('/place-order', [OrderController::class, 'placeOrder'])->name('home.place_order');
 
 
 Route::middleware(['auth'])->group(function () {
@@ -29,10 +44,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('/category', CategoryController::class);
     Route::resource('/product', ProductController::class);
+    Route::resource('/order', OrderController::class);
 });
 
 Route::fallback(function () {
-    return Inertia::render('NotFound'); // Replace 'NotFound' with your 404 page component
+    return Inertia::render('NotFound');
 });
 
 require __DIR__ . '/auth.php';

@@ -41,37 +41,4 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    /**
-     * Get all orders associated with the user.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     *
-     * @return \Illuminate\Database\Eloquent\Collection|\App\Models\Order[]
-     *
-     * @throws \Exception
-     */
-    public function orders()
-    {
-        return $this->hasMany(Order::class);
-    }
-
-    /**
-     * Get the cart associated with the user.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     *
-     * @return \App\Models\Cart|null The user's cart, or null if the user does not have a cart.
-     *
-     * @throws \Exception
-     */
-    public function cart()
-    {
-        return $this->hasOne(Cart::class);
-    }
-
-    public function reviews()
-    {
-        return $this->hasMany(Review::class);
-    }
 }

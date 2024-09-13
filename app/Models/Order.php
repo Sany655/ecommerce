@@ -8,18 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     use HasFactory;
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+    protected $guarded = ['id', 'created_at', 'updated_at'];
 
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
-    }
-
-    public function payment()
-    {
-        return $this->hasOne(Payment::class);
     }
 }
