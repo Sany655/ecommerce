@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const Carousel = ({ categories:items, interval = 3000 }) => {
+const Carousel = ({ categories: items, interval = 3000 }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
@@ -21,7 +21,7 @@ const Carousel = ({ categories:items, interval = 3000 }) => {
                 {items.map((item, index) => (
                     <div key={index} className="w-full flex-shrink-0 relative">
                         <img
-                            src={'storage/'+item.banner}
+                            src={'storage/' + item.banner}
                             alt={`Slide ${index}`}
                             className="w-full h-64 object-cover"
                         />
@@ -39,13 +39,13 @@ const Carousel = ({ categories:items, interval = 3000 }) => {
                 onClick={() =>
                     setCurrentIndex((currentIndex - 1 + items.length) % items.length)
                 }
-                className="absolute left-5 top-1/2 transform -translate-y-1/2 px-4 py-2 bg-white text-black rounded-full shadow-md focus:outline-none"
+                className="absolute left-5 top-1/2 transform -translate-y-1/2 text-blue-500 text-4xl focus:outline-none"
             >
                 ‹
             </button>
             <button
                 onClick={() => setCurrentIndex((currentIndex + 1) % items.length)}
-                className="absolute right-5 top-1/2 transform -translate-y-1/2 px-4 py-2 bg-white text-black rounded-full shadow-md focus:outline-none"
+                className="absolute right-5 top-1/2 transform -translate-y-1/2 text-blue-500 text-4xl focus:outline-none"
             >
                 ›
             </button>

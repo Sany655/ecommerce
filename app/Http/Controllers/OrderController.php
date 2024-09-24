@@ -7,7 +7,9 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
@@ -50,8 +52,15 @@ class OrderController extends Controller
 
         // Check if the cart exists and contains items
         if (!$cart || $cart->cartItems->isEmpty()) {
-            return response()->json(['message' => 'Cart is empty or invalid'], 400);
+            return Inertia::render('Checkout')->with(['error' => 'Cart is empty or invalid']);
         }
+
+        $orderToken = $request->cookie('order_token');
+        if ($orderToken) {
+            return Inertia::render('Checkout')->with(['error' => 'if u want any kind of information please call us - 01854846414']);
+        }
+
+        $orderToken = (string) Str::uuid();
 
         // Start a database transaction to ensure atomicity
         DB::beginTransaction();
@@ -71,8 +80,8 @@ class OrderController extends Controller
                 'division' => $request->input('division'),
                 'mobile' => $request->input('mobile'),
                 'notes' => $request->input('notes'),
-                'total_price' => $totalPrice, // Calculated price
-                'status' => 'pending', // default status is pending
+                'total_price' => $totalPrice,
+                'status' => 'pending',
             ]);
             // Loop through the cart items and create corresponding order items
             foreach ($cart->cartItems as $cartItem) {
@@ -85,6 +94,7 @@ class OrderController extends Controller
                 ]);
             }
             // Commit the transaction
+            Cookie::queue('order_token', $orderToken, 60 * 24 * 5);
             DB::commit();
             return redirect()->route('home.order_invoice', $order->id);
         } catch (\Exception $e) {

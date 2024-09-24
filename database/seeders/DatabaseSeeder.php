@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        User::factory()->create();
+        // User::factory()->create();
         Category::factory()->count(5)->create()->each(function ($category) {
             Product::factory()->count(20)->create([
                 'category_id' => $category->id

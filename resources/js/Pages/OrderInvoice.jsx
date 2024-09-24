@@ -1,11 +1,17 @@
+import useCart from '@/Hooks/useCart';
 import AppLayout from '@/Layouts/AppLayout';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 // import html2pdf from 'html2pdf.js';
 
 function Index({ order }) {
     const invoiceRef = useRef(null)
+    const { clearCart } = useCart();
+
+    useEffect(() => {
+        clearCart();
+    }, [])
 
     const downloadInvoice = async () => {
         try {

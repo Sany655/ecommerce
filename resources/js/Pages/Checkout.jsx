@@ -5,8 +5,9 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 
 function Index() {
-    const { cart, clearCart } = useCart();
-    const { post, data, reset, setData, errors, clearErrors } = useForm({
+    const { props } = usePage();
+    const { cart, addToCart, removeFromCart } = useCart();
+    const { post, data, reset, setData, errors, clearErrors, } = useForm({
         name: "",
         email: "",
         address: "",
@@ -14,7 +15,6 @@ function Index() {
         mobile: "",
         notes: "",
     });
-    const [success, setSuccess] = useState('')
     const subtotal = cart.reduce((total, item) => Math.round(total + (item.product?.discount_price || item.product?.price) * item.quantity), 0);
 
     const handleInputChange = (e) => {
@@ -28,9 +28,7 @@ function Index() {
         post(route('home.place_order'), {
             onSuccess: () => {
                 clearErrors();
-                clearCart();
                 reset();
-                // router.get(route('home.order_invoice', orderId))
             }
         });
     };
@@ -41,6 +39,7 @@ function Index() {
             {/* Billing Details */}
             <div className="bg-white rounded-lg shadow-lg p-8 mb-8 md:flex-1">
                 <h1 className="text-2xl font-bold mb-6">Billing details</h1>
+                {props.error && <p className="text-red-500 mb-6 text-center">{props.error}</p>}
                 <div className="grid gap-6">
                     {/* Name */}
                     <div className="col-span-2 md:col-span-1">
@@ -132,7 +131,6 @@ function Index() {
                         {errors.notes && <p className="text-red-500">{errors.notes}</p>}
                     </div>
                 </div>
-                {success && <div className="text-green-500 text-center">{success}</div>}
                 {errors.orderItems && <div className="text-red-500 text-center">{errors.orderItems}</div>}
             </div>
 
@@ -149,8 +147,19 @@ function Index() {
                     <tbody>
                         {cart.map((item, i) => (
                             <tr key={i} className="border-b">
-                                <td className="p-4 line-clamp-1">
-                                    {item.product.name} × {item.quantity}
+                                <td className="p-4 line-clamp-3 flex gap-2 items-center">
+                                    <button onClick={() => removeFromCart(item.id)} className="text-red-500 hover:text-red-700">
+                                        &#10005;
+                                    </button>
+                                    {item.product.name}
+                                    x
+                                    <input
+                                        type="number"
+                                        value={item.quantity}
+                                        min="1"
+                                        className="border w-14"
+                                        onChange={(e) => addToCart(item.product, parseInt(e.target.value))}
+                                    />
                                 </td>
                                 <td className="p-4 text-red-500">&#2547; {Math.round((item.product.discount_price || item.product.price) * item.quantity)}</td>
                             </tr>
@@ -185,13 +194,15 @@ function Index() {
                 </div>
 
                 {/* Place Order Button */}
-                <button
-                    type="submit"
-                    className="bg-orange-500 text-white px-6 py-3 rounded-lg w-full hover:bg-orange-600 disabled:opacity-50"
-                    disabled={cart.length === 0 || data.name === "" || data.address === "" || data.division === "" || data.mobile === ""}
-                >
-                    Place order
-                </button>
+                {
+                    cart.length === 0 || <button
+                        type="submit"
+                        className="bg-blue-500 text-white px-6 py-3 rounded-lg w-full hover:bg-blue-600 disabled:opacity-50"
+                        disabled={data.name === "" || data.address === "" || data.division === "" || data.mobile === ""}
+                    >
+                        Place order
+                    </button>
+                }
             </div>
         </form>
     );

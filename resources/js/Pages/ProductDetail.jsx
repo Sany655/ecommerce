@@ -1,5 +1,5 @@
 import AppLayout from "@/Layouts/AppLayout";
-import { Head, usePage } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import React, { useEffect, useState } from "react";
 import useCart from "@/Hooks/useCart"
 import ProductCart from "@/Components/ProductCart";
@@ -7,7 +7,6 @@ import axios from "axios";
 
 const Index = ({ product }) => {
     const { cart, addToCart, removeFromCart } = useCart()
-    const props = usePage().props;
     const { id, category_id, name, description, price, image, discount_price, coupon_price, coupon_code, status, created_at, updated_at } = product;
     const [products, setproducts] = useState([])
     const [couponError, setCouponError] = useState('')
@@ -81,7 +80,7 @@ const Index = ({ product }) => {
                             className="border px-4 py-2 w-1/2 rounded-l-lg"
                             name="coupon_code"
                         />
-                        <button type="submit" className="bg-orange-500 text-white px-6 py-2 rounded-r-lg hover:bg-orange-600">
+                        <button type="submit" className="bg-blue-500 text-white px-6 py-2 rounded-r-lg hover:bg-blue-600">
                             Apply coupon
                         </button>
                     </form>
@@ -89,10 +88,12 @@ const Index = ({ product }) => {
 
                     {/* Buttons */}
                     <div className="flex items-center space-x-4 my-6">
-                        <button className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600" onClick={() => addToCart(product)}>
+                        <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600" onClick={() => addToCart(product)}>
                             Add to Cart
                         </button>
-                        <button className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300">
+                        <button className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300" onClick={() => {
+                            addToCart(product).then(() => router.visit(route('home.checkout')));
+                        }}>
                             Order Now
                         </button>
                     </div>

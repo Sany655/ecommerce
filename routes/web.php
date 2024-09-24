@@ -36,6 +36,7 @@ Route::get('/checkout', fn() => Inertia::render("Checkout"))->name('home.checkou
 Route::post('/place-order', [OrderController::class, 'placeOrder'])->name('home.place_order');
 Route::get('/order-invoice/{orderId}', [OrderController::class, 'orderInvoice'])->name('home.order_invoice');
 Route::get('/download-invoice/{orderId}', [OrderController::class, 'downloadInvoice'])->name('home.download_invoice');
+Route::get('/search/{query}', [FrontController::class, 'search'])->name('home.search');
 
 
 Route::middleware(['auth'])->group(function () {

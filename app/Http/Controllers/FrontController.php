@@ -12,6 +12,13 @@ use Inertia\Inertia;
 
 class FrontController extends Controller
 {
+
+    function search($query)
+    {
+        $prods = Product::where('name', 'LIKE', '%' . $query . '%')->where('status', true)->get();
+        return Inertia::render('SearchProducts', ['products' => $prods]);
+    }
+
     public function index()
     {
         return Inertia::render('Index', [

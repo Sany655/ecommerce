@@ -1,6 +1,6 @@
 import useCart from "@/Hooks/useCart"
 import PrimaryButton from "./PrimaryButton"
-import { Link } from "@inertiajs/react"
+import { Link, router } from "@inertiajs/react"
 import { useEffect, useState } from "react"
 
 function ProductCart({ product }) {
@@ -25,13 +25,13 @@ function ProductCart({ product }) {
                 <p className="text-sm mb-4 text-gray-300 line-clamp-2 text-wrap">{product.description}</p>
 
                 {/* Heart Icon */}
-                {loading ? <i className="fa fa-spinner text-2xl self-center mb-3 transition-colors"></i> : <i className={`fa fa-heart ${cartItem?.id ? 'text-red-500' : 'text-yellow-500 hover:text-orange-500'} text-2xl self-center mb-3 transition-colors`} onClick={() => {
+                {loading ? <i className="fa fa-spinner text-2xl self-center mb-3 transition-colors"></i> : <i className={`fa fa-heart ${cartItem?.id ? 'text-red-500' : 'text-blue-500 hover:text-gray-500'} text-2xl self-center mb-3 transition-colors cursor-pointer`} onClick={() => {
                     setLoading(true)
                     addToCart(product).then(() => setLoading(false))
                 }}></i>}
                 {/* Buttons */}
                 <div className="flex gap-3 justify-center">
-                    <PrimaryButton className="bg-orange-500 hover:bg-orange-600">
+                    <PrimaryButton className="bg-yellow-600 hover:bg-yellow-900" onClick={() => addToCart(product).then(() => router.visit(route('home.checkout'))).catch(error => alert("something went wrong, try again!"))}>
                         Order Now
                     </PrimaryButton>
                     <Link href={route("home.product", product.id)}><PrimaryButton className="">

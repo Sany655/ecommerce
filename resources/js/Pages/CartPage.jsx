@@ -36,7 +36,7 @@ const Index = () => {
                                         </td>
                                         <td className="p-4 flex items-center">
                                             <img src={`/storage/${item.product?.image}`} alt={item.product?.name} className="w-16 h-16 rounded-lg mr-4" />
-                                            <Link className="text-orange-500 hover:underline line-clamp-1" href={route('home.product', item.product_id)}>{item.product?.name}</Link>
+                                            <Link className="text-blue-500 hover:underline line-clamp-1" href={route('home.product', item.product_id)}>{item.product?.name}</Link>
                                         </td>
                                         <td className="p-4 text-red-500">&#2547; {Math.round(item.product?.price)}</td>
                                         <td className="p-4 text-red-500">&#2547; {Math.round(item.product?.discount_price)}</td>
@@ -85,7 +85,7 @@ const Index = () => {
                 </div>
                 {cart.length > 0 && (
                     <div className="flex flex-col gap-2">
-                        <Link href={route('home.checkout')} className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 mt-4 text-center">
+                        <Link href={route('home.checkout')} className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 mt-4 text-center">
                             Proceed to checkout
                         </Link>
                         <button className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600" onClick={() => {
