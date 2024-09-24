@@ -5,10 +5,9 @@ import { useEffect, useState } from "react"
 
 function ProductCart({ product }) {
     const { cart, addToCart, removeFromCart } = useCart()
-    const [isInCart, setIsInCart] = useState({})
-    useEffect(() => {
-        setIsInCart(cart.find(item => item.product_id === product.id) || {})
-    }, [cart.length]);
+    const [loading, setLoading] = useState(false)
+    const cartItem = cart.find(item => item.product_id === product.id);
+
     return (
         <div
             className="relative bg-cover bg-center h-80 mb-6 rounded-lg shadow-lg transition-transform transform hover:scale-105"
@@ -26,8 +25,10 @@ function ProductCart({ product }) {
                 <p className="text-sm mb-4 text-gray-300 line-clamp-2 text-wrap">{product.description}</p>
 
                 {/* Heart Icon */}
-                <i className={`fa fa-heart ${isInCart.id ? 'text-red-500' : 'text-yellow-500 hover:text-orange-500'} text-2xl self-center mb-3 transition-colors`} onClick={() => addToCart(product)}></i>
-                <p className="text-white">{isInCart.quantity}</p>
+                {loading ? <i className="fa fa-spinner text-2xl self-center mb-3 transition-colors"></i> : <i className={`fa fa-heart ${cartItem?.id ? 'text-red-500' : 'text-yellow-500 hover:text-orange-500'} text-2xl self-center mb-3 transition-colors`} onClick={() => {
+                    setLoading(true)
+                    addToCart(product).then(() => setLoading(false))
+                }}></i>}
                 {/* Buttons */}
                 <div className="flex gap-3 justify-center">
                     <PrimaryButton className="bg-orange-500 hover:bg-orange-600">

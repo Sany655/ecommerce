@@ -34,6 +34,8 @@ Route::delete('/cart-remove/{itemId}', [CartController::class, 'removeFromCart']
 Route::delete('/cart-delete', [CartController::class, 'clearCart'])->name('cart.delete');
 Route::get('/checkout', fn() => Inertia::render("Checkout"))->name('home.checkout');
 Route::post('/place-order', [OrderController::class, 'placeOrder'])->name('home.place_order');
+Route::get('/order-invoice/{orderId}', [OrderController::class, 'orderInvoice'])->name('home.order_invoice');
+Route::get('/download-invoice/{orderId}', [OrderController::class, 'downloadInvoice'])->name('home.download_invoice');
 
 
 Route::middleware(['auth'])->group(function () {
@@ -45,6 +47,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/category', CategoryController::class);
     Route::resource('/product', ProductController::class);
     Route::resource('/order', OrderController::class);
+
+    Route::put('/order-status/{orderId}', [OrderController::class, 'changeOrderStatus'])->name('home.order_status');
 });
 
 Route::fallback(function () {

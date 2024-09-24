@@ -3,9 +3,9 @@ laravel with inertia-reactjs
 
 -1. coupon-code+coupon-price for fixed product
 0. database for bangla support
-1. category list in header
-2. remove total quantity
-3. after order sent mail
+1. category list in header (done)
+2. remove total quantity (done)
+3. after order sent mail - https://laravel.com/docs/11.x/mail
 4. place order reciep download option as pdf 
 5. after place an order, in 24 hours cannot be placed order.
 

@@ -51,8 +51,6 @@ class CartController extends Controller
         return response()->json(['cart' => $cartItems]);
     }
 
-
-
     // Function to remove an item from the cart
     public function removeFromCart(Request $request, $itemId)
     {

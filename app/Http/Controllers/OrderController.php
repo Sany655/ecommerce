@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -12,10 +13,27 @@ use Inertia\Inertia;
 
 class OrderController extends Controller
 {
+    function downloadInvoice($orderId)
+    {
+        $order = Order::where('id', $orderId)->with('orderItems.product')->first();
+        if (!$order) {
+            abort(404, "Order not found.");
+        }
+
+        $pdf = PDF::loadView('order-invoice', ['order' => $order]);
+        return $pdf->download('order_invoice.pdf');
+    }
+
+    function orderInvoice($orderId)
+    {
+        $order = Order::where('id', $orderId)->first();
+        return Inertia::render('OrderInvoice', ['order' => $order->with('orderItems.product')->first()]);
+    }
+
     public function index()
     {
-        $orders = Order::paginate(10)->sortBy('created_at', 'desc')->get();
-        return Inertia::render('Admin/ManageOrder', compact('orders'));
+        $orders = Order::with('orderItems.product')->orderBy('created_at', 'desc')->paginate(10);
+        return Inertia::render('Admin/ManageOrder', ['orders' => $orders]);
     }
 
     public function show(Order $order)
@@ -37,7 +55,6 @@ class OrderController extends Controller
 
         // Start a database transaction to ensure atomicity
         DB::beginTransaction();
-
         try {
             // Calculate the total price from the cart items
             $totalPrice = 0;
@@ -46,7 +63,6 @@ class OrderController extends Controller
                 $productPrice = $cartItem->product->discount_price ?? $cartItem->product->price;
                 $totalPrice += $productPrice * $cartItem->quantity;
             }
-
             // Create the order with the data from the request and calculated total_price
             $order = Order::create([
                 'name' => $request->input('name'),
@@ -58,7 +74,6 @@ class OrderController extends Controller
                 'total_price' => $totalPrice, // Calculated price
                 'status' => 'pending', // default status is pending
             ]);
-
             // Loop through the cart items and create corresponding order items
             foreach ($cart->cartItems as $cartItem) {
                 $productPrice = $cartItem->product->discount_price ?? $cartItem->product->price;
@@ -69,13 +84,20 @@ class OrderController extends Controller
                     'price' => $productPrice, // Using the correct product price
                 ]);
             }
-
             // Commit the transaction
             DB::commit();
+            return redirect()->route('home.order_invoice', $order->id);
         } catch (\Exception $e) {
             // Rollback the transaction in case of error
             DB::rollBack();
-            return response()->json(['message' => 'Failed to place order', 'error' => $e->getMessage()], 500);
+            response()->json(['message' => 'Failed to place order', 'error' => $e->getMessage()], 500);
         }
+    }
+
+    function changeOrderStatus(Request $request, $orderId)
+    {
+        Order::where('id', $orderId)->update(['status' => $request->status]);
+        $updatedOrder = Order::find($orderId);
+        return response()->json(['status' => $updatedOrder->status], 200);
     }
 }

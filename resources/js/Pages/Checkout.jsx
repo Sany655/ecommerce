@@ -29,8 +29,8 @@ function Index() {
             onSuccess: () => {
                 clearErrors();
                 clearCart();
-                setSuccess('Order placed successfully!');
                 reset();
+                // router.get(route('home.order_invoice', orderId))
             }
         });
     };

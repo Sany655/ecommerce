@@ -1,17 +1,14 @@
 import DangerButton from '@/Components/DangerButton';
+import SelectInput from '@/Components/SelectInput';
 import ProductCreateForm from '@/Forms/ProductCreateForm';
 import ProductEditForm from '@/Forms/ProductEditForm';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
+import axios from 'axios';
+import { useState } from 'react';
 
 function ManageOrder(props) {
-    const { products, categories } = props;
-
-    // const handleDeleteCat = (id) => {
-    //     if (window.confirm("Are you sure you want to delete this product?")) {
-    //         router.delete(`product/${id}`, { preserveScroll: true });
-    //     }
-    // };
+    const { orders } = props;
 
     return (
         <AuthenticatedLayout
@@ -21,52 +18,88 @@ function ManageOrder(props) {
         >
             <Head title="Manage Orders" />
 
-            {/* <div className="bg-white rounded py-12 mt-2">
+            <div className="bg-white rounded py-12 mt-2">
                 <div className="container mx-auto">
                     <div className="flex justify-between items-center mb-8">
                         <div className="flex items-center gap-2">
-                            <h2 className="text-lg font-semibold">Products</h2>
+                            <h2 className="text-lg font-semibold">Orders</h2>
                         </div>
-                        <ProductCreateForm categories={categories} />
                     </div>
-                    {products.data.length > 0 ? (
+                    {orders.data.length > 0 ? (
                         <>
                             <table className='min-w-full bg-white border border-gray-200'>
                                 <thead>
                                     <tr className='bg-gray-200 text-gray-600 uppercase text-sm leading-normal'>
-                                        <th className='py-3 px-6 text-center'>Name</th>
-                                        <th className='py-3 px-6 text-center'>Description</th>
-                                        <th className='py-3 px-6 text-center'>Category</th>
+                                        <th className='py-3 px-6 text-center'>User Info</th>
+                                        <th className='py-3 px-6 text-center'>Note</th>
+                                        <th className='py-3 px-6 text-center'>Product Info</th>
+                                        <th className='py-3 px-6 text-center'>Total Price</th>
+                                        <th className='py-3 px-6 text-center'>Ordered Date</th>
                                         <th className='py-3 px-6 text-center'></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {
-                                        products.data.map((product, i) => (
-                                            <tr key={i} className='py-3 px-6 text-center border-b'>
-                                                <td className='border'>{product.name}</td>
-                                                <td className='border'>{product.description}</td>
-                                                <td className='border'>{product.category.name}</td>
-                                                <td className='flex items-center gap-2 p-4'>
-                                                    <ProductEditForm product={product} categories={categories} />
-                                                    <p className="text-red-500" onClick={() => handleDeleteCat(product.id)}>Delete</p>
-                                                </td>
-                                            </tr>
+                                        orders.data.map((order, i) => (
+                                            <OrderItems order={order} key={i} />
                                         ))
                                     }
                                 </tbody>
                             </table>
                             <div className="mt-4 flex justify-center">
-                                {products.links.map((link, index) => (
+                                {orders.links.map((link, index) => (
                                     <Link key={index} href={link.url} as="button" type="button" className={`px-4 py-2 mx-1 rounded border ${link.active ? 'bg-black text-white' : 'bg-white text-black'}`} disabled={!link.url} dangerouslySetInnerHTML={{ __html: link.label }} />
                                 ))}
                             </div>
                         </>
-                    ) : <p className="my-40 text-center">No product availabe</p>}
+                    ) : <p className="my-40 text-center">No Orders availabe</p>}
                 </div>
-            </div> */}
+            </div>
         </AuthenticatedLayout>
     );
+}
+
+const OrderItems = ({ order }) => {
+    const [loading, setLoading] = useState(false)
+    const [status, setStatus] = useState(order.status);
+
+    const changeStatus = (orderId, status) => {
+        setLoading(true)
+        axios.put(route('home.order_status', orderId), { status })
+            .then(res => {
+                setStatus(res.data.status)
+            })
+            .finally(() => setLoading(false));
+    }
+
+    return (<tr className='py-3 px-6 text-center border'>
+        <td className=' line-clamp-4'>{order.name} {order.email} {order.address} {order.division}</td>
+        <td className=''>{order.notes}</td>
+        <td className=' line-clamp-3'>
+            {order.order_items.map((item, j) => item.product.name + ' x ' + item.quantity + ', ')}
+        </td>
+        <td className=''>{order.total_price}</td>
+        <td className=' line-clamp-2'>{new Date(order.created_at).toLocaleString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+        })}</td>
+        <td className=''>
+            {
+                loading ? <i className="fa fa-spinner"></i> : (
+                    <SelectInput value={status} onChange={e => changeStatus(order.id, e.target.value)}>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </SelectInput>
+                )
+            }
+        </td>
+    </tr>)
 }
 
 export default ManageOrder;
