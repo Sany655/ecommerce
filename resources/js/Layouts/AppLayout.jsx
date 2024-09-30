@@ -68,7 +68,7 @@ const Header = () => {
 const Footer = () => {
     return (
         <footer className="bg-gray-100 py-8">
-            <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+            <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 text-center md:text-left">
                 {/* Logo and Motto */}
                 <div>
                     {/* <img src="/path/to/logo.png" alt="Sunnah Corner" className="mx-auto md:mx-0 mb-4" /> */}
@@ -82,7 +82,7 @@ const Footer = () => {
                 </div>
 
                 {/* Payment Methods and Contact Information */}
-                <div className="md:text-center">
+                {/* <div className="md:text-center">
                     <div className="mb-4">
                         <h5 className="text-lg font-semibold text-gray-800 mb-2">We Accept</h5>
                         <div className="flex justify-center space-x-2">
@@ -90,13 +90,13 @@ const Footer = () => {
                         </div>
                     </div>
 
-                </div>
+                </div> */}
 
                 {/* Download App */}
                 <div className="md:text-right text-sm text-gray-700">
                     <h5 className="text-lg font-semibold text-gray-800 mb-2">Contact Us</h5>
-                    <p>📞 (+88) 01646-790153</p>
-                    <p>✉️ contact@sunnahcorner.com</p>
+                    <p>📞 (+88) 01854846414</p>
+                    <p>✉️ Info@hamdaanz.com</p>
                 </div>
             </div>
             <div className="container mx-auto text-center mt-8 border-t pt-4">
@@ -112,7 +112,7 @@ const Footer = () => {
                     </a>
                 </div>
                 <p className="text-sm text-gray-700">
-                    Best Islamic Lifestyle Brand in Bangladesh | sunnahcorner.com | Designed by: Theme Freesia | © 2024 WordPress
+                    Islamic Lifestyle Brand in Bangladesh | hamdaanz.com
                 </p>
             </div>
         </footer>
