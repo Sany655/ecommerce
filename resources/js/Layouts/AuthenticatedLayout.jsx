@@ -104,6 +104,15 @@ export default function Authenticated({ auth, header, children }) {
                         <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
                             Dashboard
                         </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('category.index')} active={route().current('category.index')}>
+                            Manage Categories
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('product.index')} active={route().current('product.index')}>
+                            Manage Products
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('order.index')} active={route().current('order.index')}>
+                            Manage Orders
+                        </ResponsiveNavLink>
                     </div>
 
                     <div className="pt-4 pb-1 border-t border-gray-200">
