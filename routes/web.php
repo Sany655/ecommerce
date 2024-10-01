@@ -20,6 +20,9 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
+// Route::get('/linkstorage', function () {
+//     Artisan::call('storage:link');
+// });
 
 Route::get('/', [FrontController::class, 'index'])->name('home');;
 Route::get('/cat/{catId}', [FrontController::class, 'show'])->name('home.category_products');
