@@ -25,10 +25,10 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
-    }
+    // public function create()
+    // {
+
+    // }
 
     /**
      * Store a newly created resource in storage.
@@ -41,7 +41,7 @@ class CategoryController extends Controller
         // Validate the request data
         $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
-            'description' => 'nullable|string',
+            'description' => 'nullable|string|max:500',
             'banner' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
             'parent_id' => 'nullable|exists:categories,id',
             'status' => 'boolean',
@@ -80,10 +80,10 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function edit(Category $category)
-    {
-        //
-    }
+    // public function edit(Category $category)
+    // {
+
+    // }
 
     /**
      * Update the specified resource in storage.
@@ -97,7 +97,7 @@ class CategoryController extends Controller
         // Validate the request
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
-            'description' => 'nullable|string',
+            'description' => 'nullable|string|max:500',
             'banner' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
             'parent_id' => 'nullable|exists:categories,id',
             'status' => 'boolean',
@@ -145,8 +145,10 @@ class CategoryController extends Controller
 
         // Delete all associated products and their images
         $category->products()->each(function ($product) {
-            if ($product->image && Storage::disk('public')->exists($product->image)) {
-                Storage::disk('public')->delete($product->image);
+            foreach (json_decode($product->images) as $key => $image) {
+                if ($image && Storage::disk('public')->exists($image)) {
+                    Storage::disk('public')->delete($image);
+                }
             }
         });
 

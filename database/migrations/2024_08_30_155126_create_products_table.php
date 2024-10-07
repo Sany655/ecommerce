@@ -22,7 +22,7 @@ return new class extends Migration
             $table->decimal('discount_price', 7, 2)->nullable();
             $table->decimal('coupon_price', 7, 2)->nullable();
             $table->string('coupon_code', 25)->nullable();
-            $table->string('image')->nullable();
+            $table->text('images')->nullable();
             $table->integer('sold')->nullable()->default(0);
             $table->integer('views')->nullable()->default(0);
             $table->boolean('status')->default(true);

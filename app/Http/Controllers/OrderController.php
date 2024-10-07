@@ -38,11 +38,11 @@ class OrderController extends Controller
         return Inertia::render('Admin/ManageOrder', ['orders' => $orders]);
     }
 
-    public function show(Order $order)
-    {
-        $order->load('user', 'orderItems.product');
-        return view('orders.show', compact('order'));
-    }
+    // public function show(Order $order)
+    // {
+    //     $order->load('user', 'orderItems.product');
+    //     return view('orders.show', compact('order'));
+    // }
 
     public function placeOrder(Request $request)
     {
@@ -55,9 +55,12 @@ class OrderController extends Controller
             return Inertia::render('Checkout')->with(['error' => 'Cart is empty or invalid']);
         }
 
-        $orderToken = $request->cookie('order_token');
-        if ($orderToken) {
-            return Inertia::render('Checkout')->with(['error' => 'if u want any kind of information please call us - 01854846414']);
+        // check if the env is in production environment
+        if (app()->environment('production')) {
+            $orderToken = $request->cookie('order_token');
+            if ($orderToken) {
+                return Inertia::render('Checkout')->with(['error' => 'if u want any kind of information please call us - 01854846414']);
+            }
         }
 
         $orderToken = (string) Str::uuid();
@@ -69,8 +72,7 @@ class OrderController extends Controller
             $totalPrice = 0;
             foreach ($cart->cartItems as $cartItem) {
                 // Assuming product has both 'price' and 'discount_price' fields
-                $productPrice = $cartItem->product->discount_price ?? $cartItem->product->price;
-                $totalPrice += $productPrice * $cartItem->quantity;
+                $totalPrice += $cartItem->product->discount_price ?? $cartItem->product->price * $cartItem->quantity;
             }
             // Create the order with the data from the request and calculated total_price
             $order = Order::create([
@@ -85,16 +87,16 @@ class OrderController extends Controller
             ]);
             // Loop through the cart items and create corresponding order items
             foreach ($cart->cartItems as $cartItem) {
-                $productPrice = $cartItem->product->discount_price ?? $cartItem->product->price;
+                Log::info($cartItem->product->discount_price ?? $cartItem->product->price);
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $cartItem->product_id,
                     'quantity' => $cartItem->quantity,
-                    'price' => $productPrice, // Using the correct product price
+                    'price' => $cartItem->product->discount_price ?? $cartItem->product->price,
                 ]);
             }
             // Commit the transaction
-            Cookie::queue('order_token', $orderToken, 60 * 24 * 5);
+            // Cookie::queue('order_token', $orderToken, 60 * 24 * 5);
             DB::commit();
             return redirect()->route('home.order_invoice', $order->id);
         } catch (\Exception $e) {

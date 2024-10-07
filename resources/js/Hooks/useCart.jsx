@@ -19,13 +19,14 @@ export const CartProvider = ({ children }) => {
     }, []);
 
 
-    const addToCart = async (item, changedQuantity = null) => {
+    const addToCart = async (item, changedQuantity = null, itemPrice = 0) => {
         setCartLoading(true);
+        itemPrice = itemPrice === 0 ? item.discount_price || item.price : itemPrice;
         try {
             const doesExistInCart = cart.find(c => c.product_id === item.id);
             const updatedQuantity = doesExistInCart ? doesExistInCart.quantity + 1 : 1;
             const finalQuantity = changedQuantity || updatedQuantity;
-            const data = { product_id: item.id, quantity: finalQuantity };
+            const data = { product_id: item.id, quantity: finalQuantity, price: itemPrice };
             const response = await axios.post(route('cart.add'), data);
             setCart([...response.data.cart]);
         } catch (error) {

@@ -33,7 +33,7 @@ const Child = ({ categories, banner }) => {
                             <h1 className="text-4xl font-bold capitalize">{category.name}</h1>
                             <NavLink className="text-sm font-bold text-gray-400" href={route('home.category_products', category.id)}>View all</NavLink>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 space-4">
                             {
                                 category.products.map((product, i) => (
                                     <ProductCart product={product} key={i} />

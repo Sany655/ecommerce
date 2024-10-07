@@ -48,9 +48,10 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::resource('/category', CategoryController::class);
-    Route::resource('/product', ProductController::class);
-    Route::resource('/order', OrderController::class);
+    Route::resource('/category', CategoryController::class)->except(['edit','create']);
+    Route::resource('/product', ProductController::class)->except(['edit','show','create']);
+    Route::delete('/product/{id}/image',[ProductController::class, 'deleteImage'])->name('product.delete_image');
+    Route::resource('/order', OrderController::class)->except(['edit','show','create','update' ]);
 
     Route::put('/order-status/{orderId}', [OrderController::class, 'changeOrderStatus'])->name('home.order_status');
 });

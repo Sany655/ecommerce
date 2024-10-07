@@ -51,7 +51,7 @@ function Index({ order }) {
                             <th className="py-2">Product</th>
                             <th className="py-2">Quantity</th>
                             <th className="py-2">Price</th>
-                            <th className="py-2">Total</th>
+                            <th className="py-2">Subtotal</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -59,8 +59,8 @@ function Index({ order }) {
                             <tr key={index} className="border-b text-sm">
                                 <td className="py-2">{item.product.name}</td>
                                 <td className="py-2">{item.quantity}</td>
-                                <td className="py-2"><i className="fa-solid fa-bangladeshi-taka-sign"></i> {item.product.price}</td>
-                                <td className="py-2"><i className="fa-solid fa-bangladeshi-taka-sign"></i> {(item.quantity * item.product.price).toFixed(2)}</td>
+                                <td className="py-2"><i className="fa-solid fa-bangladeshi-taka-sign"></i> {item.price}</td>
+                                <td className="py-2"><i className="fa-solid fa-bangladeshi-taka-sign"></i> {(item.quantity * item.price).toFixed(2)}</td>
                             </tr>
                         ))}
                     </tbody>

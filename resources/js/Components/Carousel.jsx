@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ApplicationLogo from './ApplicationLogo';
 
 const Carousel = ({ categories: items, interval = 3000 }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -12,7 +13,7 @@ const Carousel = ({ categories: items, interval = 3000 }) => {
     }, [items.length, interval]);
 
     return (
-        <div className="relative w-full overflow-hidden h-64">
+        <div className="relative w-full overflow-hidden">
             {/* Carousel Wrapper */}
             <div
                 className="flex transition-transform ease-in-out duration-1000"
@@ -20,15 +21,18 @@ const Carousel = ({ categories: items, interval = 3000 }) => {
             >
                 {items.map((item, index) => (
                     <div key={index} className="w-full flex-shrink-0 relative">
-                        <img
-                            src={'storage/' + item.banner}
-                            alt={`Slide ${index}`}
-                            className="w-full h-64 object-cover"
-                        />
-                        {/* Text overlay */}
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 text-white">
-                            <h2 className="text-xl font-bold">{item.name}</h2>
-                            <p className='text-l'>{item.description}</p>
+                        {/* Flex container for the image and content */}
+                        <div className="grid grid-cols-2 object-contain">
+                            <img
+                                src={'storage/' + item.banner}
+                                alt={`Slide ${index}`}
+                                className=""
+                            />
+                            <div className="bg-black bg-opacity-50 p-4 flex flex-col items-center justify-center text-white gap-2">
+                                <ApplicationLogo />
+                                <h2 className="text-xl font-bold">{item.name}</h2>
+                                <p className="text-md">{item.description}</p>
+                            </div>
                         </div>
                     </div>
                 ))}

@@ -15,6 +15,7 @@ function CategoryCreateForm({ categories }) {
         description: '',
         banner: null,
         parent_id: null,
+        attributes: [],
         status: false
     });
     const [catCreateModal, setCatCreateModal] = useState(false)
@@ -55,6 +56,26 @@ function CategoryCreateForm({ categories }) {
                                 </SelectInput>
                             </>
                         )}
+                        <div className="">
+                            <h2 className="text-2xl">Attributes</h2>
+                            <form className="flex gap-2" onSubmit={e => {
+                                e.preventDefault();
+                                // Add attribute to attributes array
+                                setData('attributes', [...data.attributes, { name: e.target.elements.attribute_name.value, type: e.target.elements.attribute_type.value }]);
+                                e.target.elements.attribute_name.value = '';
+                                e.target.elements.attribute_type.value = '';
+                            }}>
+                                <TextInput required placeholder="Attribute Name" name='attribute_name' />
+                                <SelectInput name="attribute_type">
+                                    <option value="">Select Attribute Type</option>
+                                    <option value="text">Text</option>
+                                    <option value="number">Number</option>
+                                    <option value="select">Select</option>
+                                    <option value="checkbox">Checkbox</option>
+                                </SelectInput>
+                                <PrimaryButton type="submit">Add</PrimaryButton>
+                            </form>
+                        </div>
                         <div className="flex gap-2">
                             <input type="checkbox" name="status" id="status" checked={data.status} onChange={(e) => setData('status', e.target.checked)} />
                             <InputLabel htmlFor="status">Assign for display</InputLabel>

@@ -6,8 +6,10 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import SelectInput from "@/Components/SelectInput";
 import TextArea from "@/Components/TextArea";
 import TextInput from "@/Components/TextInput";
-import { router, useForm } from "@inertiajs/react";
+import { useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
+import ReactQuill from "react-quill"
+import 'react-quill/dist/quill.snow.css';
 
 function ProductEditForm({ product, categories = [] }) {
     const [prodEditModal, setProdEditModal] = useState(false);
@@ -19,12 +21,12 @@ function ProductEditForm({ product, categories = [] }) {
             name: product.name,
             description: product.description,
             category_id: product.category_id,
-            image: null,
+            images: [],
             price: product.price,
-            discount_price: product.discount_price,
+            discount_price: product.discount_price || '',
             status: product.status,
-            coupon_code: product.coupon_code,
-            coupon_price: product.coupon_price
+            coupon_code: product.coupon_code || '',
+            coupon_price: product.coupon_price || ''
         });
     }, [product]);
 
@@ -67,26 +69,24 @@ function ProductEditForm({ product, categories = [] }) {
 
                         <div className="">
                             <InputLabel htmlFor="description">Product Description</InputLabel>
-                            <TextArea
-                                className="w-full"
-                                id="description"
+                            <ReactQuill
                                 required
-                                name="description"
-                                placeholder="Description"
+                                theme="snow"
                                 value={data.description}
-                                onChange={(e) => setData("description", e.target.value)}
-                            ></TextArea>
+                                onChange={(value) => setData("description", value)}
+                                className="bg-white text-black rounded-lg shadow-md"
+                            />
                             <InputError message={errors.description} className="mt-2" />
                         </div>
 
                         <input
                             type="file"
-                            name="image"
+                            name="images"
+                            multiple
                             onChange={(e) => {
-                                // Check if a file was selected
                                 if (e.target.files.length > 0) {
-                                    // Set the file to the form data
-                                    setData('image', e.target.files[0]);
+                                    const files = Array.from(e.target.files).slice(0, 10);
+                                    setData('images', files);
                                 }
                             }}
                             accept="image/*"

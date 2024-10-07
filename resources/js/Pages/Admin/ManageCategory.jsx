@@ -1,5 +1,4 @@
 import DangerButton from '@/Components/DangerButton';
-import PrimaryButton from '@/Components/PrimaryButton';
 import CategoryCreateForm from '@/Forms/CategoryCreateForm';
 import CategoryEditForm from '@/Forms/CategoryEditForm';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
@@ -31,16 +30,17 @@ function ManageCategory(props) {
                         <CategoryCreateForm categories={categories} />
                     </div>
                     {categories.length > 0 ? categories.map((category, i) => (
-                        <div key={i} className="relative bg-cover bg-center h-64 mb-3" style={{ backgroundImage: `url('storage/${category.banner}')` }}>
+                        <div key={i} className="relative bg-cover bg-center mb-3" style={{ backgroundImage: `url('storage/${category.banner}')` }}>
                             <div className="absolute inset-0 bg-black opacity-50"></div>
-                            <div className="relative flex items-center justify-center h-full text-white">
+                            <div className="relative text-white p-10">
                                 <div className="text-center flex flex-col gap-2">
                                     <h1 className="text-4xl font-bold mb-4">{category.name}</h1>
-                                    <p className="text-lg mb-2">{category.description}</p>
-                                    {/* <PrimaryButton onClick={()=>route('product.index')}>Manage Products</PrimaryButton> */}
-                                    <Link href={route('category.show', category.id)} className='border rounded'>Manage related products</Link>
-                                    <CategoryEditForm category={category} categories={categories} />
-                                    <DangerButton onClick={() => handleDeleteCat(category.id)}>Delete category with corresponding products</DangerButton>
+                                    <p className="text-lg mb-2 ">{category.description}</p>
+                                    <div className="flex flex-col md:flex-row items-center justify-center gap-4">
+                                        <Link href={route('category.show', category.id)} className='border rounded py-1 px-2 hover:border-black hover:text-black hover:bg-white'>Manage related products</Link>
+                                        <CategoryEditForm category={category} categories={categories} />
+                                        <DangerButton onClick={() => handleDeleteCat(category.id)}>Delete category with corresponding products</DangerButton>
+                                    </div>
                                 </div>
                             </div>
                         </div>

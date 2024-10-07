@@ -28,7 +28,7 @@ function Index() {
         post(route('home.place_order'), {
             onSuccess: () => {
                 clearErrors();
-                reset();
+                // reset();
             }
         });
     };

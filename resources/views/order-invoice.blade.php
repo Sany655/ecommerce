@@ -77,7 +77,7 @@
                         <th class="py-2">Product</th>
                         <th class="py-2">Quantity</th>
                         <th class="py-2">Price</th>
-                        <th class="py-2">Sub Total</th>
+                        <th class="py-2">Subtotal</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -85,9 +85,9 @@
                         <tr class="border-b text-sm">
                             <td class="py-2">{{ $item['product']['name'] }}</td>
                             <td class="py-2">{{ $item['quantity'] }}</td>
-                            <td class="py-2">{{ $item['product']['price'] || $item['product']['discount_price'] }}
+                            <td class="py-2">{{ $item['price'] }}
                             </td>
-                            <td class="py-2">{{ number_format($item['quantity'] * $item['product']['price'], 2) }}
+                            <td class="py-2">{{ number_format($item['quantity'] * $item['price'], 2) }}
                             </td>
                         </tr>
                     @endforeach

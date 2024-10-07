@@ -8,6 +8,8 @@ import TextArea from "@/Components/TextArea"
 import TextInput from "@/Components/TextInput"
 import { router, useForm } from "@inertiajs/react"
 import { useState } from "react"
+import ReactQuill from "react-quill"
+import 'react-quill/dist/quill.snow.css';
 
 function ProductCreateForm({ categories = [], category = null }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -15,11 +17,12 @@ function ProductCreateForm({ categories = [], category = null }) {
         name: '',
         description: '',
         price: '',
-        image: '',
+        images: [],
         discount_price: '',
         coupon_price: '',
         coupon_code: '',
-        status: false
+        status: false,
+        options: [],
     });
     const [prodCreateModal, setProdCreateModal] = useState(false)
 
@@ -64,30 +67,29 @@ function ProductCreateForm({ categories = [], category = null }) {
 
                         <div className="">
                             <InputLabel htmlFor="description">Product Description *</InputLabel>
-                            <TextArea
-                                className="w-full"
-                                id="description"
+                            <ReactQuill
                                 required
-                                name="description"
-                                placeholder="Description"
+                                theme="snow"
                                 value={data.description}
-                                onChange={(e) => setData("description", e.target.value)}
-                            ></TextArea>
+                                onChange={(value) => setData("description", value)}
+                                className="bg-white text-black rounded-lg shadow-md"
+                            />
                             <InputError message={errors.description} className="mt-2" />
                         </div>
 
                         <input
                             type="file"
-                            name="image"
+                            name="images"
+                            multiple
                             onChange={(e) => {
-                                // Check if a file was selected
                                 if (e.target.files.length > 0) {
-                                    // Set the file to the form data
-                                    setData('image', e.target.files[0]);
+                                    const files = Array.from(e.target.files).slice(0, 10);
+                                    setData('images', files);
                                 }
                             }}
                             accept="image/*"
                         />
+
                         <InputError message={errors.image} className="mt-2" />
 
                         {categories.length > 0 && (
@@ -120,6 +122,7 @@ function ProductCreateForm({ categories = [], category = null }) {
                                 name="price"
                                 value={data.price}
                                 onChange={(e) => setData("price", e.target.value)}
+                                type="number"
                             />
                             <InputError message={errors.price} className="mt-2" />
                         </div>
@@ -133,6 +136,7 @@ function ProductCreateForm({ categories = [], category = null }) {
                                 name="discount_price"
                                 value={data.discount_price}
                                 onChange={(e) => setData("discount_price", e.target.value)}
+                                type="number"
                             />
                             <InputError message={errors.discount_price} className="mt-2" />
                         </div>
