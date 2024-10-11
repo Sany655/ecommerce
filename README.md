@@ -3,3 +3,6 @@
 2. multiple image with zoom effect for product (alwanilifestyle.com) doen
 3. card design (alwanilifestyle.com) done
 4. banner (between image and logo+ name vertical) done
+
+product with variation database
+https://www.youtube.com/watch?v=8bkGKwb29L4
