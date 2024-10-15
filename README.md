@@ -182,3 +182,5 @@ To secure your site with HTTPS, use SSL certificates:
 ---
 
 By following these steps, you can successfully deploy your Laravel application on a shared hosting environment.
+product with variation database
+https://www.youtube.com/watch?v=8bkGKwb29L4
