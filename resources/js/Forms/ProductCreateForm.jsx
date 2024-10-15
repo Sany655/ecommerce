@@ -4,25 +4,22 @@ import Modal from "@/Components/Modal"
 import PrimaryButton from "@/Components/PrimaryButton"
 import SecondaryButton from "@/Components/SecondaryButton"
 import SelectInput from "@/Components/SelectInput"
-import TextArea from "@/Components/TextArea"
 import TextInput from "@/Components/TextInput"
 import { router, useForm } from "@inertiajs/react"
-import { useState } from "react"
-import ReactQuill from "react-quill"
-import 'react-quill/dist/quill.snow.css';
+import { useEffect, useState } from "react"
+import JoditEditor from 'jodit-react';
+import axios from "axios"
 
-function ProductCreateForm({ categories = [], category = null }) {
+function ProductCreateForm({ category }) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        category_id: category,
+        category_id: category.id,
         name: '',
         description: '',
+        variants: category.attributes ? JSON.stringify(category.attributes.split(',').map((attr) => ({ attribute: attr, values: '' }))) : JSON.stringify([]),
         price: '',
         images: [],
         discount_price: '',
-        coupon_price: '',
-        coupon_code: '',
-        status: false,
-        options: [],
+        status: true,
     });
     const [prodCreateModal, setProdCreateModal] = useState(false)
 
@@ -30,12 +27,12 @@ function ProductCreateForm({ categories = [], category = null }) {
         e.preventDefault();
         if (!data.category_id) {
             alert('Please select a category for the product.');
-            reset()
-            router.get(route('category.index'));
         } else {
             post(route('product.store'), {
-                forceFormData: true,
-                onSuccess: () => { reset(); setProdCreateModal(false); },
+                onSuccess: () => {
+                    reset();
+                    setProdCreateModal(false);
+                },
                 onError: e => console.log(e)
             });
         }
@@ -46,12 +43,13 @@ function ProductCreateForm({ categories = [], category = null }) {
             <PrimaryButton onClick={() => setProdCreateModal(true)}>Add Product</PrimaryButton>
             <Modal onClose={() => setProdCreateModal(!prodCreateModal)} show={prodCreateModal}>
                 <div className="p-5">
-                    <h3 className='mb-3 text-2xl font-bold flex justify-between items-center'>
+                    <h3 className="flex items-center justify-between mb-3 text-xl font-bold">
                         <span>Create Product</span>
-                        <i className="fa fa-close" onClick={() => setProdCreateModal(false)}></i>
+                        <i className="cursor-pointer fa fa-close" onClick={() => setProdCreateModal(false)}></i>
                     </h3>
-                    <form className='flex flex-col gap-5' onSubmit={handleCreateProduct} encType="multipart/form-data">
-                        <div>
+
+                    <form className="flex flex-col gap-5" onSubmit={handleCreateProduct}>
+                        <div className="flex flex-col">
                             <InputLabel htmlFor="name">Product Name *</InputLabel>
                             <TextInput
                                 className="w-full"
@@ -65,122 +63,105 @@ function ProductCreateForm({ categories = [], category = null }) {
                             <InputError message={errors.name} className="mt-2" />
                         </div>
 
-                        <div className="">
+                        <div className="flex flex-col">
                             <InputLabel htmlFor="description">Product Description *</InputLabel>
-                            <ReactQuill
+                            <JoditEditor
+                                // config={{ height: 20 }}
                                 required
-                                theme="snow"
                                 value={data.description}
                                 onChange={(value) => setData("description", value)}
-                                className="bg-white text-black rounded-lg shadow-md"
+                                className="text-black bg-white rounded-lg shadow-md"
                             />
                             <InputError message={errors.description} className="mt-2" />
                         </div>
 
-                        <input
-                            type="file"
-                            name="images"
-                            multiple
-                            onChange={(e) => {
-                                if (e.target.files.length > 0) {
-                                    const files = Array.from(e.target.files).slice(0, 10);
-                                    setData('images', files);
-                                }
-                            }}
-                            accept="image/*"
-                        />
-
-                        <InputError message={errors.image} className="mt-2" />
-
-                        {categories.length > 0 && (
-                            <div className="">
-                                <InputLabel htmlFor="category_id">Category</InputLabel>
-                                <SelectInput
-                                    className="w-full"
-                                    id="category_id"
-                                    name="category_id"
-                                    value={data.category_id || ""} // Set value for category_id
-                                    onChange={(e) => setData("category_id", e.target.value)}
-                                >
-                                    <option value={""}>Select Product to use it as subproduct</option>
-                                    {categories.map((cat) => (
-                                        <option key={cat.id} value={cat.id}>
-                                            {cat.name}
-                                        </option>
-                                    ))}
-                                </SelectInput>
+                        <div className="flex flex-col">
+                            <InputLabel htmlFor="variants">Product Variants <small>(variant1,variant2,variant3,etc)</small></InputLabel>
+                            <div className="grid grid-cols-2 gap-5 space-5">
+                                {data.variants.length > 0 ? JSON.parse(data.variants).map((variant, i) => (
+                                    <div key={i} className="flex gap-2">
+                                        {variant.attribute}: <input
+                                            type="text"
+                                            placeholder={`Enter value for ${variant.attribute}`}
+                                            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
+                                            value={variant.values}
+                                            onChange={(e) =>
+                                                setData('variants', JSON.stringify(JSON.parse(data.variants).map((v, index) => (index === i ? { ...v, values: e.target.value } : v))))
+                                            }
+                                        />
+                                    </div>
+                                )) : null}
                             </div>
-                        )}
-
-                        <div className="">
-                            <InputLabel htmlFor="price">Price *</InputLabel>
-                            <TextInput
-                                required
-                                className="w-full"
-                                id="price"
-                                placeholder="Price"
-                                name="price"
-                                value={data.price}
-                                onChange={(e) => setData("price", e.target.value)}
-                                type="number"
-                            />
-                            <InputError message={errors.price} className="mt-2" />
+                            <InputError message={errors.variants} className="mt-2 text-sm text-red-500" />
                         </div>
 
-                        <div className="">
-                            <InputLabel htmlFor="discount_price">Discount Price</InputLabel>
-                            <TextInput
-                                className="w-full"
-                                id="discount_price"
-                                placeholder="Discount Price"
-                                name="discount_price"
-                                value={data.discount_price}
-                                onChange={(e) => setData("discount_price", e.target.value)}
-                                type="number"
+                        <div className="flex flex-col">
+                            <InputLabel htmlFor="images">Product Images</InputLabel>
+                            <input
+                                type="file"
+                                name="images"
+                                multiple
+                                accept="image/*"
+                                onChange={(e) => {
+                                    if (e.target.files.length > 0) {
+                                        const files = Array.from(e.target.files).slice(0, 10);
+                                        setData("images", files);
+                                    }
+                                }}
+                                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:bg-indigo-600 file:text-white hover:file:bg-indigo-700"
                             />
-                            <InputError message={errors.discount_price} className="mt-2" />
+                            <InputError message={errors.images} className="mt-2" />
                         </div>
 
-                        <div className="">
-                            <InputLabel htmlFor="coupon_code">Coupon Code</InputLabel>
-                            <TextInput
-                                className="w-full"
-                                id="coupon_code"
-                                placeholder="Coupon Code"
-                                name="coupon_code"
-                                required={data.coupon_price !== ''}
-                                value={data.coupon_code}
-                                onChange={(e) => setData("coupon_code", e.target.value)}
-                            />
-                            <InputError message={errors.coupon_code} className="mt-2" />
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <div className="flex flex-col">
+                                <InputLabel htmlFor="price">Price *</InputLabel>
+                                <TextInput
+                                    required
+                                    id="price"
+                                    placeholder="Price"
+                                    name="price"
+                                    value={data.price}
+                                    onChange={(e) => setData("price", e.target.value)}
+                                    type="number"
+                                    className="w-full"
+                                />
+                                <InputError message={errors.price} className="mt-2" />
+                            </div>
+
+                            <div className="flex flex-col">
+                                <InputLabel htmlFor="discount_price">Discount Price</InputLabel>
+                                <TextInput
+                                    id="discount_price"
+                                    placeholder="Discount Price"
+                                    name="discount_price"
+                                    value={data.discount_price}
+                                    onChange={(e) => setData("discount_price", e.target.value)}
+                                    type="number"
+                                    className="w-full"
+                                />
+                                <InputError message={errors.discount_price} className="mt-2" />
+                            </div>
                         </div>
 
-
-                        <div className="">
-                            <InputLabel htmlFor="coupon_price">Coupon Price</InputLabel>
-                            <TextInput
-                                className="w-full"
-                                id="coupon_price"
-                                required={data.coupon_code !== ''}
-                                placeholder="Coupon Price"
-                                name="coupon_price"
-                                value={data.coupon_price}
-                                onChange={(e) => setData("coupon_price", e.target.value)}
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="checkbox"
+                                id="status"
+                                checked={data.status}
+                                onChange={(e) => setData("status", e.target.checked)}
                             />
-                            <InputError message={errors.coupon_price} className="mt-2" />
-                        </div>
-
-                        <div className="flex gap-2">
-                            <input type="checkbox" name="status" checked={data.status} id="status" onChange={(e) => setData('status', e.target.checked)} />
                             <InputLabel htmlFor="status">Assign for display</InputLabel>
                         </div>
-                        <div className="flex justify-between items-center">
-                            <SecondaryButton onClick={() => setProdCreateModal(!prodCreateModal)}>Close</SecondaryButton>
+
+                        <div className="flex items-center justify-between mt-5">
+                            <SecondaryButton onClick={() => setProdCreateModal(false)}>Close</SecondaryButton>
                             <PrimaryButton disabled={processing}>Create</PrimaryButton>
                         </div>
                     </form>
                 </div>
             </Modal>
+
         </>
     )
 }

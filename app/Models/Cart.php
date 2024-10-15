@@ -14,4 +14,14 @@ class Cart extends Model
     {
         return $this->hasMany(CartItem::class);
     }
+
+    /**
+     * Get the coupon that owns the Cart
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function coupon()
+    {
+        return $this->belongsTo(Coupon::class);
+    }
 }

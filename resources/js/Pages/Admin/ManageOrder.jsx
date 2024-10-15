@@ -27,9 +27,10 @@ function ManageOrder(props) {
                     </div>
                     {orders.data.length > 0 ? (
                         <>
-                            <table className='min-w-full bg-white border border-gray-200'>
+                            <table className='min-w-full bg-white border border-gray-200 table-auto'>
                                 <thead>
                                     <tr className='bg-gray-200 text-gray-600 uppercase text-sm leading-normal'>
+                                        <th className='text-center p-5'>ID</th>
                                         <th className='py-3 px-6 text-center'>User Info</th>
                                         <th className='py-3 px-6 text-center'>Note</th>
                                         <th className='py-3 px-6 text-center'>Product Info</th>
@@ -69,13 +70,18 @@ const OrderItems = ({ order }) => {
             .then(res => {
                 setStatus(res.data.status)
             })
+            .catch(error => {
+                alert(error.response.data.message)
+                console.log(error.response.data);
+            })
             .finally(() => setLoading(false));
     }
 
     return (<tr className='py-3 px-6 text-center border'>
-        <td className=' line-clamp-4'>{order.name} {order.email} {order.address} {order.division}</td>
+        <td className=''>{order.id}</td>
+        <td className='line-clamp-4'>{order.name} {order.email} {order.address} {order.division}</td>
         <td className=''>{order.notes}</td>
-        <td className=' line-clamp-3'>
+        <td className='line-clamp-3'>
             {order.order_items.map((item, j) => item.product.name + ' x ' + item.quantity + ', ')}
         </td>
         <td className=''>{order.total_price}</td>

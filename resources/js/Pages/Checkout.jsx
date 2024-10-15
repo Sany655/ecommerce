@@ -1,21 +1,42 @@
 import useCart from "@/Hooks/useCart";
-import AppLayout from "@/Layouts/AppLayout"
-import { Head, router, useForm, usePage } from "@inertiajs/react"
+import AppLayout from "@/Layouts/AppLayout";
+import { Head, router, useForm, usePage } from "@inertiajs/react";
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 
 function Index() {
-    const { props } = usePage();
-    const { cart, addToCart, removeFromCart } = useCart();
-    const { post, data, reset, setData, errors, clearErrors, } = useForm({
+    const { props } = usePage() ?? {}; // Null check on usePage
+    const { cart, removeFromCart, apply_coupon } = useCart() ?? {}; // Null check on useCart
+    const { post, data, reset, setData, errors, clearErrors } = useForm({
         name: "",
         email: "",
         address: "",
         division: "",
         mobile: "",
         notes: "",
-    });
-    const subtotal = cart.reduce((total, item) => Math.round(total + (item.product?.discount_price || item.product?.price) * item.quantity), 0);
+        shipping_cost: 0,
+    }) ?? {}; // Null check on useForm
+
+    const [shipCost, setShipCost] = useState(0);
+    const [couponError, setCouponError] = useState('');
+    const [couponSuccess, setCouponSuccess] = useState('');
+
+    useEffect(() => {
+        switch (data?.division) {
+            case "Chittagong":
+                setShipCost(100);
+                setData("shipping_cost", 100);
+                break;
+            case "":
+                setShipCost(0);
+                setData("shipping_cost", 0);
+                break;
+            default:
+                setShipCost(150);
+                setData("shipping_cost", 150);
+                break;
+        }
+    }, [data?.division]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -24,57 +45,79 @@ function Index() {
 
     const handlePlaceOrder = (e) => {
         e.preventDefault();
-        // setData(prev => ({ ...prev, orderItems: oI }));
         post(route('home.place_order'), {
             onSuccess: () => {
                 clearErrors();
                 // reset();
-            }
+            },
         });
     };
 
+    const applying_coupon_code = useRef(null);
+    const applyCoupon = async () => {
+        setCouponError('');
+        setCouponSuccess('');
+
+        try {
+            const response = await axios.post(route('home.apply_coupon'), {
+                coupon_code: applying_coupon_code.current?.value ?? "", // Null check on coupon code
+            });
+
+            if (response?.status === 200) {
+                setCouponSuccess(response.data?.message ?? ""); // Null check on response data
+                apply_coupon(
+                    response.data?.coupon_id ?? "", // Null check on coupon_id
+                    response.data?.discount ?? 0, // Null check on discount
+                    response.data?.coupon ?? "" // Null check on coupon
+                );
+            }
+        } catch (error) {
+            setCouponError(error?.response?.data?.message ?? 'An unexpected error occurred'); // Null check on error response
+        }
+    };
 
     return (
-        <form className="container mx-auto md:flex gap-4" onSubmit={handlePlaceOrder}>
+        <form className="container gap-4 mx-auto lg:flex" onSubmit={handlePlaceOrder}>
             {/* Billing Details */}
-            <div className="bg-white rounded-lg shadow-lg p-8 mb-8 md:flex-1">
-                <h1 className="text-2xl font-bold mb-6">Billing details</h1>
-                {props.error && <p className="text-red-500 mb-6 text-center">{props.error}</p>}
+            <div className="p-8 mb-8 bg-white rounded-lg shadow-lg lg:flex-1">
+                <h1 className="mb-6 text-2xl font-bold">Billing details</h1>
+                {props?.error && <p className="mb-6 text-center text-red-500">{props.error}</p>}
                 <div className="grid gap-6">
                     {/* Name */}
                     <div className="col-span-2 md:col-span-1">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Name / আপনার নাম *</label>
+                        <label className="block mb-1 text-sm font-medium text-gray-700">Name / আপনার নাম *</label>
                         <input
                             type="text"
                             name="name"
-                            value={data.name}
+                            value={data?.name ?? ""} // Null check on data
                             onChange={handleInputChange}
-                            className="border rounded-lg w-full p-2"
+                            className="w-full p-2 border rounded-lg"
                             required
                         />
-                        {errors.name && <p className="text-red-500">{errors.name}</p>}
+                        {errors?.name && <p className="text-red-500">{errors.name}</p>}
                     </div>
 
                     {/* Email */}
                     <div className="col-span-2 md:col-span-1">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Email / আপনার ইমেইল</label>
+                        <label className="block mb-1 text-sm font-medium text-gray-700">Email / আপনার ইমেইল</label>
                         <input
                             type="email"
                             name="email"
-                            value={data.email}
+                            value={data?.email ?? ""} // Null check on data
                             onChange={handleInputChange}
-                            className="border rounded-lg w-full p-2"
+                            className="w-full p-2 border rounded-lg"
                         />
-                        {errors.email && <p className="text-red-500">{errors.email}</p>}
+                        {errors?.email && <p className="text-red-500">{errors.email}</p>}
                     </div>
 
+                    {/* Division */}
                     <div className="col-span-2 md:col-span-1">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Division / বিভাগ *</label>
+                        <label className="block mb-1 text-sm font-medium text-gray-700">Division / বিভাগ *</label>
                         <select
                             name="division"
-                            value={data.division}
+                            value={data?.division ?? ""} // Null check on data
                             onChange={handleInputChange}
-                            className="border rounded-lg w-full p-2"
+                            className="w-full p-2 border rounded-lg"
                             required
                         >
                             <option value="">Select a Division</option>
@@ -87,122 +130,120 @@ function Index() {
                             <option value="Rangpur">Rangpur</option>
                             <option value="Mymensingh">Mymensingh</option>
                         </select>
-                        {errors.division && <p className="text-red-500">{errors.division}</p>}
+                        {errors?.division && <p className="text-red-500">{errors.division}</p>}
                     </div>
 
-                    {/* Mobile Number */}
+                    {/* Mobile */}
                     <div className="col-span-2 md:col-span-1">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number *</label>
+                        <label className="block mb-1 text-sm font-medium text-gray-700">Mobile Number *</label>
                         <input
-                            type="text"
+                            type="number"
                             name="mobile"
-                            value={data.mobile}
+                            value={data?.mobile ?? ""} // Null check on data
                             onChange={handleInputChange}
-                            className="border rounded-lg w-full p-2"
+                            className="w-full p-2 border rounded-lg"
                             required
                         />
-                        {errors.mobile && <p className="text-red-500">{errors.mobile}</p>}
+                        {errors?.mobile && <p className="text-red-500">{errors.mobile}</p>}
                     </div>
 
                     {/* Address */}
                     <div className="col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Full Address / বিস্তারিত ঠিকানা *</label>
+                        <label className="block mb-1 text-sm font-medium text-gray-700">Full Address / বিস্তারিত ঠিকানা *</label>
                         <input
                             type="text"
                             name="address"
-                            value={data.address}
+                            value={data?.address ?? ""} // Null check on data
                             onChange={handleInputChange}
-                            className="border rounded-lg w-full p-2"
+                            className="w-full p-2 border rounded-lg"
                             required
                         />
-                        {errors.address && <p className="text-red-500">{errors.address}</p>}
+                        {errors?.address && <p className="text-red-500">{errors.address}</p>}
                     </div>
 
-                    {/* Order Notes */}
+                    {/* Notes */}
                     <div className="col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Order notes (optional)</label>
+                        <label className="block mb-1 text-sm font-medium text-gray-700">Order notes (optional)</label>
                         <textarea
                             name="notes"
-                            value={data.notes}
+                            value={data?.notes ?? ""} // Null check on data
                             onChange={handleInputChange}
-                            className="border rounded-lg w-full p-2"
+                            className="w-full p-2 border rounded-lg"
                             rows={3}
                         ></textarea>
-                        {errors.notes && <p className="text-red-500">{errors.notes}</p>}
+                        {errors?.notes && <p className="text-red-500">{errors.notes}</p>}
                     </div>
                 </div>
-                {errors.orderItems && <div className="text-red-500 text-center">{errors.orderItems}</div>}
+                {errors?.orderItems && <div className="text-center text-red-500">{errors.orderItems}</div>}
             </div>
 
             {/* Order Summary */}
-            <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 className="text-2xl font-bold mb-6">Your order</h2>
-                <table className="w-full table-auto mb-6">
+            <div className="p-8 mb-8 bg-white rounded-lg shadow-lg lg:w-1/3">
+                <h2 className="mb-6 text-2xl font-bold">Your order</h2>
+                <table className="w-full mb-6 table-auto">
                     <thead>
                         <tr className="border-b">
-                            <th className="text-left p-4">Product</th>
-                            <th className="text-left p-4">Subtotal</th>
+                            <th className="p-4 text-left">Product</th>
+                            <th className="p-4 text-left">Subtotal</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {cart.map((item, i) => (
+                        {cart?.cart_items?.map((item, i) => (
                             <tr key={i} className="border-b">
-                                <td className="p-4 line-clamp-3 flex gap-2 items-center">
-                                    <button onClick={() => removeFromCart(item.id)} className="text-red-500 hover:text-red-700">
+                                <td className="flex items-center gap-2 p-4 line-clamp-5 text-wrap">
+                                    <button onClick={() => removeFromCart?.(item.id)} className="text-red-500 hover:text-red-700">
                                         &#10005;
                                     </button>
-                                    {item.product.name}
-                                    x
-                                    <input
-                                        type="number"
-                                        value={item.quantity}
-                                        min="1"
-                                        className="border w-14"
-                                        onChange={(e) => addToCart(item.product, parseInt(e.target.value))}
-                                    />
+                                    <span className="md:text-md text-sm">{item?.product?.name ?? "Unnamed product"}</span>
+                                    <span>*</span>
+                                    <span>{item?.quantity ?? 1}</span>
+                                    <div className="px-5 border">
+                                        {
+                                            item?.variants && Array.isArray(JSON.parse(item.variants)) &&
+                                            JSON.parse(item.variants)?.map((v, i) => (
+                                                v?.values && <span key={i}>{v?.values},</span>
+                                            ))
+                                        }
+                                    </div>
                                 </td>
-                                <td className="p-4 text-red-500">&#2547; {Math.round((item.product.discount_price || item.product.price) * item.quantity)}</td>
+                                <td className="p-4 text-red-500">&#2547;{item?.subtotal ?? 0}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-                <div className="flex justify-between mb-4">
-                    <span className="font-semibold">Subtotal</span>
-                    <span className="text-red-500 font-bold">&#2547; {subtotal}</span>
-                </div>
-                {/* <div className="flex justify-between mb-4">
-                    <span className="font-semibold">Shipping</span>
-                    <span>Enter your address to view shipping options.</span>
-                </div> */}
-                {/* <div className="flex justify-between mb-4">
-                    <span className="font-semibold">Vat</span>
-                    <span>10%</span>
-                </div>
-                <div className="flex justify-between mb-4">
-                    <span className="font-semibold">GST</span>
-                    <span>2%</span>
-                </div> */}
-                <div className="flex justify-between mb-6">
-                    <span className="font-semibold">Total</span>
-                    <span className="text-red-500 font-bold">&#2547; {subtotal}</span>
-                </div>
 
-                {/* Payment Method */}
-                <div className="bg-gray-100 p-4 rounded-lg mb-4">
-                    <h3 className="font-semibold mb-2">Cash on delivery</h3>
-                    <p className="text-sm text-gray-600">Pay with cash upon delivery.</p>
-                </div>
-
-                {/* Place Order Button */}
-                {
-                    cart.length === 0 || <button
-                        type="submit"
-                        className="bg-blue-500 text-white px-6 py-3 rounded-lg w-full hover:bg-blue-600 disabled:opacity-50"
-                        disabled={data.name === "" || data.address === "" || data.division === "" || data.mobile === ""}
+                <div className="flex w-full mt-8">
+                    <input
+                        type="text"
+                        placeholder="Coupon code"
+                        className="flex-1 w-1/2 p-2 mr-2 border rounded"
+                        ref={applying_coupon_code}
+                    />
+                    <button
+                        type="button"
+                        onClick={applyCoupon}
+                        className="p-2 text-white bg-indigo-500 rounded hover:bg-indigo-700"
                     >
-                        Place order
+                        Apply Coupon
                     </button>
-                }
+                </div>
+
+                {couponError && <p className="mt-4 text-center text-red-500">{couponError}</p>}
+                {couponSuccess && <p className="mt-4 text-center text-green-500">{couponSuccess}</p>}
+
+                <div className="flex justify-between w-full mt-8">
+                    <h3>Shipping cost:</h3>
+                    <span>{shipCost}</span>
+                </div>
+
+                <div className="flex justify-between w-full mt-8">
+                    <h3>Total:</h3>
+                    <span>{cart?.total_amount || 0}</span>
+                </div>
+
+                <button type="submit" className="w-full p-2 mt-8 text-white bg-indigo-500 rounded hover:bg-indigo-700">
+                    Place Order
+                </button>
             </div>
         </form>
     );
@@ -211,9 +252,9 @@ function Index() {
 function Checkout() {
     return (
         <AppLayout>
-            <Head title="Checkout" />
+            <Head title='Checkout' />
             <Index />
         </AppLayout>
     )
 }
-export default Checkout
+export default Checkout;

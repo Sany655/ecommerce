@@ -17,8 +17,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('cart_id')->constrained()->onDelete('cascade');
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->foreignId('coupon_id')->nullable()->constrained()->onDelete('set null');
+            $table->json('variants')->nullable();
             $table->integer('quantity');
-            $table->decimal('price', 10, 2);
+            $table->decimal('subtotal', 10, 2)->default(0);
             $table->timestamps();
         });
     }

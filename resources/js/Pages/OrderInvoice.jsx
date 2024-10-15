@@ -7,11 +7,6 @@ import React, { useEffect, useRef } from 'react';
 
 function Index({ order }) {
     const invoiceRef = useRef(null)
-    const { clearCart } = useCart();
-
-    useEffect(() => {
-        clearCart();
-    }, [])
 
     const downloadInvoice = async () => {
         try {
@@ -26,28 +21,28 @@ function Index({ order }) {
             link.click();
             link.remove();
         } catch (error) {
-            console.error('Error downloading PDF:', error.message);
+            console.error('Error downloading PDF:', error.response.data);
         }
     }
 
     return (
-        <div className="max-w-md mx-auto my-8 p-8 bg-white shadow-lg rounded-lg" ref={invoiceRef}>
-            <h2 className="text-2xl font-bold text-center mb-8">Order Invoice</h2>
+        <div className="max-w-md p-8 mx-auto my-8 bg-white rounded-lg shadow-lg" ref={invoiceRef}>
+            <h2 className="mb-8 text-2xl font-bold text-center">Order Invoice</h2>
 
             {/* User Info */}
-            <div className="border-b pb-4 mb-4">
-                <h3 className="text-lg font-semibold mb-2">Customer Info</h3>
+            <div className="pb-4 mb-4 border-b">
+                <h3 className="mb-2 text-lg font-semibold">Customer Info</h3>
                 <p><strong>Name:</strong> {order.name}</p>
                 <p><strong>Email:</strong> {order.email}</p>
                 <p><strong>Address:</strong> {order.address}, {order.city}, {order.division}</p>
             </div>
 
             {/* Product Info */}
-            <div className="border-b pb-4 mb-4">
-                <h3 className="text-lg font-semibold mb-2">Order Details</h3>
+            <div className="pb-4 mb-4 border-b">
+                <h3 className="mb-2 text-lg font-semibold">Order Details</h3>
                 <table className="min-w-full text-left table-auto">
                     <thead>
-                        <tr className="border-b text-sm font-semibold text-gray-700">
+                        <tr className="text-sm font-semibold text-gray-700 border-b">
                             <th className="py-2">Product</th>
                             <th className="py-2">Quantity</th>
                             <th className="py-2">Price</th>
@@ -56,11 +51,11 @@ function Index({ order }) {
                     </thead>
                     <tbody>
                         {order.order_items.map((item, index) => (
-                            <tr key={index} className="border-b text-sm">
+                            <tr key={index} className="text-sm border-b">
                                 <td className="py-2">{item.product.name}</td>
                                 <td className="py-2">{item.quantity}</td>
-                                <td className="py-2"><i className="fa-solid fa-bangladeshi-taka-sign"></i> {item.price}</td>
-                                <td className="py-2"><i className="fa-solid fa-bangladeshi-taka-sign"></i> {(item.quantity * item.price).toFixed(2)}</td>
+                                <td className="py-2"><i className="fa-solid fa-bangladeshi-taka-sign"></i> {item.product.discount_price || item.product.price}</td>
+                                <td className="py-2"><i className="fa-solid fa-bangladeshi-taka-sign"></i> {item.subtotal}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -68,25 +63,29 @@ function Index({ order }) {
             </div>
 
             {/* Payment Info */}
-            <div className="border-b pb-4 mb-4">
-                <h3 className="text-lg font-semibold mb-2">Payment Summary</h3>
+            <div className="pb-4 mb-4 border-b">
+                <h3 className="mb-2 text-lg font-semibold">Payment Summary</h3>
                 <div className="flex justify-between text-sm">
                     <p><strong>Subtotal:</strong></p>
                     <p><i className="fa-solid fa-bangladeshi-taka-sign"></i> {order.total_price}</p>
                 </div>
+                {(order.coupon || order.order_items.some(oI => oI.coupon)) && <div className="flex justify-between text-sm">
+                    <p><strong>Coupon:</strong></p>
+                    <p><i className="fa-solid fa-bangladeshi-taka-sign"></i> {order.coupon?.value}</p>
+                </div>}
                 <div className="flex justify-between text-sm">
-                    <p><strong>Tax (5%):</strong></p>
-                    <p><i className="fa-solid fa-bangladeshi-taka-sign"></i> {(order.total_price * 0.05).toFixed(2)}</p>
+                    <p><strong>Shipping Cost:</strong></p>
+                    <p><i className="fa-solid fa-bangladeshi-taka-sign"></i> {order.division === "Chittagong" ? 100 : 150}</p>
                 </div>
                 <div className="flex justify-between text-sm">
                     <p><strong>Total:</strong></p>
-                    <p><i className="fa-solid fa-bangladeshi-taka-sign"></i> {(order.total_price * 1.05).toFixed(2)}</p>
+                    <p><i className="fa-solid fa-bangladeshi-taka-sign"></i> {parseInt(order.total_price)}</p>
                 </div>
             </div>
 
             {/* Order Info */}
             <div className="pb-4">
-                <h3 className="text-lg font-semibold mb-2">Order Info</h3>
+                <h3 className="mb-2 text-lg font-semibold">Order Info</h3>
                 <div className="flex justify-between text-sm">
                     <p><strong>Order Date:</strong></p>
                     <p>{new Date(order.created_at).toLocaleDateString()}</p>
@@ -100,7 +99,7 @@ function Index({ order }) {
             {/* Print Button */}
             <div className="mt-6 text-center" data-html2canvas-ignore>
                 <button
-                    className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-300"
+                    className="px-4 py-2 text-white transition duration-300 bg-blue-500 rounded hover:bg-blue-700"
                     // onClick={() => window.print()}
                     onClick={downloadInvoice}
                 >

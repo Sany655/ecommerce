@@ -69,15 +69,4 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
-
-
-    protected function schedule(Schedule $schedule)
-    {
-        $schedule->call(function () {
-            Cart::where('updated_at', '<', now()->subDays(30))->each(function ($cart) {
-                $cart->cartItems()->delete();
-                $cart->delete();
-            });
-        })->daily(); // Clean up old carts every day
-    }
 }

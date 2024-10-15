@@ -10,7 +10,7 @@ function AppLayout({ children }) {
         <CartProvider>
             <div className="min-h-screen bg-gray-50">
                 <Header />
-                <main className="container mx-auto px-4 py-6 relative">
+                <main className="container relative px-4 py-6 mx-auto">
                     {children}
                     <ScrollTop />
                 </main>
@@ -23,7 +23,7 @@ function AppLayout({ children }) {
 
 const Header = () => {
     const { cart } = useCart()
-    const totalPrice = cart?.reduce((acc, item) => Math.round(acc + (item.product?.discount_price || item.product?.price) * item.quantity), 0)
+    // const totalPrice = cart?.reduce((acc, item) => Math.round(acc + parseInt(item.subtotal)), 0)
     const [searchInput, setSearchInput] = useState('')
     const handleSearch = e => {
         e.preventDefault();
@@ -31,11 +31,11 @@ const Header = () => {
     }
 
     return (
-        <header className="bg-white shadow-md capitalize sticky top-0 z-50">
-            <div className="container mx-auto pt-8 pb-4 flex flex-col md:flex-row justify-between items-center text-blue-500 gap-5">
+        <header className="sticky top-0 z-50 capitalize bg-white shadow-md">
+            <div className="container flex flex-col items-center justify-between gap-5 pt-8 pb-4 mx-auto text-blue-500 md:flex-row">
                 <div className="flex items-center">
                     <Link href="/">
-                        <ApplicationLogo className="w-20 h-20 fill-current text-gray-500" />
+                        <ApplicationLogo className="w-20 h-20 text-gray-500 fill-current" />
                     </Link>
                 </div>
                 <div className="flex items-center gap-4">
@@ -43,21 +43,21 @@ const Header = () => {
                         <input
                             type="text"
                             placeholder="Search products..."
-                            className="text-black w-full px-4 py-2 rounded-md border border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
+                            className="w-full px-4 py-2 text-black border border-blue-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
                             value={searchInput}
                             onChange={e => setSearchInput(e.target.value)}
                         />
-                        <i className="fa fa-search absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer" onClick={handleSearch}></i>
+                        <i className="absolute transform -translate-y-1/2 cursor-pointer fa fa-search right-4 top-1/2" onClick={handleSearch}></i>
                     </form>
                     <div className="relative hover:text-gray-500">
                         <Link href={route('cart.index')}>
-                            <i className="fa fa-heart text-2xl"></i>
-                            <span className="text-sm font-bold absolute bottom-4 left-5">{cart.length}</span>
+                            <i className="text-2xl fa fa-heart"></i>
+                            <span className="absolute text-sm font-bold bottom-4 left-5">{cart.cart_items?.length}</span>
                         </Link>
                     </div>
                     <div className="">
                         <span className="text-sm font-bold">Total</span>
-                        <span className="ml-2 text-sm font-bold">৳ {totalPrice}</span>
+                        <span className="ml-2 text-sm font-bold">৳ {cart.total_amount}</span>
                     </div>
                 </div>
             </div>
@@ -67,11 +67,11 @@ const Header = () => {
 
 const Footer = () => {
     return (
-        <footer className="bg-gray-100 py-8">
-            <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 text-center md:text-left">
+        <footer className="py-8 bg-gray-100">
+            <div className="container grid grid-cols-1 gap-8 mx-auto text-center md:grid-cols-2 md:text-left">
                 {/* Logo and Motto */}
                 <div>
-                    {/* <img src="/path/to/logo.png" alt="Sunnah Corner" className="mx-auto md:mx-0 mb-4" /> */}
+                    {/* <img src="/path/to/logo.png" alt="Sunnah Corner" className="mx-auto mb-4 md:mx-0" /> */}
                     <Link className="text-xl font-bold text-blue-500" href="/">
                         <ApplicationLogo />
                     </Link>
@@ -84,7 +84,7 @@ const Footer = () => {
                 {/* Payment Methods and Contact Information */}
                 {/* <div className="md:text-center">
                     <div className="mb-4">
-                        <h5 className="text-lg font-semibold text-gray-800 mb-2">We Accept</h5>
+                        <h5 className="mb-2 text-lg font-semibold text-gray-800">We Accept</h5>
                         <div className="flex justify-center space-x-2">
                             <img src="/images/bkash.jpg" alt="bkash" className="h-8" />
                         </div>
@@ -93,14 +93,14 @@ const Footer = () => {
                 </div> */}
 
                 {/* Download App */}
-                <div className="md:text-right text-sm text-gray-700">
-                    <h5 className="text-lg font-semibold text-gray-800 mb-2">Contact Us</h5>
+                <div className="text-sm text-gray-700 md:text-right">
+                    <h5 className="mb-2 text-lg font-semibold text-gray-800">Contact Us</h5>
                     <p>📞 (+88) 01854846414</p>
                     <p>✉️ Info@hamdaanz.com</p>
                 </div>
             </div>
-            <div className="container mx-auto text-center mt-8 border-t pt-4">
-                <div className="flex justify-center space-x-4 mb-4">
+            <div className="container pt-4 mx-auto mt-8 text-center border-t">
+                <div className="flex justify-center mb-4 space-x-4">
                     <a href="https://facebook.com" className="text-gray-600 hover:text-gray-800">
                         <i className="fab fa-facebook-f"></i>
                     </a>

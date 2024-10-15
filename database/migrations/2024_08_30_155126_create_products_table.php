@@ -18,10 +18,9 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->text('description')->nullable();
+            $table->json('variants')->nullable();
             $table->decimal('price', 10, 2);
-            $table->decimal('discount_price', 7, 2)->nullable();
-            $table->decimal('coupon_price', 7, 2)->nullable();
-            $table->string('coupon_code', 25)->nullable();
+            $table->decimal('discount_price', 10, 2)->nullable();
             $table->text('images')->nullable();
             $table->integer('sold')->nullable()->default(0);
             $table->integer('views')->nullable()->default(0);

@@ -19,4 +19,14 @@ class Product extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    /**
+     * Get the coupon that owns the Product
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function coupons()
+    {
+        return $this->belongsToMany(Coupon::class, 'product_coupon');
+    }
 }

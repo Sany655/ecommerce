@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Coupon;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -10,24 +11,35 @@ use Inertia\Inertia;
 
 class ProductController extends Controller
 {
-    public function index()
-    {
-        return Inertia::render('Admin/ManageProduct', ['products' => Product::with('category')->paginate(10)]);
-    }
+    // public function index()
+    // {
+    //     return Inertia::render('Admin/ManageProduct', ['products' => Product::with('category')->paginate(10), 'coupons' => Coupon::all()]);
+    // }
 
     public function store(Request $request)
     {
         // Validate input data
         $request->validate([
             'name' => 'required|string|max:255|unique:products,name',
-            'description' => 'required|string|max:500',
-            'price' => 'required|numeric',
-            'discount_price' => 'nullable|numeric',
+            'description' => 'required|string|max:2000',
+            'variants' => 'nullable|json',
+            'price' => [
+                'nullable',
+                'numeric',
+                'regex:/^\d{1,9}(\.\d{1,2})?$/',  // Up to 99999.99
+            ],
+            'discount_price' => [
+                'nullable',
+                'numeric',
+                function ($attribute, $value, $fail) {
+                    if ($value >= request('price')) {
+                        $fail('The discount price must be less than the price.');
+                    }
+                },
+            ],
             'category_id' => 'required|exists:categories,id',
-            'images' => 'nullable|array|max:10', // Ensure max of 10 files
-            'images.*' => 'image|mimes:jpg,png,jpeg,gif|max:2048', // Validate each image
-            'coupon_code' => 'nullable|string|max:255',
-            'coupon_price' => 'nullable|numeric',
+            'images' => 'nullable|array|max:10',
+            'images.*' => 'image|mimes:jpg,png,jpeg,gif|max:2048',
             'status' => 'boolean',
         ]);
 
@@ -43,12 +55,11 @@ class ProductController extends Controller
         Product::create([
             'name' => $request->input('name'),
             'description' => $request->input('description'),
+            'variants' => $request->input('variants'),
             'price' => $request->input('price'),
             'discount_price' => $request->input('discount_price'),
             'category_id' => $request->input('category_id'),
-            'images' => json_encode($imagePaths), // Storing images as JSON if using a single column
-            'coupon_code' => $request->input('coupon_code'),
-            'coupon_price' => $request->input('coupon_price'),
+            'images' => json_encode($imagePaths),
             'status' => $request->input('status'),
         ]);
     }
@@ -57,15 +68,26 @@ class ProductController extends Controller
     {
         // Validate the request
         $request->validate([
-            'name' => 'required|string|max:255|unique:products,name,' . $product->id, // Exclude the current product from the unique check
-            'description' => 'required|string|max:500',
-            'price' => 'required|numeric',
-            'discount_price' => 'nullable|numeric',
+            'name' => 'required|string|max:255|unique:products,name,' . $product->id,
+            'description' => 'required|string',
+            'variants' => 'nullable|json',
+            'price' => [
+                'nullable',
+                'numeric',
+                'regex:/^\d{1,9}(\.\d{1,2})?$/',  // Up to 99999.99
+            ],
+            'discount_price' => [
+                'nullable',
+                'numeric',
+                function ($attribute, $value, $fail) {
+                    if ($value >= request('price')) {
+                        $fail('The discount price must be less than the price.');
+                    }
+                },
+            ],
             'category_id' => 'required|exists:categories,id',
-            'images' => 'nullable|array|max:10', // Ensure max of 10 files
-            'images.*' => 'image|mimes:jpg,png,jpeg,gif|max:2048', // Validate each image
-            'coupon_code' => 'nullable|string|max:255',
-            'coupon_price' => 'nullable|numeric',
+            'images' => 'nullable|array|max:10',
+            'images.*' => 'image|mimes:jpg,png,jpeg,gif|max:2048',
             'status' => 'boolean',
         ]);
 
@@ -89,12 +111,11 @@ class ProductController extends Controller
         $product->update([
             'name' => $request->name,
             'description' => $request->description,
+            'variants' => $request->variants,
             'price' => $request->price,
             'discount_price' => $request->discount_price,
             'category_id' => $request->category_id,
-            'images' => json_encode($allImages), // Store updated images as JSON
-            'coupon_code' => $request->coupon_code,
-            'coupon_price' => $request->coupon_price,
+            'images' => json_encode($allImages),
             'status' => $request->status,
         ]);
 
@@ -115,19 +136,19 @@ class ProductController extends Controller
         return redirect()->back();
     }
 
-    function deleteImage(Request $request,$productId) {
-        $prod = Product::where('id',$productId)->first();
+    function deleteImage(Request $request, $productId)
+    {
+        $prod = Product::where('id', $productId)->first();
         $updatedImages = [];
         foreach (json_decode($prod->images) as $key => $image) {
-            if($image!= $request->img){
+            if ($image != $request->img) {
                 $updatedImages[] = $image;
-            }else{
+            } else {
                 Storage::disk('public')->delete($image);
             }
         }
         $prod->images = json_encode($updatedImages);
         $prod->save();
-        Log::info($prod);
         return redirect()->back();
     }
 }

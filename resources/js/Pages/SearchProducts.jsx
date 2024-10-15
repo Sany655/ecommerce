@@ -1,4 +1,4 @@
-import ProductCart from "@/Components/ProductCart"
+import ProductCart from "@/Components/ProductCard"
 import AppLayout from "@/Layouts/AppLayout"
 import { Head } from "@inertiajs/react"
 

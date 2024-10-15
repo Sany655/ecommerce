@@ -2,12 +2,12 @@ import AppLayout from "@/Layouts/AppLayout";
 import { Head, router } from "@inertiajs/react";
 import React, { useEffect, useRef, useState } from "react";
 import useCart from "@/Hooks/useCart"
-import ProductCart from "@/Components/ProductCart";
+import ProductCart from "@/Components/ProductCard";
 import axios from "axios";
 import DOMPurify from "dompurify";
 
 const ImageGallery = ({ images }) => {
-    const [selectedImage, setSelectedImage] = useState(images[0]);
+    const [selectedImage, setSelectedImage] = useState(images && images[0]);
     const [zoomStyle, setZoomStyle] = useState({});
     const imageRef = useRef(null);
 
@@ -43,26 +43,26 @@ const ImageGallery = ({ images }) => {
 
     return (
         <div className="">
-            <div className="relative w-full h-96 overflow-hidden p-4">
+            <div className="relative w-full p-4 overflow-hidden h-96">
                 <img
                     ref={imageRef}
                     src={'/storage/' + selectedImage}
                     alt="Product Image"
-                    className="w-full h-full object-cover"
+                    className="object-cover w-full h-full"
                     style={zoomStyle}
                     onMouseMove={handleMouseMove}
                     onMouseLeave={resetZoom}
                 />
                 <button
                     onClick={openFullscreen}
-                    className="absolute top-2 right-2 bg-white rounded-full text-blue-500 w-10 h-10"
+                    className="absolute w-10 h-10 text-blue-500 bg-white rounded-full top-2 right-2"
                 >
                     <i className="fa fa-magnifying-glass"></i>
                 </button>
             </div>
 
             <div className="flex justify-center mt-4 space-x-4">
-                {images.map((image, index) => (
+                {images && images.map((image, index) => (
                     <div key={index} className="cursor-pointer">
                         <img
                             src={'/storage/' + image}
@@ -78,89 +78,115 @@ const ImageGallery = ({ images }) => {
 };
 
 const Index = ({ product }) => {
-    const { cart, addToCart, removeFromCart } = useCart()
-    const { id, category_id, name, description, price, images, discount_price, coupon_price, coupon_code, status, created_at, updated_at } = product;
+    const { cart, addToCart, removeFromCart, cartLoading } = useCart()
+    const { id, category_id, name, description, variants, price, images, discount_price, status, created_at, updated_at } = product;
     const [products, setproducts] = useState([])
-    const [couponError, setCouponError] = useState('')
     const sanitizedDescription = DOMPurify.sanitize(description);
+    const [selectedVariants, setSelectedVariants] = useState([])
+    const cartItem = cart.cart_items?.find(item => item.product_id === product.id);
+
     useEffect(() => {
         axios.get(route('home.related_products', category_id)).then(response => {
             setproducts(response.data)
         })
-        setCouponError('');
     }, [category_id])
 
-    const applyCouponCode = (e) => {
-        e.preventDefault();
-        if (e.target.coupon_code.value === coupon_code) {
-            setCouponError('server error! try again later.');
+
+    useEffect(() => {
+        if (variants?.length > 0) {
+            const initialVariants = JSON.parse(variants).map((variant) => {
+                return ({
+                    attribute: variant.attribute,
+                    values: variant.values.split(',')[0],
+                })
+            });
+            setSelectedVariants(initialVariants);
         }
-        else {
-            setCouponError('Invalid coupon code!');
-        }
-        e.target.coupon_code.value = '';
-    }
+    }, [variants]);
+
+    const handleVariantClick = (attribute, value) => {
+        setSelectedVariants((prevState) => {
+            const updatedVariants = prevState.map((variant) => {
+                if (variant.attribute === attribute) {
+                    return { ...variant, values: value };
+                }
+                return variant;
+            });
+            return updatedVariants;
+        });
+    };
 
     return (
-        <div className="container bg-white mx-auto p-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="container p-8 mx-auto bg-white">
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 {/* Image Section */}
                 <ImageGallery images={JSON.parse(images)} />
 
                 {/* Product Information Section */}
                 <div className="p-8 rounded-lg">
-                    <h1 className="text-4xl font-bold mb-2">{name}</h1>
-                    {discount_price ? (
-                        <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
-                            <p className="md:text-3xl text-gray-500 line-through">
-                                <span className="text-4xl bold">৳</span> {price}
-                            </p>
-                            <p className="md:text-3xl font-bold text-red-600">
-                                <span className="text-4xl bold">৳</span> {discount_price}
-                            </p>
-                            <p className="bg-red-500 text-white text-sm px-2 py-1 rounded">
-                                {Math.round(((price - discount_price) / price) * 100)}% Off
-                            </p>
-                        </div>
-                    ) : (
-                        <p className="text-3xl font-bold mb-4">${price}</p>
-                    )}
+                    <h1 className="mb-2 text-4xl font-bold">{name}</h1>
+
+                    <div className="flex flex-col gap-4 mb-4 md:flex-row md:items-center">
+                        <p className="text-gray-500 line-through md:text-3xl">
+                            <span className="text-4xl bold">৳</span> {price}
+                        </p>
+                        {discount_price && (
+                            <>
+                                <p className="font-bold text-red-600 md:text-3xl">
+                                    <span className="text-4xl bold">৳</span> {discount_price}
+                                </p>
+                                <p className="px-2 py-1 text-sm text-white bg-red-500 rounded">
+                                    {Math.round(((price - discount_price) / price) * 100)}% Off
+                                </p>
+                            </>
+                        )}
+                    </div>
+
 
                     <div className="flex items-center mb-4">
                         {
                             status ? (
-                                <span className="font-medium bg-green-500 px-4 py-2 text-white">Available</span>
+                                <span className="px-4 py-2 font-medium text-white bg-green-500">Available</span>
                             ) :
-                                <span className="font-medium bg-red-500 px-4 py-2 text-white">Unavailable</span>
+                                <span className="px-4 py-2 font-medium text-white bg-red-500">Unavailable</span>
                         }
                     </div>
 
-                    {/* Coupon Section */}
-                    {
-                        coupon_code && coupon_price && (
+                    <div className="space-y-4">
+                        {(variants && variants.length > 0) &&
+                            JSON.parse(variants).map((variant, index) => (
+                                variant.values.split(',').length > 0 && (
+                                    <div key={index} className="space-y-2">
+                                        {/* Render variant attribute name */}
+                                        <h3 className="text-lg font-medium">{variant.attribute}</h3>
+                                        <div className="flex space-x-2">
+                                            {/* Render buttons for each variant value */}
+                                            {variant.values.split(',').map((v, idx) => (
+                                                <button
+                                                    key={idx}
+                                                    onClick={() => handleVariantClick(variant.attribute, v)}
+                                                    className={`px-4 py-2 border ${selectedVariants[index]?.values === v
+                                                        ? 'bg-blue-500 text-white'
+                                                        : 'bg-white text-black'
+                                                        }`}
+                                                >
+                                                    {v}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )
+                            ))}
+                    </div>
 
-                            <form onSubmit={applyCouponCode} className="flex w-full mt-8 ms-auto">
-                                <input
-                                    type="text"
-                                    placeholder="Coupon code"
-                                    className="border px-4 py-2 w-1/2 rounded-l-lg"
-                                    name="coupon_code"
-                                />
-                                <button type="submit" className="bg-blue-500 text-white px-6 py-2 rounded-r-lg hover:bg-blue-600">
-                                    Apply coupon
-                                </button>
-                                {couponError && <span className="text-red-500">{couponError}</span>}
-                            </form>
-                        )
-                    }
 
                     {/* Buttons */}
-                    <div className="flex items-center space-x-4 my-6">
-                        <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600" onClick={() => addToCart(product)}>
+                    <div className="flex items-center my-6 space-x-4">
+                        {cartLoading ? <i className="self-center mb-3 text-2xl fa fa-spinner animate-spin"></i> : <button className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600" onClick={() => addToCart(product, null, JSON.stringify(selectedVariants))}>
                             Add to Cart
-                        </button>
-                        <button className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300" onClick={() => {
-                            addToCart(product).then(() => router.visit(route('home.checkout')));
+                        </button>}
+                        <button className="px-4 py-2 text-gray-700 bg-yellow-500 rounded-lg hover:bg-yellow-600" onClick={() => {
+                            cartItem?.id ? router.visit(route('home.checkout')) : addToCart(product, null, JSON.stringify(selectedVariants)).then(() => router.visit(route('home.checkout')));
                         }}>
                             Order Now
                         </button>
@@ -168,14 +194,14 @@ const Index = ({ product }) => {
                 </div>
             </div>
             <div className="prose max-w-none">
-                <div className="p-8 rounded-lg shadow-lg" dangerouslySetInnerHTML={{ __html: sanitizedDescription }}>
-                </div>
+                <pre className="p-8 rounded-lg shadow-sm text-wrap text-justify" dangerouslySetInnerHTML={{ __html: sanitizedDescription }}>
+                </pre>
             </div>
 
             {/* Related Products Section */}
             <div className="mt-10">
-                <h2 className="text-2xl font-bold mb-6">Related Products</h2>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <h2 className="mb-6 text-2xl font-bold">Related Products</h2>
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
                     {
                         products.map((product, i) => (
                             <ProductCart product={product} key={i} />

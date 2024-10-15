@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('coupon_id')->nullable()->constrained()->onDelete('set null');
             $table->string('name');
             $table->string('email')->nullable();
             $table->string('address');

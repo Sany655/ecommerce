@@ -42,6 +42,7 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
             'description' => 'nullable|string|max:500',
+            'attributes' => 'nullable|string|max:50',
             'banner' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
             'parent_id' => 'nullable|exists:categories,id',
             'status' => 'boolean',
@@ -49,17 +50,16 @@ class CategoryController extends Controller
 
         $bannerPath = null;
         if ($request->hasFile('banner')) {
-            // Store the file in 'public/category' and get the relative path
             $bannerPath = $request->file('banner')->store('category', 'public');
         }
 
-        // Create category using mass assignment
         Category::create([
-            'name' => $request->name,
-            'description' => $request->description,
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
+            'attributes' => $request->input('attributes'),
             'banner' => $bannerPath,
-            'parent_id' => $request->parent_id,
-            'status' => $request->status,
+            'parent_id' => $request->input('parent_id'),
+            'status' => $request->input('status'),
         ]);
     }
 
@@ -71,7 +71,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        return Inertia::render('Admin/ManageCategoryProducts',['category' => $category, 'products' => $category->products]);
+        return Inertia::render('Admin/ManageCategoryProducts', ['category' => $category->with('products.category')->find($category->id)]);
     }
 
     /**
@@ -98,6 +98,7 @@ class CategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'description' => 'nullable|string|max:500',
+            'attributes' => 'nullable|string|max:50',
             'banner' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
             'parent_id' => 'nullable|exists:categories,id',
             'status' => 'boolean',
@@ -119,6 +120,7 @@ class CategoryController extends Controller
         $category->update([
             'name' => $validated['name'],
             'description' => $validated['description'],
+            'attributes' => $validated['attributes'],
             'banner' => $category->banner, // New banner or old banner
             'parent_id' => $validated['parent_id'] ?? null, // Set parent_id to null if not provided
             'status' => $validated['status'], // Update status field
@@ -160,5 +162,10 @@ class CategoryController extends Controller
 
         // Finally, delete the category itself
         $category->delete();
+    }
+
+    function getAll()
+    {
+        return Category::all();
     }
 }

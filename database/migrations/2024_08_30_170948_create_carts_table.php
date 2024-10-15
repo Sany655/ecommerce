@@ -15,7 +15,9 @@ return new class extends Migration
     {
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('coupon_id')->nullable()->constrained()->onDelete('set null');
             $table->string('cart_token')->unique();
+            $table->decimal('total_amount', 10, 2)->default(0);
             $table->timestamps();
         });
     }

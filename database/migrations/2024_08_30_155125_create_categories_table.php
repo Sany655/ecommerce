@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->text('banner')->nullable();
+            $table->string('attributes', 100)->nullable();
             $table->foreignId('parent_id')->nullable()->constrained('categories')->onDelete('cascade');
             $table->boolean('status')->default(true);
             $table->timestamps();

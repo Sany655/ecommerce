@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import useCart from "@/Hooks/useCart"
 import NavLink from "@/Components/NavLink"
 import PrimaryButton from "@/Components/PrimaryButton"
-import ProductCart from "@/Components/ProductCart"
+import ProductCart from "@/Components/ProductCard"
 
 function AllProducts({ category }) {
     return (

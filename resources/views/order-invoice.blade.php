@@ -52,13 +52,39 @@
         .total-row {
             font-weight: bold;
         }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .summary-row strong {
+            font-weight: bold;
+        }
     </style>
 </head>
 
 <body class="bg-white">
 
     <div class="container">
-        <h2 class="text-2xl font-bold text-center mb-8">Order Invoice</h2>
+
+        <h2 class="text-2xl font-bold text-center mb-8">Hamdaanz Order Invoice</h2>
 
         {{-- User Info --}}
         <div class="border-b pb-4 mb-4">
@@ -85,10 +111,11 @@
                         <tr class="border-b text-sm">
                             <td class="py-2">{{ $item['product']['name'] }}</td>
                             <td class="py-2">{{ $item['quantity'] }}</td>
-                            <td class="py-2">{{ $item['price'] }}
+                            <td class="py-2">{{ $item['product']['discount_price'] ?? $item['product']['price'] }} BDT
                             </td>
-                            <td class="py-2">{{ number_format($item['quantity'] * $item['price'], 2) }}
-                            </td>
+                            <td class="py-2">
+                                {{ number_format($item['quantity'] * ($item['product']['discount_price'] ?? $item['product']['price']), 2) }}
+                                BDT</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -98,26 +125,41 @@
         {{-- Payment Info --}}
         <div class="border-b pb-4 mb-4">
             <h3 class="text-lg font-semibold mb-2">Payment Summary</h3>
-            <div class="flex justify-between text-sm">
+
+            <div class="summary-row">
                 <p><strong>Subtotal:</strong></p>
-                <p>{{ $order['total_price'] }}</p>
+                <p>{{ $order['total_price'] }} BDT</p>
             </div>
-            <div class="flex justify-between text-sm">
-                <p><strong>Tax (5%):</strong></p>
-                <p>{{ number_format($order['total_price'] * 0.05, 2) }}</p>
+
+            @if ($order['coupon'])
+                <div class="summary-row">
+                    <p><strong>Coupon Discount:</strong></p>
+                    <p>{{ $order['coupon']['value'] ?? '0' }} BDT</p>
+                </div>
+            @endif
+
+            <div class="summary-row">
+                <p><strong>Shipping Cost:</strong></p>
+                <p>{{ $order['division'] === 'Chittagong' ? '100' : '150' }} BDT</p>
             </div>
-            <div class="flex justify-between text-sm total-row">
+
+            <div class="summary-row total-row">
                 <p><strong>Total:</strong></p>
-                <p>{{ number_format($order['total_price'] * 1.05, 2) }}</p>
+                <p>{{ number_format($order['total_price'] + ($order['division'] === 'Chittagong' ? 100 : 150), 2) }}
+                    BDT</p>
             </div>
         </div>
 
         {{-- Order Info --}}
         <div class="pb-4">
             <h3 class="text-lg font-semibold mb-2">Order Info</h3>
-            <div class="flex justify-between text-sm">
+            <div class="summary-row">
                 <p><strong>Order Date:</strong></p>
                 <p>{{ \Carbon\Carbon::parse($order['created_at'])->format('m/d/Y') }}</p>
+            </div>
+            <div class="summary-row">
+                <p><strong>Status:</strong></p>
+                <p>{{ $order['status'] ?? 'Processing' }}</p>
             </div>
         </div>
     </div>
