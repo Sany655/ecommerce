@@ -59,24 +59,20 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
-Route::get('/run-temp', function () {
-    // Artisan::call('migrate:refresh', ['--force' => true,  '--seed'=>true]);
-    Artisan::call('storage:link');
-    return 'Migrations are run and storage linked successfully';
-});
-
 Route::get('/clear-cache', function () {
     Artisan::call('config:clear');
     Artisan::call('route:clear');
     Artisan::call('view:clear');
     Artisan::call('cache:clear');
-    return 'all cache cleared';
+    Artisan::call('storage:link');
+    // Artisan::call('migrate:refresh', ['--force' => true,  '--seed'=>true]);
+    return 'all cache cleared and linked storage successfully';
 });
 Route::get('/save-cache', function () {
     Artisan::call('config:cache');
     Artisan::call('route:cache');
     Artisan::call('view:cache');
-    return 'cached';
+    return 'cached saved';
 });
 
 Route::fallback(function () {

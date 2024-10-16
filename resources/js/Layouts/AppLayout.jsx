@@ -104,15 +104,12 @@ const Footer = () => {
                     <a href="https://www.tiktok.com/@hamdaans1" className="text-gray-600 hover:text-gray-800" target="_blank">
                         <i className="fab fa-tiktok"></i>
                     </a>
-                    {/* <a href="https://facebook.com" className="text-gray-600 hover:text-gray-800" target="_blank">
+                    <a href="https://www.facebook.com/hamdaanzz?mibextid=LQQJ4d" className="text-gray-600 hover:text-gray-800" target="_blank">
                         <i className="fab fa-facebook-f"></i>
-                    </a> */}
+                    </a>
                     <a href="https://www.instagram.com/hamdaan_z/profilecard/" target="_blank" className="text-gray-600 hover:text-gray-800">
                         <i className="fab fa-instagram"></i>
                     </a>
-                    {/* <a href="https://linkedin.com" className="text-gray-600 hover:text-gray-800" target="_blank">
-                        <i className="fab fa-linkedin-in"></i>
-                    </a> */}
                 </div>
                 <p className="text-sm text-gray-700">
                     Islamic Lifestyle Brand in Bangladesh | hamdaanz.com
