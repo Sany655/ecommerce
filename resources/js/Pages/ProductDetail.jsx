@@ -43,7 +43,7 @@ const ImageGallery = ({ images }) => {
 
     return (
         <div className="">
-            <div className="relative w-full p-4 overflow-hidden h-96">
+            <div className="relative w-full p-4 overflow-hidden">
                 <img
                     ref={imageRef}
                     src={'/storage/' + selectedImage}
@@ -83,13 +83,44 @@ const Index = ({ product }) => {
     const [products, setproducts] = useState([])
     const sanitizedDescription = DOMPurify.sanitize(description);
     const [selectedVariants, setSelectedVariants] = useState([])
-    const cartItem = cart.cart_items?.find(item => item.product_id === product.id);
+    const [cartItem, setCartItem] = useState({});
 
     useEffect(() => {
         axios.get(route('home.related_products', category_id)).then(response => {
             setproducts(response.data)
         })
     }, [category_id])
+
+    useEffect(() => {
+        if (cart.cart_items?.length > 0) {
+            const matchingCartItem = cart.cart_items.find((item) => {
+                if (item.product_id !== product.id) return false;
+
+                if (!item.variants || item.variants === '[]') {
+                    // No variants exist in the item, just match by product ID
+                    return true;
+                }
+
+                if (selectedVariants?.length > 0) {
+                    const itemVariants = JSON.parse(item.variants);
+                    const isMatch = itemVariants.every((itemVariant, index) => {
+                        return (
+                            itemVariant.attribute === selectedVariants[index]?.attribute &&
+                            itemVariant.values === selectedVariants[index]?.values
+                        );
+                    });
+                    return isMatch;
+                }
+
+                return false;
+            }) || {};
+
+            setCartItem(matchingCartItem);
+        } else {
+            setCartItem({});
+        }
+    }, [selectedVariants, cart, product.id]);
+
 
 
     useEffect(() => {
@@ -127,7 +158,7 @@ const Index = ({ product }) => {
                     <h1 className="mb-2 text-4xl font-bold">{name}</h1>
 
                     <div className="flex flex-col gap-4 mb-4 md:flex-row md:items-center">
-                        <p className="text-gray-500 line-through md:text-3xl">
+                        <p className={`text-gray-500 md:text-3xl ${discount_price && 'line-through'}`}>
                             <span className="text-4xl bold">৳</span> {price}
                         </p>
                         {discount_price && (
@@ -155,7 +186,7 @@ const Index = ({ product }) => {
                     <div className="space-y-4">
                         {(variants && variants.length > 0) &&
                             JSON.parse(variants).map((variant, index) => (
-                                variant.values.split(',').length > 0 && (
+                                variant.values && (
                                     <div key={index} className="space-y-2">
                                         {/* Render variant attribute name */}
                                         <h3 className="text-lg font-medium">{variant.attribute}</h3>
@@ -182,11 +213,25 @@ const Index = ({ product }) => {
 
                     {/* Buttons */}
                     <div className="flex items-center my-6 space-x-4">
-                        {cartLoading ? <i className="self-center mb-3 text-2xl fa fa-spinner animate-spin"></i> : <button className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600" onClick={() => addToCart(product, null, JSON.stringify(selectedVariants))}>
-                            Add to Cart
-                        </button>}
+                        {
+                            cartLoading ? <i className="self-center mb-3 text-2xl fa fa-spinner animate-spin"></i> :
+                                (Object.keys(cartItem).length > 0 && cartItem.quantity > 0) ? (
+                                    <>
+                                        <button className="px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600" onClick={() => removeFromCart(cartItem.id)}>
+                                            Remove from Cart
+                                        </button> <input
+                                            type="number"
+                                            value={cartItem.quantity}
+                                            min="1"
+                                            className="w-16 text-center border rounded-lg"
+                                            onChange={(e) => e.target.value > 0 && addToCart(cartItem.product.id, parseInt(e.target.value), JSON.stringify(selectedVariants))}
+                                        />
+                                    </>
+                                ) : <button className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600" onClick={() => addToCart(product.id, 1, JSON.stringify(selectedVariants))}>
+                                    Add to Cart
+                                </button>}
                         <button className="px-4 py-2 text-gray-700 bg-yellow-500 rounded-lg hover:bg-yellow-600" onClick={() => {
-                            cartItem?.id ? router.visit(route('home.checkout')) : addToCart(product, null, JSON.stringify(selectedVariants)).then(() => router.visit(route('home.checkout')));
+                            (Object.keys(cartItem).length > 0 && cartItem.quantity > 0) ? router.visit(route('home.checkout')) : addToCart(product.id, 1, JSON.stringify(selectedVariants)).then(() => router.visit(route('home.checkout')));
                         }}>
                             Order Now
                         </button>
@@ -194,8 +239,8 @@ const Index = ({ product }) => {
                 </div>
             </div>
             <div className="prose max-w-none">
-                <pre className="p-8 rounded-lg shadow-sm text-wrap text-justify" dangerouslySetInnerHTML={{ __html: sanitizedDescription }}>
-                </pre>
+                <p className="p-8 rounded-lg shadow-sm text-justify" dangerouslySetInnerHTML={{ __html: sanitizedDescription }}>
+                </p>
             </div>
 
             {/* Related Products Section */}

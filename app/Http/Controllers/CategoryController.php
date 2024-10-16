@@ -41,8 +41,8 @@ class CategoryController extends Controller
         // Validate the request data
         $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
-            'description' => 'nullable|string|max:500',
-            'attributes' => 'nullable|string|max:50',
+            'description' => 'nullable|string',
+            'attributes' => 'nullable|string|max:100',
             'banner' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
             'parent_id' => 'nullable|exists:categories,id',
             'status' => 'boolean',
@@ -97,8 +97,8 @@ class CategoryController extends Controller
         // Validate the request
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
-            'description' => 'nullable|string|max:500',
-            'attributes' => 'nullable|string|max:50',
+            'description' => 'nullable|string',
+            'attributes' => 'nullable|string|max:100',
             'banner' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
             'parent_id' => 'nullable|exists:categories,id',
             'status' => 'boolean',
@@ -120,7 +120,7 @@ class CategoryController extends Controller
         $category->update([
             'name' => $validated['name'],
             'description' => $validated['description'],
-            'attributes' => $validated['attributes'],
+            'attributes' => $validated['attributes'] ?? null,
             'banner' => $category->banner, // New banner or old banner
             'parent_id' => $validated['parent_id'] ?? null, // Set parent_id to null if not provided
             'status' => $validated['status'], // Update status field

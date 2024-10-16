@@ -6,9 +6,8 @@ import SecondaryButton from "@/Components/SecondaryButton"
 import SelectInput from "@/Components/SelectInput"
 import TextInput from "@/Components/TextInput"
 import { router, useForm } from "@inertiajs/react"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import JoditEditor from 'jodit-react';
-import axios from "axios"
 
 function ProductCreateForm({ category }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -22,7 +21,7 @@ function ProductCreateForm({ category }) {
         status: true,
     });
     const [prodCreateModal, setProdCreateModal] = useState(false)
-
+    
     const handleCreateProduct = (e) => {
         e.preventDefault();
         if (!data.category_id) {
@@ -66,7 +65,6 @@ function ProductCreateForm({ category }) {
                         <div className="flex flex-col">
                             <InputLabel htmlFor="description">Product Description *</InputLabel>
                             <JoditEditor
-                                // config={{ height: 20 }}
                                 required
                                 value={data.description}
                                 onChange={(value) => setData("description", value)}
@@ -78,7 +76,7 @@ function ProductCreateForm({ category }) {
                         <div className="flex flex-col">
                             <InputLabel htmlFor="variants">Product Variants <small>(variant1,variant2,variant3,etc)</small></InputLabel>
                             <div className="grid grid-cols-2 gap-5 space-5">
-                                {data.variants.length > 0 ? JSON.parse(data.variants).map((variant, i) => (
+                                {(data.variants.length > 0) ? JSON.parse(data.variants).map((variant, i) => (
                                     <div key={i} className="flex gap-2">
                                         {variant.attribute}: <input
                                             type="text"

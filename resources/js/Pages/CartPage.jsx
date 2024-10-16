@@ -4,6 +4,7 @@ import useCart from "@/Hooks/useCart"
 
 const Index = () => {
     const { cart, removeFromCart, addToCart, clearCart, cartLoading } = useCart()
+    
     return (
         <div className="container flex flex-col gap-2 mx-auto lg:flex-row">
             {/* Cart Table */}
@@ -45,7 +46,7 @@ const Index = () => {
                                                     value={item.quantity}
                                                     min="1"
                                                     className="w-16 text-center border rounded-lg"
-                                                    onChange={(e) => addToCart(item.product, parseInt(e.target.value), item.variants)}
+                                                    onChange={(e) => e.target.value > 0 && addToCart(item.product.id, parseInt(e.target.value), item.variants)}
                                                 />}
                                             </td>
                                             <td className="">
@@ -55,11 +56,13 @@ const Index = () => {
                                                         JSON.parse(item.variants).map((variant, j) => (
                                                             variant.values && `${variant.attribute} : ${variant.values}, `
                                                         ))
-                                                        : 'Invalid variant data'
+                                                        : Array.isArray(item.variants) ? item.variants.map((variant, j) => (
+                                                            variant.values && `${variant.attribute} : ${variant.values}, `
+                                                        )) : 'Invalid variant data'
                                                     : 'No variants available'}
                                             </td>
                                             <td className="p-4 text-red-500">
-                                                {Math.round(parseFloat(item.product?.discount_price || item.product?.price) * parseInt(item.quantity)) || 'N/A'} &#2547;
+                                                {Math.round(parseFloat(item.subtotal))} &#2547;
                                             </td>
                                         </tr>
                                     ))

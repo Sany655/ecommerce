@@ -37,7 +37,7 @@ function ManageCategoryProducts(props) {
                         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             {
                                 products.map((product, i) => (
-                                    <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow">
+                                    <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow" key={i}>
                                         <img
                                             className="rounded-t-lg h-20 w-full object-cover"
                                             src={product.images && product.images.length > 0

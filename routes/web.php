@@ -57,12 +57,26 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/get-all-categories', [CategoryController::class, 'getAll'])->name('categories.get_all');
     Route::put('/order-status/{orderId}', [OrderController::class, 'changeOrderStatus'])->name('home.order_status');
 
-    // temporary routes
-    // Route::get('/run-temp', function () {
-    //     Artisan::call('migrate', ['--force' => true]);
-    //     Artisan::call('storage:link');
-    //     return 'Migrations are run and storage linked successfully';
-    // });
+});
+
+Route::get('/run-temp', function () {
+    // Artisan::call('migrate:refresh', ['--force' => true,  '--seed'=>true]);
+    Artisan::call('storage:link');
+    return 'Migrations are run and storage linked successfully';
+});
+
+Route::get('/clear-cache', function () {
+    Artisan::call('config:clear');
+    Artisan::call('route:clear');
+    Artisan::call('view:clear');
+    Artisan::call('cache:clear');
+    return 'all cache cleared';
+});
+Route::get('/save-cache', function () {
+    Artisan::call('config:cache');
+    Artisan::call('route:cache');
+    Artisan::call('view:cache');
+    return 'cached';
 });
 
 Route::fallback(function () {

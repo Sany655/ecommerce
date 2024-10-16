@@ -157,10 +157,10 @@
                 <p><strong>Order Date:</strong></p>
                 <p>{{ \Carbon\Carbon::parse($order['created_at'])->format('m/d/Y') }}</p>
             </div>
-            <div class="summary-row">
-                <p><strong>Status:</strong></p>
-                <p>{{ $order['status'] ?? 'Processing' }}</p>
-            </div>
+            <!--<div class="summary-row">-->
+            <!--    <p><strong>Status:</strong></p>-->
+            <!--    <p>{{ $order['status'] ?? 'Processing' }}</p>-->
+            <!--</div>-->
         </div>
     </div>
 

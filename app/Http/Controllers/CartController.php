@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Cart;
+use App\Models\Product;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -31,46 +32,48 @@ class CartController extends Controller
     // Function to add an item to the cart
     public function addToCart(Request $request)
     {
-        $cartToken = $request->cookie('cart_token');
-        $productId = $request->input('product_id');
-        $quantity = $request->input('quantity', 1);
-        $variants = $request->input('variants');
+        try {
+            $cartToken = $request->cookie('cart_token');
+            $productId = $request->input('product_id');
+            $quantity = $request->input('quantity');
+            $variants = $request->input('variants');
 
-        // Find or create a cart based on the cart token
-        $cart = Cart::where('cart_token', $cartToken)->firstOrCreate(['cart_token' => $cartToken]);
+            // Find or create a cart based on the cart token
+            $cart = Cart::where('cart_token', $cartToken)->firstOrCreate(['cart_token' => $cartToken]);
 
-        // Find if the same product with the same variants exists in the cart
-        $cartItem = $cart->cartItems()
-            ->where('product_id', $productId)
-            ->where('variants', $variants)
-            ->first();
+            // Find if the same product with the same variants exists in the cart
+            $cartItem = $cart->cartItems()
+                ->where('product_id', $productId)
+                ->where('variants', $variants)
+                ->first();
 
-        if ($cartItem) {
-            // Update the quantity and subtotal if the cart item exists
-            $cartItem->quantity = $quantity;
-            $cartItem->subtotal = $quantity * ($cartItem->product->discount_price ?? $cartItem->product->price);
-            $cartItem->save();
-        } else {
-            // Create a new cart item if it doesn't exist
-            $prod = \App\Models\Product::find($productId);
-            $subtotal = $quantity * ($prod->discount_price ?? $prod->price);
+            if ($cartItem) {
+                $cartItem->quantity = $quantity;
+                $cartItem->subtotal = $quantity * ($cartItem->product->discount_price ?? $cartItem->product->price);
+                $cartItem->save();
+            } else {
+                $prod = Product::find($productId);
+                $subtotal = $quantity * ($prod->discount_price ?? $prod->price);
 
-            $cart->cartItems()->create([
-                'product_id' => $productId,
-                'quantity' => $quantity,
-                'subtotal' => $subtotal,
-                'variants' => $variants,
+                $cart->cartItems()->create([
+                    'product_id' => $productId,
+                    'quantity' => $quantity,
+                    'subtotal' => $subtotal,
+                    'variants' => $variants,
+                ]);
+            }
+
+            // Update the total amount of the cart
+            $cart->total_amount = $cart->cartItems()->sum('subtotal');
+            $cart->save();
+
+            // Return the whole cart with cart items and corresponding products
+            return response()->json([
+                'cart' => $cart->load('cartItems.product', 'cartItems.coupon', 'coupon')
             ]);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th], 500);
         }
-
-        // Update the total amount of the cart
-        $cart->total_amount = $cart->cartItems()->sum('subtotal');
-        $cart->save();
-
-        // Return the whole cart with cart items and corresponding products
-        return response()->json([
-            'cart' => $cart->load('cartItems.product', 'cartItems.coupon', 'coupon')
-        ]);
     }
 
 

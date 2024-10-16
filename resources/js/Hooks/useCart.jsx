@@ -35,31 +35,23 @@ export const CartProvider = ({ children }) => {
         fetchCart();
     }, []);
 
-    const addToCart = async (item, changedQuantity = null, variants = null) => {
+    const addToCart = async (prodId, quantity, variants) => {
         setCartLoading(true);
         try {
-            const existingCartItem = cart.cart_items?.find(c => c.product_id === item.id && JSON.stringify(c.variants) === JSON.stringify(variants));
-            const newQuantity = existingCartItem ? existingCartItem.quantity + 1 : 1;
-            const finalQuantity = changedQuantity || newQuantity;
-            const subtotal = cart.cart_items;
-
-            // Prepare data to send to the backend
-            const data = {
-                product_id: item.id,
-                quantity: finalQuantity,
-                variants: variants || item.variants || '[]',
-                subtotal,
-            };
-
-            const response = await axios.post(route('cart.add'), data);
+            const response = await axios.post(route('cart.add'), {
+                product_id: prodId,
+                quantity: quantity,
+                variants: variants,
+            });
             const updatedCart = { ...response.data.cart };
-
-            // Update the cart with new total amount and items
-            // updatedCart.total_amount = updatedCart.cart_items?.reduce((sum, item) => sum + parseInt(item.price), 0);
+            if (updatedCart.coupon_id && updatedCart.total_amount < updatedCart.coupon.minimum_purchase) {
+                clearCart();
+                return;
+            }
             setCart(updatedCart);
 
         } catch (error) {
-            console.error('Error adding to cart:', error.message);
+            console.log('Error adding to cart:', error.response.data);
         } finally {
             setCartLoading(false);
         }
@@ -79,11 +71,15 @@ export const CartProvider = ({ children }) => {
                 cart_items: updatedCartItems,
                 total_amount: updatedCartItems.reduce((sum, item) => sum + parseInt(item.subtotal), 0)
             };
+            if (updatedCart.coupon_id && updatedCart.total_amount < updatedCart.coupon.minimum_purchase) {
+                clearCart();
+                return;
+            }
 
             setCart(updatedCart);
 
         } catch (error) {
-            console.error('Error removing from cart:', error);
+            console.error('Error removing from cart:', error.response.data);
         } finally {
             setCartLoading(false);
         }

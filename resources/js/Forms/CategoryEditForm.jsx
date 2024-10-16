@@ -19,7 +19,7 @@ function CategoryEditForm({ category, categories }) {
             _method: "PATCH",
             name: category.name,
             description: category.description || "",
-            attributes: category.attributes || [],
+            attributes: category.attributes || "",
             parent_id: category.parent_id,
             banner: null,
             status: category.status

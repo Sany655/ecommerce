@@ -133,7 +133,6 @@ function CouponCreateForm() {
                                 type="checkbox"
                                 id="status"
                                 name="status"
-                                defaultChecked={data.status}
                                 checked={data.status}
                                 onChange={(e) => setData('status', e.target.checked)}
                                 className="text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"

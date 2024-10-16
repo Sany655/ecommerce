@@ -180,33 +180,40 @@ function Index() {
             {/* Order Summary */}
             <div className="p-8 mb-8 bg-white rounded-lg shadow-lg lg:w-1/3">
                 <h2 className="mb-6 text-2xl font-bold">Your order</h2>
-                <table className="w-full mb-6 table-auto">
+                <table className="w-full mb-6 table-auto border-collapse">
                     <thead>
-                        <tr className="border-b">
-                            <th className="p-4 text-left">Product</th>
-                            <th className="p-4 text-left">Subtotal</th>
+                        <tr className="border-b text-left">
+                            <th className="p-4">Product</th>
+                            <th className="p-4">Variants</th>
+                            <th className="p-4">Subtotal</th>
                         </tr>
                     </thead>
                     <tbody>
                         {cart?.cart_items?.map((item, i) => (
                             <tr key={i} className="border-b">
-                                <td className="flex items-center gap-2 p-4 line-clamp-5 text-wrap">
-                                    <button onClick={() => removeFromCart?.(item.id)} className="text-red-500 hover:text-red-700">
+                                <td className="p-4 flex items-start gap-2">
+                                    <button
+                                        onClick={() => removeFromCart?.(item.id)}
+                                        className="text-red-500 hover:text-red-700"
+                                    >
                                         &#10005;
                                     </button>
-                                    <span className="md:text-md text-sm">{item?.product?.name ?? "Unnamed product"}</span>
-                                    <span>*</span>
-                                    <span>{item?.quantity ?? 1}</span>
-                                    <div className="px-5 border">
-                                        {
-                                            item?.variants && Array.isArray(JSON.parse(item.variants)) &&
-                                            JSON.parse(item.variants)?.map((v, i) => (
-                                                v?.values && <span key={i}>{v?.values},</span>
-                                            ))
-                                        }
+                                    <div>
+                                        <span className="block font-medium">{item?.product?.name ?? "Unnamed product"}</span>
+                                        <span className="block text-sm text-gray-500">x {item?.quantity ?? 1}</span>
                                     </div>
                                 </td>
-                                <td className="p-4 text-red-500">&#2547;{item?.subtotal ?? 0}</td>
+                                <td className="p-4 text-sm text-gray-700">
+                                    {
+                                        item?.variants && Array.isArray(JSON.parse(item.variants)) &&
+                                        JSON.parse(item.variants)?.map((v, i) => (
+                                            v?.values && <span key={i} className="block">{v?.values}</span>
+                                        ))
+                                    }
+                                </td>
+                                <td className="p-4 text-red-500 font-semibold">
+                                    &#2547;{item?.subtotal ?? 0}
+                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -236,9 +243,23 @@ function Index() {
                     <span>{shipCost}</span>
                 </div>
 
+                {
+                    (cart.coupon || cart.cart_items.some(cI => cI.coupon)) && (
+                        <div className="flex justify-between my-4">
+                            <span className="font-semibold">Applied coupon</span>
+                            {
+                                cart.cart_items.some(cI => cI.coupon) && <span className="font-bold text-red-500">{cart.cart_items.reduce((sum, item) => sum + parseInt(item.coupon?.value || 0), 0)} &#2547;</span>
+                            }
+                            {
+                                cart.coupon && <span className="font-bold text-red-500">{cart.coupon?.value} &#2547;</span>
+                            }
+                        </div>
+                    )
+                }
+
                 <div className="flex justify-between w-full mt-8">
                     <h3>Total:</h3>
-                    <span>{cart?.total_amount || 0}</span>
+                    <span>{(parseInt(cart?.total_amount) + parseInt(shipCost)) || 0}</span>
                 </div>
 
                 <button type="submit" className="w-full p-2 mt-8 text-white bg-indigo-500 rounded hover:bg-indigo-700">
