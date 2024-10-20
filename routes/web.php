@@ -64,7 +64,7 @@ Route::get('/clear-cache', function () {
     Artisan::call('route:clear');
     Artisan::call('view:clear');
     Artisan::call('cache:clear');
-    // Artisan::call('storage:link');
+    Artisan::call('storage:link');
     // Artisan::call('migrate:refresh', ['--force' => true,  '--seed'=>true]);
     return 'all cache cleared and linked storage successfully';
 });

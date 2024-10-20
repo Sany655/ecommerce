@@ -27,12 +27,12 @@ function ProductCard({ product }) {
                     {product?.name}
                 </h1>
 
-                <p className="text-gray-600 text-center">Price: {product.discount_price ? (
+                <p className="text-gray-600 text-center flex flex-col mb-2">{product.discount_price ? (
                     <>
-                        <span className="line-through px-1">{product.price}</span>
-                        <span>{product.discount_price}</span>
+                        <span className="px-1">Regular Price: <span className="line-through">{product.price}</span></span>
+                        <span>Discount Price: {product.discount_price}</span>
                     </>
-                ) : product.price}</p>
+                ) : <span className="px-1">Regular Price: {product.price}</span>}</p>
 
                 {/* Handle cart button or spinner */}
                 {(productVariants.some(v => v.values?.split(',').length > 1))
