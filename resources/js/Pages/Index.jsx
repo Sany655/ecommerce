@@ -9,7 +9,7 @@ import ProductCard from '@/Components/ProductCard'
 function Index({ categories, banner }) {
     return (
         <AppLayout>
-            <Head title='home' />
+            <Head title='Home' />
             <Child {...{ categories, banner }} />
         </AppLayout>
     )

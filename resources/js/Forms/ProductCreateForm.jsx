@@ -7,7 +7,9 @@ import SelectInput from "@/Components/SelectInput"
 import TextInput from "@/Components/TextInput"
 import { router, useForm } from "@inertiajs/react"
 import { useEffect, useRef, useState } from "react"
-import JoditEditor from 'jodit-react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import './quill.css'
 
 function ProductCreateForm({ category }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -21,7 +23,12 @@ function ProductCreateForm({ category }) {
         status: true,
     });
     const [prodCreateModal, setProdCreateModal] = useState(false)
-    
+    const descRef = useRef();
+    useEffect(() => {
+        descRef.current && descRef.current.blur();
+    }, [])
+
+
     const handleCreateProduct = (e) => {
         e.preventDefault();
         if (!data.category_id) {
@@ -64,11 +71,13 @@ function ProductCreateForm({ category }) {
 
                         <div className="flex flex-col">
                             <InputLabel htmlFor="description">Product Description *</InputLabel>
-                            <JoditEditor
+                            <ReactQuill
+                                ref={descRef}
+                                theme="snow"
                                 required
                                 value={data.description}
                                 onChange={(value) => setData("description", value)}
-                                className="text-black bg-white rounded-lg shadow-md"
+                                className="text-black"
                             />
                             <InputError message={errors.description} className="mt-2" />
                         </div>

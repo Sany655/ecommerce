@@ -6,16 +6,20 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import SelectInput from "@/Components/SelectInput";
 import TextInput from "@/Components/TextInput";
 import { useForm } from "@inertiajs/react";
-import { useEffect, useState } from "react";
-import JoditEditor from 'jodit-react';
+import { useEffect, useRef, useState } from "react";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import './quill.css'
 import axios from "axios";
 
 function ProductEditForm({ product }) {
     const [prodEditModal, setProdEditModal] = useState(false);
     const { data, setData, post, processing, errors } = useForm({});
     const [categories, setCategories] = useState([])
+    const descRef = useRef();
 
     useEffect(() => {
+        descRef.current && descRef.current.blur();
         axios.get(route('categories.get_all')).then(response => {
             setCategories(response.data)
         })
@@ -89,14 +93,14 @@ function ProductEditForm({ product }) {
                             </div>
                         </div>
 
-                        <div className="flex flex-col">
+                        <div className="mb-5">
                             <InputLabel htmlFor="description">Product Description *</InputLabel>
-                            <JoditEditor
-                                config={{ height: 5 }}
+                            <ReactQuill
+                                ref={descRef}
                                 required
                                 value={data.description}
                                 onChange={(value) => setData("description", value)}
-                                className="text-black bg-white rounded-lg shadow-md"
+                                className="text-black rounded-lg overflow-auto"
                             />
                             <InputError message={errors.description} className="mt-2" />
                         </div>

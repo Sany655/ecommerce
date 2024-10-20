@@ -29,7 +29,7 @@ function ProductCard({ product }) {
 
                 <p className="text-gray-600 text-center">Price: {product.discount_price ? (
                     <>
-                        <span className="line-through">{product.price}</span>
+                        <span className="line-through px-1">{product.price}</span>
                         <span>{product.discount_price}</span>
                     </>
                 ) : product.price}</p>
