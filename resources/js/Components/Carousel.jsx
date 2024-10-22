@@ -22,14 +22,14 @@ const Carousel = ({ categories: items, interval = 3000 }) => {
                 {items.map((item, index) => (
                     <div key={index} className="w-full flex-shrink-0 relative">
                         {/* Flex container for the image and content */}
-                        <div className="grid grid-cols-2 object-contain">
+                        <div className="md:grid grid-cols-2 object-contain">
                             <img
                                 src={'storage/' + item.banner}
                                 alt={`Slide ${index}`}
-                                className=""
+                                className="w-full object-cover"
                             />
                             <div className="bg-black bg-opacity-50 p-4 flex flex-col items-center justify-center text-white gap-2">
-                                <ApplicationLogo />
+                                <ApplicationLogo className="my-5"/>
                                 <h2 className="text-xl font-bold">{item.name}</h2>
                                 <p className="text-md">{item.description}</p>
                             </div>

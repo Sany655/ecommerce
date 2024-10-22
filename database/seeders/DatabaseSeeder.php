@@ -23,13 +23,13 @@ class DatabaseSeeder extends Seeder
         $bakhoorBurnerCategoryId = Category::create([
             'name' => 'Bakhoor Burner Set',
             'description' => 'A variety of Bakhoor burners, charcoal, and premium imported lighters.',
-            'status' => true,
+            'status' => false,
         ]);
 
         $accessoriesCategoryId = Category::create([
             'name' => 'Accessories',
             'description' => 'Premium quality accessories including charcoal, lighters, and gas cylinders.',
-            'status' => true,
+            'status' => false,
         ]);
 
         // Product::create([

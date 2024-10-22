@@ -57,23 +57,26 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/get-all-categories', [CategoryController::class, 'getAll'])->name('categories.get_all');
     Route::put('/order-status/{orderId}', [OrderController::class, 'changeOrderStatus'])->name('home.order_status');
 
+    Route::get('/clear-cache', function () {
+        Artisan::call('config:clear');
+        Artisan::call('route:clear');
+        Artisan::call('view:clear');
+        Artisan::call('cache:clear');
+        Artisan::call('storage:link');
+        return 'all cache cleared and linked storage successfully';
+    });
+    Route::get('/save-cache', function () {
+        Artisan::call('config:cache');
+        Artisan::call('route:cache');
+        Artisan::call('view:cache');
+        return 'cached saved';
+    });
+    Route::get('/sany654', function () {
+        Artisan::call('migrate:refresh', ['--force' => true,  '--seed' => true]);
+        return 'migration refreshed and seeded';
+    });
 });
 
-Route::get('/clear-cache', function () {
-    Artisan::call('config:clear');
-    Artisan::call('route:clear');
-    Artisan::call('view:clear');
-    Artisan::call('cache:clear');
-    Artisan::call('storage:link');
-    // Artisan::call('migrate:refresh', ['--force' => true,  '--seed'=>true]);
-    return 'all cache cleared and linked storage successfully';
-});
-Route::get('/save-cache', function () {
-    Artisan::call('config:cache');
-    Artisan::call('route:cache');
-    Artisan::call('view:cache');
-    return 'cached saved';
-});
 
 Route::fallback(function () {
     return Inertia::render('NotFound');

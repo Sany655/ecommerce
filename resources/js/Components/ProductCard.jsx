@@ -21,7 +21,7 @@ function ProductCard({ product }) {
 
     return (
         <div className="flex flex-col transition-transform transform rounded-lg shadow-lg hover:scale-105 hover:shadow-xl">
-            <img src={product.images ? `/storage/${JSON.parse(product.images)[0]}` : null} alt={product?.name} className="w-full h-full rounded-t-lg" />
+            <img src={(product.images && JSON.parse(product.images).length > 0) ? `/storage/${JSON.parse(product.images)[0]}` : '/images/default-product.png'} alt={product?.name} className="w-full rounded-t-lg" />
             <div className="flex flex-col justify-between p-4 bg-gray-100 rounded-b-lg">
                 <h1 className="mb-2 text-sm font-bold tracking-wide text-center line-clamp-5">
                     {product?.name}

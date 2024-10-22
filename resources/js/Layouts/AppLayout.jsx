@@ -35,7 +35,7 @@ const Header = () => {
             <div className="container flex flex-col items-center justify-between gap-5 pt-8 pb-4 mx-auto text-blue-500 md:flex-row">
                 <div className="flex items-center">
                     <Link href="/">
-                        <ApplicationLogo className="w-20 h-20 text-gray-500 fill-current" />
+                        <ApplicationLogo />
                     </Link>
                 </div>
                 <div className="flex items-center gap-4">
@@ -73,7 +73,7 @@ const Footer = () => {
                 <div>
                     {/* <img src="/path/to/logo.png" alt="Sunnah Corner" className="mx-auto mb-4 md:mx-0" /> */}
                     <Link className="text-xl font-bold text-blue-500" href="/">
-                        <ApplicationLogo />
+                        <ApplicationLogo className={"mb-2"}/>
                     </Link>
                     <p className="text-sm text-gray-700">
                         Online Based Premium Islamic Lifestyle Shop. <br />

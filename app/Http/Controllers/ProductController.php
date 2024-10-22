@@ -11,11 +11,6 @@ use Inertia\Inertia;
 
 class ProductController extends Controller
 {
-    // public function index()
-    // {
-    //     return Inertia::render('Admin/ManageProduct', ['products' => Product::with('category')->paginate(10), 'coupons' => Coupon::all()]);
-    // }
-
     public function store(Request $request)
     {
         // Validate input data
@@ -118,10 +113,6 @@ class ProductController extends Controller
             'images' => json_encode($allImages),
             'status' => $request->status,
         ]);
-
-        // Optionally, remove images if desired
-        // This can be implemented if the user wants to delete specific images.
-        // Example: You can pass an array of image paths to be deleted and handle them here.
     }
 
 
@@ -144,7 +135,9 @@ class ProductController extends Controller
             if ($image != $request->img) {
                 $updatedImages[] = $image;
             } else {
-                Storage::disk('public')->delete($image);
+                if ($image && Storage::disk('public')->exists($image)) {
+                    Storage::disk('public')->delete($image);
+                }
             }
         }
         $prod->images = json_encode($updatedImages);

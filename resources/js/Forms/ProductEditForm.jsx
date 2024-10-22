@@ -7,19 +7,16 @@ import SelectInput from "@/Components/SelectInput";
 import TextInput from "@/Components/TextInput";
 import { useForm } from "@inertiajs/react";
 import { useEffect, useRef, useState } from "react";
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import './quill.css'
+import JoditEditor from "jodit-react";
+import './editor.css'
 import axios from "axios";
 
 function ProductEditForm({ product }) {
     const [prodEditModal, setProdEditModal] = useState(false);
     const { data, setData, post, processing, errors } = useForm({});
     const [categories, setCategories] = useState([])
-    const descRef = useRef();
 
     useEffect(() => {
-        descRef.current && descRef.current.blur();
         axios.get(route('categories.get_all')).then(response => {
             setCategories(response.data)
         })
@@ -95,8 +92,7 @@ function ProductEditForm({ product }) {
 
                         <div className="mb-5">
                             <InputLabel htmlFor="description">Product Description *</InputLabel>
-                            <ReactQuill
-                                ref={descRef}
+                            <JoditEditor
                                 required
                                 value={data.description}
                                 onChange={(value) => setData("description", value)}

@@ -7,7 +7,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 
-function ManageCategoryProducts(props) {
+function ManageProduct(props) {
     const { category } = props;
     const products = category.products;
 
@@ -39,10 +39,10 @@ function ManageCategoryProducts(props) {
                                 products.map((product, i) => (
                                     <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow" key={i}>
                                         <img
-                                            className="rounded-t-lg h-20 w-full object-cover"
-                                            src={product.images && product.images.length > 0
+                                            className="w-full"
+                                            src={product.images && JSON.parse(product.images).length > 0
                                                 ? `/storage/${JSON.parse(product.images)[0]}`
-                                                : '/path-to-placeholder-image.jpg'}
+                                                : '/images/default-product.png'}
                                             alt={product.name}
                                         />
                                         <div className="p-5 bg-gray-50">
@@ -56,7 +56,7 @@ function ManageCategoryProducts(props) {
                                                 {product.images && product.images.length > 0 && (
                                                     <UpdateImages id={product.id} images={JSON.parse(product.images)} />
                                                 )}
-                                                <DangerButton className="">
+                                                <DangerButton className="" onClick={() => handleDelProd(product.id)}>
                                                     Delete Product
                                                 </DangerButton>
                                             </div>
@@ -104,4 +104,4 @@ function UpdateImages({ id, images }) {
     )
 }
 
-export default ManageCategoryProducts
+export default ManageProduct

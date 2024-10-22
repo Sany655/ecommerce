@@ -71,7 +71,7 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        return Inertia::render('Admin/ManageCategoryProducts', ['category' => $category->with('products.category')->find($category->id)]);
+        return Inertia::render('Admin/ManageProduct', ['category' => $category->with('products.category')->find($category->id)]);
     }
 
     /**

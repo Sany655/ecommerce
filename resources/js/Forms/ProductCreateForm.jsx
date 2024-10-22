@@ -7,9 +7,8 @@ import SelectInput from "@/Components/SelectInput"
 import TextInput from "@/Components/TextInput"
 import { router, useForm } from "@inertiajs/react"
 import { useEffect, useRef, useState } from "react"
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import './quill.css'
+import JoditEditor from "jodit-react"
+import './editor.css'
 
 function ProductCreateForm({ category }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -71,9 +70,8 @@ function ProductCreateForm({ category }) {
 
                         <div className="flex flex-col">
                             <InputLabel htmlFor="description">Product Description *</InputLabel>
-                            <ReactQuill
+                            <JoditEditor
                                 ref={descRef}
-                                theme="snow"
                                 required
                                 value={data.description}
                                 onChange={(value) => setData("description", value)}

@@ -84,7 +84,6 @@ const Index = ({ product }) => {
     const sanitizedDescription = DOMPurify.sanitize(description);
     const [selectedVariants, setSelectedVariants] = useState([])
     const [cartItem, setCartItem] = useState({});
-
     useEffect(() => {
         axios.get(route('home.related_products', category_id)).then(response => {
             setproducts(response.data)
@@ -148,23 +147,33 @@ const Index = ({ product }) => {
     };
 
     return (
-        <div className="container p-8 mx-auto bg-white">
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <div className="container p-4 md:p-8 mx-auto bg-white">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Image Section */}
-                <ImageGallery images={JSON.parse(images)} />
-
+                <div className="w-full">
+                    {
+                        (images && JSON.parse(images).length > 0) ? <ImageGallery images={JSON.parse(images)} /> : (
+                            <img
+                                src={'/images/default-product.png'}
+                                alt="Product Image"
+                                className="object-cover w-full h-full"
+                            />
+                        )
+                    }
+                </div>
+    
                 {/* Product Information Section */}
-                <div className="p-8 rounded-lg">
-                    <h1 className="mb-2 text-4xl font-bold">{name}</h1>
-
+                <div className="p-4 md:p-8">
+                    <h1 className="mb-2 text-2xl md:text-4xl font-bold">{name}</h1>
+    
                     <div className="flex flex-col gap-4 mb-4 md:flex-row md:items-center">
-                        <p className={`text-gray-500 md:text-3xl ${discount_price && 'line-through'}`}>
-                            <span className="text-4xl bold">৳</span> {price}
+                        <p className={`text-gray-500 text-lg md:text-2xl ${discount_price && 'line-through'}`}>
+                            <span className="text-xl md:text-3xl bold">৳</span> {price}
                         </p>
                         {discount_price && (
                             <>
-                                <p className="font-bold text-red-600 md:text-3xl">
-                                    <span className="text-4xl bold">৳</span> {discount_price}
+                                <p className="font-bold text-red-600 text-lg md:text-2xl">
+                                    <span className="text-xl md:text-3xl bold">৳</span> {discount_price}
                                 </p>
                                 <p className="px-2 py-1 text-sm text-white bg-red-500 rounded">
                                     {Math.round(((price - discount_price) / price) * 100)}% Off
@@ -172,8 +181,7 @@ const Index = ({ product }) => {
                             </>
                         )}
                     </div>
-
-
+    
                     <div className="flex items-center mb-4">
                         {
                             status ? (
@@ -182,21 +190,19 @@ const Index = ({ product }) => {
                                 <span className="px-4 py-2 font-medium text-white bg-red-500">Unavailable</span>
                         }
                     </div>
-
+    
                     <div className="space-y-4">
                         {(variants && variants.length > 0) &&
                             JSON.parse(variants).map((variant, index) => (
                                 variant.values && (
                                     <div key={index} className="space-y-2">
-                                        {/* Render variant attribute name */}
                                         <h3 className="text-lg font-medium">{variant.attribute}</h3>
-                                        <div className="flex space-x-2">
-                                            {/* Render buttons for each variant value */}
+                                        <div className="flex space-x-2 flex-wrap">
                                             {variant.values.split(',').map((v, idx) => (
                                                 <button
                                                     key={idx}
                                                     onClick={() => handleVariantClick(variant.attribute, v)}
-                                                    className={`px-4 py-2 border ${selectedVariants[index]?.values === v
+                                                    className={`px-4 py-2 border rounded-lg ${selectedVariants[index]?.values === v
                                                         ? 'bg-blue-500 text-white'
                                                         : 'bg-white text-black'
                                                         }`}
@@ -209,27 +215,29 @@ const Index = ({ product }) => {
                                 )
                             ))}
                     </div>
-
-
+    
                     {/* Buttons */}
-                    <div className="flex items-center my-6 space-x-4">
+                    <div className="flex flex-col md:flex-row gap-2 items-center my-6 space-x-4">
                         {
                             cartLoading ? <i className="self-center mb-3 text-2xl fa fa-spinner animate-spin"></i> :
                                 (Object.keys(cartItem).length > 0 && cartItem.quantity > 0) ? (
                                     <>
-                                        <button className="px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600" onClick={() => removeFromCart(cartItem.id)}>
-                                            Remove from Cart
-                                        </button> <input
+                                        <input
                                             type="number"
                                             value={cartItem.quantity}
                                             min="1"
                                             className="w-16 text-center border rounded-lg"
                                             onChange={(e) => e.target.value > 0 && addToCart(cartItem.product.id, parseInt(e.target.value), JSON.stringify(selectedVariants))}
                                         />
+                                        <button className="px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600" onClick={() => removeFromCart(cartItem.id)}>
+                                            Remove from Cart
+                                        </button>
                                     </>
-                                ) : <button className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600" onClick={() => addToCart(product.id, 1, JSON.stringify(selectedVariants))}>
-                                    Add to Cart
-                                </button>}
+                                ) : (
+                                    <button className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600" onClick={() => addToCart(product.id, 1, JSON.stringify(selectedVariants))}>
+                                        Add to Cart
+                                    </button>
+                                )}
                         <button className="px-4 py-2 text-gray-700 bg-yellow-500 rounded-lg hover:bg-yellow-600" onClick={() => {
                             (Object.keys(cartItem).length > 0 && cartItem.quantity > 0) ? router.visit(route('home.checkout')) : addToCart(product.id, 1, JSON.stringify(selectedVariants)).then(() => router.visit(route('home.checkout')));
                         }}>
@@ -238,24 +246,23 @@ const Index = ({ product }) => {
                     </div>
                 </div>
             </div>
+    
             <div className="prose max-w-none">
-                <p className="p-8 rounded-lg shadow-sm text-justify" dangerouslySetInnerHTML={{ __html: sanitizedDescription }}>
-                </p>
+                <p className="p-4 md:p-8 rounded-lg shadow-sm md:text-justify" dangerouslySetInnerHTML={{ __html: sanitizedDescription }}></p>
             </div>
-
+    
             {/* Related Products Section */}
             <div className="mt-10">
-                <h2 className="mb-6 text-2xl font-bold">Related Products</h2>
-                <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-                    {
-                        products.map((product, i) => (
-                            <ProductCart product={product} key={i} />
-                        ))
-                    }
+                <h2 className="mb-6 text-xl md:text-2xl font-bold">Related Products</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    {products.map((product, i) => (
+                        <ProductCart product={product} key={i} />
+                    ))}
                 </div>
             </div>
         </div>
     );
+    
 };
 
 const ProductDetail = ({ product }) => {

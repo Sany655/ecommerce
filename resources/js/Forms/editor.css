@@ -1,0 +1,7 @@
+.jodit-status-bar-link{
+  display: none;
+}
+.jodit-wysiwyg{
+  height: 150px!important;
+  overflow: scroll!important;
+}
