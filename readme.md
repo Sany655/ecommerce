@@ -1,6 +1,10 @@
+# work to do
+* to implement bkash in laravel
 https://www.youtube.com/watch?v=SMa2na3FKsM
-to implement bkash in laravel
 https://www.youtube.com/watch?v=_doFKWa-OvM
+* pixal setup in laravel
+https://www.youtube.com/watch?v=XNF3Sz8l_vo
+https://www.youtube.com/watch?v=vRBEuzxQVZ8
 
 # production preparation
 npm run build

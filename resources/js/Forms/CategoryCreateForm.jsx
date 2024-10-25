@@ -30,7 +30,7 @@ function CategoryCreateForm({ categories }) {
     };
     return (
         <>
-            <PrimaryButton onClick={() => setCatCreateModal(true)}>Add Category/Subcategory</PrimaryButton>
+            <PrimaryButton onClick={() => setCatCreateModal(true)}>Add Category</PrimaryButton>
             <Modal onClose={() => setCatCreateModal(!catCreateModal)} show={catCreateModal}>
                 <div className="p-5">
                     <h3 className='mb-3 text-2xl font-bold flex justify-between items-center'>

@@ -16,7 +16,7 @@ class ProductController extends Controller
         // Validate input data
         $request->validate([
             'name' => 'required|string|max:255|unique:products,name',
-            'description' => 'required|string',
+            'description' => 'nullable|string|max:4000000000',
             'variants' => 'nullable|json',
             'price' => [
                 'nullable',
@@ -64,7 +64,7 @@ class ProductController extends Controller
         // Validate the request
         $request->validate([
             'name' => 'required|string|max:255|unique:products,name,' . $product->id,
-            'description' => 'required|string',
+            'description' => 'nullable|string|max:4000000000',
             'variants' => 'nullable|json',
             'price' => [
                 'nullable',

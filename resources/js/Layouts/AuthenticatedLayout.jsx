@@ -110,12 +110,9 @@ export default function Authenticated({ auth, header, children }) {
                         <ResponsiveNavLink href={route('category.index')} active={route().current('category.index')}>
                             Manage Categories & Products
                         </ResponsiveNavLink>
-                        {/* <ResponsiveNavLink href={route('product.index')} active={route().current('product.index')}>
-                            Manage Products
-                        </ResponsiveNavLink> */}
-                        <NavLink href={route('coupon.index')} active={route().current('coupon.index')}>
+                        <ResponsiveNavLink href={route('coupon.index')} active={route().current('coupon.index')}>
                             Manage Coupons
-                        </NavLink>
+                        </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('order.index')} active={route().current('order.index')}>
                             Manage Orders
                         </ResponsiveNavLink>

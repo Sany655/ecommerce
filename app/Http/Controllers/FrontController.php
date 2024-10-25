@@ -83,12 +83,12 @@ class FrontController extends Controller
         if (!$catWithProd) {
             return abort(404);
         }
-        return Inertia::render('AllProducts', ['category' => $catWithProd]);
+        return Inertia::render('Products', ['category' => $catWithProd]);
     }
 
-    function show_product(Request $request, $prodId)
+    function product_details($prodId)
     {
-        $product = Product::where(['id' => $prodId])->with('category')->first();
+        $product = Product::where(['id' => $prodId])->with(['category' => fn($q) => $q->with(['products' => fn($p) => $p->where('id','!=',$prodId)->limit(4)])])->first();
         if (!$product) {
             return abort(404);
         }

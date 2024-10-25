@@ -21,12 +21,10 @@ function ManageCategory(props) {
         >
             <Head title="Manage Categories" />
 
-            <div className="py-12 mt-2 bg-white rounded">
+            <div className="p-2 mt-2 bg-white rounded">
                 <div className="container mx-auto">
                     <div className="flex items-center justify-between mb-8">
-                        <div className="flex flex-wrap items-center gap-2">
-                            <h2 className="text-lg font-semibold">Categories</h2>
-                        </div>
+                        <h2 className="text-lg font-semibold">Categories</h2>
                         <CategoryCreateForm categories={categories} />
                     </div>
                     {categories.length > 0 ? categories.map((category, i) => (

@@ -20,7 +20,7 @@ function ProductCard({ product }) {
     }, [cart, product.id]);
 
     return (
-        <div className="flex flex-col transition-transform transform rounded-lg shadow-lg hover:scale-105 hover:shadow-xl">
+        <div className="flex flex-col justify-between transition-transform transform rounded-lg shadow-lg hover:scale-105 hover:shadow-xl">
             <img src={(product.images && JSON.parse(product.images).length > 0) ? `/storage/${JSON.parse(product.images)[0]}` : '/images/default-product.png'} alt={product?.name} className="w-full rounded-t-lg" />
             <div className="flex flex-col justify-between p-4 bg-gray-100 rounded-b-lg">
                 <h1 className="mb-2 text-sm font-bold tracking-wide text-center line-clamp-5">
@@ -29,10 +29,10 @@ function ProductCard({ product }) {
 
                 <p className="text-gray-600 text-center flex flex-col mb-2">{product.discount_price ? (
                     <>
-                        <span className="px-1">Regular Price: <span className="line-through">{product.price}</span></span>
-                        <span>Discount Price: {product.discount_price}</span>
+                        <span className="px-1">Regular Price: <span className="line-through">{product.price} BDT</span></span>
+                        <span>Discount Price: {product.discount_price} BDT</span>
                     </>
-                ) : <span className="px-1">Regular Price: {product.price}</span>}</p>
+                ) : <span className="px-1">Regular Price: {product.price} BDT</span>}</p>
 
                 {/* Handle cart button or spinner */}
                 {(productVariants.some(v => v.values?.split(',').length > 1))

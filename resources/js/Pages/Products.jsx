@@ -6,7 +6,7 @@ import NavLink from "@/Components/NavLink"
 import PrimaryButton from "@/Components/PrimaryButton"
 import ProductCart from "@/Components/ProductCard"
 
-function AllProducts({ category }) {
+function Products({ category }) {
     return (
         <AppLayout>
             <Head title={category.name} />
@@ -32,4 +32,4 @@ const Index = ({ category }) => {
         </div>
     )
 }
-export default AllProducts
+export default Products

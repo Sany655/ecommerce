@@ -1,8 +1,10 @@
 import ApplicationLogo from "@/Components/ApplicationLogo"
+import NavLink from "@/Components/NavLink"
 import ScrollTop from "@/Components/ScrollTop"
 import useCart, { CartProvider } from "@/Hooks/useCart"
 import { Link, router } from "@inertiajs/react"
-import { useState } from "react"
+import axios from "axios"
+import { useEffect, useState } from "react"
 
 function AppLayout({ children }) {
 
@@ -23,23 +25,27 @@ function AppLayout({ children }) {
 
 const Header = () => {
     const { cart } = useCart()
-    // const totalPrice = cart?.reduce((acc, item) => Math.round(acc + parseInt(item.subtotal)), 0)
     const [searchInput, setSearchInput] = useState('')
     const handleSearch = e => {
         e.preventDefault();
         router.visit(route('home.search', searchInput))
     }
+    const [categories, setcategories] = useState([])
+    useEffect(() => {
+        axios.get(route('categories.get_all')).then(response => setcategories(response.data)).catch(error => console.log(error.message))
+    }, [])
 
     return (
         <header className="sticky top-0 z-50 capitalize bg-white shadow-md">
-            <div className="container flex flex-col items-center justify-between gap-5 pt-8 pb-4 mx-auto text-blue-500 md:flex-row">
+            <div className="container flex flex-col items-center justify-between gap-5 pt-8 pb-8 mx-auto text-blue-500 md:flex-row">
                 <div className="flex items-center">
                     <Link href="/">
                         <ApplicationLogo />
                     </Link>
                 </div>
-                <div className="flex items-center gap-4">
-                    <form className="relative" onSubmit={handleSearch}>
+                <div className="flex items-center justify-between gap-4">
+                    {/* Search Bar */}
+                    <form className="relative flex-shrink" onSubmit={handleSearch}>
                         <input
                             type="text"
                             placeholder="Search products..."
@@ -47,20 +53,45 @@ const Header = () => {
                             value={searchInput}
                             onChange={e => setSearchInput(e.target.value)}
                         />
-                        <i className="absolute transform -translate-y-1/2 cursor-pointer fa fa-search right-4 top-1/2" onClick={handleSearch}></i>
+                        <i
+                            className="absolute transform -translate-y-1/2 cursor-pointer fa fa-search right-4 top-1/2"
+                            onClick={handleSearch}
+                        ></i>
                     </form>
+
+                    {/* Wishlist Icon */}
                     <div className="relative hover:text-gray-500">
-                        <Link href={route('cart.index')}>
-                            <i className="text-2xl fa fa-heart"></i>
-                            <span className="absolute text-sm font-bold bottom-4 left-5">{cart.cart_items?.length}</span>
+                        <Link href={route('cart.index')} className="relative text-2xl">
+                            <i className="fa fa-heart"></i>
+                            {/* Cart item count */}
+                            <span className="absolute text-xs font-bold bg-red-600 text-white rounded-full px-1 top-0 right-0 transform translate-x-3 -translate-y-1">
+                                {cart.cart_items?.length}
+                            </span>
                         </Link>
                     </div>
-                    <div className="">
-                        <span className="text-sm font-bold">Total</span>
-                        <span className="ml-2 text-sm font-bold">৳ {cart.total_amount}</span>
-                    </div>
+
+                    {/* Total Amount */}
+                    <p className="line-clamp-2 text-xs md:text-sm font-bold">
+                        Total: {cart.total_amount} BDT
+                    </p>
                 </div>
+
+
             </div>
+            {
+                categories.length > 0 && (
+                    <div className="">
+                        <hr />
+                        <div className="container mx-auto flex flex-wrap items-center gap-2 md:gap-4 py-2 capitalize">
+                            {
+                                categories.map((category, index) => (
+                                    <NavLink key={index} className={"text-sm font-bold text-gray-400"} href={route(`home.category_products`, category.id)}>{category.name}</NavLink>
+                                ))
+                            }
+                        </div>
+                    </div>
+                )
+            }
         </header>
     )
 }
@@ -68,12 +99,11 @@ const Header = () => {
 const Footer = () => {
     return (
         <footer className="py-8 bg-gray-100">
-            <div className="container grid grid-cols-1 gap-8 mx-auto text-center md:grid-cols-2 md:text-left">
+            <div className="container grid grid-cols-1 gap-8 mx-auto text-center md:grid-cols-3 md:text-left">
                 {/* Logo and Motto */}
-                <div>
-                    {/* <img src="/path/to/logo.png" alt="Sunnah Corner" className="mx-auto mb-4 md:mx-0" /> */}
+                <div className="flex items-center md:items-start flex-col gap-2">
                     <Link className="text-xl font-bold text-blue-500" href="/">
-                        <ApplicationLogo className={"mb-2"}/>
+                        <ApplicationLogo />
                     </Link>
                     <p className="text-sm text-gray-700">
                         Online Based Premium Islamic Lifestyle Shop. <br />
@@ -82,15 +112,14 @@ const Footer = () => {
                 </div>
 
                 {/* Payment Methods and Contact Information */}
-                {/* <div className="md:text-center">
+                <div className="md:text-center">
                     <div className="mb-4">
                         <h5 className="mb-2 text-lg font-semibold text-gray-800">We Accept</h5>
                         <div className="flex justify-center space-x-2">
                             <img src="/images/bkash.jpg" alt="bkash" className="h-8" />
                         </div>
                     </div>
-
-                </div> */}
+                </div>
 
                 {/* Download App */}
                 <div className="text-sm text-gray-700 md:text-right">

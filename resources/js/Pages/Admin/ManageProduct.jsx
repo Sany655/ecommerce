@@ -46,11 +46,9 @@ function ManageProduct(props) {
                                             alt={product.name}
                                         />
                                         <div className="p-5 bg-gray-50">
-                                            <a href="#">
-                                                <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
-                                                    {product.name}
-                                                </h5>
-                                            </a>
+                                            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+                                                {product.name}
+                                            </h5>
                                             <div className="flex flex-wrap justify-center gap-4">
                                                 <ProductEditForm product={product} />
                                                 {product.images && product.images.length > 0 && (

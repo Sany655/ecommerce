@@ -25,8 +25,7 @@ use Inertia\Inertia;
 
 Route::get('/', [FrontController::class, 'index'])->name('home');;
 Route::get('/cat/{catId}', [FrontController::class, 'show'])->name('home.category_products');
-Route::get('/prod/{prodId}', [FrontController::class, 'show_product'])->name('home.product');
-Route::get('/related-products/{catId}', [FrontController::class, 'related_products'])->name('home.related_products');
+Route::get('/prod/{prodId}', [FrontController::class, 'product_details'])->name('home.product');
 Route::post('/cart-products', [FrontController::class, 'cart'])->name('home.cart_products');
 Route::get('/cart', fn() => Inertia::render("CartPage"))->name('cart.index');
 Route::get('/cart-show', [CartController::class, 'showCart'])->name('cart.show');
@@ -39,6 +38,8 @@ Route::get('/order-invoice/{orderId}', [OrderController::class, 'orderInvoice'])
 Route::get('/download-invoice/{orderId}', [OrderController::class, 'downloadInvoice'])->name('home.download_invoice');
 Route::get('/search/{query}', [FrontController::class, 'search'])->name('home.search');
 Route::post('/apply-coupon', [FrontController::class, 'applyCoupon'])->name('home.apply_coupon');
+
+Route::get('/get-all-categories', [CategoryController::class, 'getAll'])->name('categories.get_all');
 
 
 Route::middleware(['auth'])->group(function () {
@@ -54,7 +55,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/order', OrderController::class)->except(['edit', 'show', 'create', 'update']);
 
     Route::get('/get-all-coupons', [CouponController::class, 'getAll'])->name('coupon.get_all');
-    Route::get('/get-all-categories', [CategoryController::class, 'getAll'])->name('categories.get_all');
     Route::put('/order-status/{orderId}', [OrderController::class, 'changeOrderStatus'])->name('home.order_status');
 
     Route::get('/clear-cache', function () {
@@ -71,11 +71,13 @@ Route::middleware(['auth'])->group(function () {
         Artisan::call('view:cache');
         return 'cached saved';
     });
-    Route::get('/sany654', function () {
-        Artisan::call('migrate:refresh', ['--force' => true,  '--seed' => true]);
-        return 'migration refreshed and seeded';
-    });
 });
+
+//  Route::get('/sany654', function () {
+//     Artisan::call('migrate:refresh', ['--force' => true,  '--seed' => true]);
+//     Artisan::call('db:seed', ['--force' => true]);
+//     return 'migration refreshed and seeded';
+// });
 
 
 Route::fallback(function () {

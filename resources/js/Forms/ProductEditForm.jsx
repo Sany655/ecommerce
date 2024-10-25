@@ -6,7 +6,7 @@ import SecondaryButton from "@/Components/SecondaryButton";
 import SelectInput from "@/Components/SelectInput";
 import TextInput from "@/Components/TextInput";
 import { useForm } from "@inertiajs/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import JoditEditor from "jodit-react";
 import './editor.css'
 import axios from "axios";

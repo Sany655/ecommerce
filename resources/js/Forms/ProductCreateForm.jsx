@@ -3,10 +3,9 @@ import InputLabel from "@/Components/InputLabel"
 import Modal from "@/Components/Modal"
 import PrimaryButton from "@/Components/PrimaryButton"
 import SecondaryButton from "@/Components/SecondaryButton"
-import SelectInput from "@/Components/SelectInput"
 import TextInput from "@/Components/TextInput"
-import { router, useForm } from "@inertiajs/react"
-import { useEffect, useRef, useState } from "react"
+import { useForm } from "@inertiajs/react"
+import { useState } from "react"
 import JoditEditor from "jodit-react"
 import './editor.css'
 
@@ -22,11 +21,6 @@ function ProductCreateForm({ category }) {
         status: true,
     });
     const [prodCreateModal, setProdCreateModal] = useState(false)
-    const descRef = useRef();
-    useEffect(() => {
-        descRef.current && descRef.current.blur();
-    }, [])
-
 
     const handleCreateProduct = (e) => {
         e.preventDefault();
@@ -71,7 +65,6 @@ function ProductCreateForm({ category }) {
                         <div className="flex flex-col">
                             <InputLabel htmlFor="description">Product Description *</InputLabel>
                             <JoditEditor
-                                ref={descRef}
                                 required
                                 value={data.description}
                                 onChange={(value) => setData("description", value)}

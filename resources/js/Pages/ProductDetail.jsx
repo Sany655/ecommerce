@@ -79,16 +79,10 @@ const ImageGallery = ({ images }) => {
 
 const Index = ({ product }) => {
     const { cart, addToCart, removeFromCart, cartLoading } = useCart()
-    const { id, category_id, name, description, variants, price, images, discount_price, status, created_at, updated_at } = product;
-    const [products, setproducts] = useState([])
+    const { name, description, variants, price, images, discount_price, status } = product;
     const sanitizedDescription = DOMPurify.sanitize(description);
     const [selectedVariants, setSelectedVariants] = useState([])
     const [cartItem, setCartItem] = useState({});
-    useEffect(() => {
-        axios.get(route('home.related_products', category_id)).then(response => {
-            setproducts(response.data)
-        })
-    }, [category_id])
 
     useEffect(() => {
         if (cart.cart_items?.length > 0) {
@@ -161,19 +155,19 @@ const Index = ({ product }) => {
                         )
                     }
                 </div>
-    
+
                 {/* Product Information Section */}
                 <div className="p-4 md:p-8">
                     <h1 className="mb-2 text-2xl md:text-4xl font-bold">{name}</h1>
-    
+
                     <div className="flex flex-col gap-4 mb-4 md:flex-row md:items-center">
                         <p className={`text-gray-500 text-lg md:text-2xl ${discount_price && 'line-through'}`}>
-                            <span className="text-xl md:text-3xl bold">৳</span> {price}
+                            {price} BDT
                         </p>
                         {discount_price && (
                             <>
                                 <p className="font-bold text-red-600 text-lg md:text-2xl">
-                                    <span className="text-xl md:text-3xl bold">৳</span> {discount_price}
+                                    {discount_price} BDT
                                 </p>
                                 <p className="px-2 py-1 text-sm text-white bg-red-500 rounded">
                                     {Math.round(((price - discount_price) / price) * 100)}% Off
@@ -181,7 +175,7 @@ const Index = ({ product }) => {
                             </>
                         )}
                     </div>
-    
+
                     <div className="flex items-center mb-4">
                         {
                             status ? (
@@ -190,7 +184,7 @@ const Index = ({ product }) => {
                                 <span className="px-4 py-2 font-medium text-white bg-red-500">Unavailable</span>
                         }
                     </div>
-    
+
                     <div className="space-y-4">
                         {(variants && variants.length > 0) &&
                             JSON.parse(variants).map((variant, index) => (
@@ -215,7 +209,7 @@ const Index = ({ product }) => {
                                 )
                             ))}
                     </div>
-    
+
                     {/* Buttons */}
                     <div className="flex flex-col md:flex-row gap-2 items-center my-6 space-x-4">
                         {
@@ -246,23 +240,28 @@ const Index = ({ product }) => {
                     </div>
                 </div>
             </div>
-    
+
             <div className="prose max-w-none">
-                <p className="p-4 md:p-8 rounded-lg shadow-sm md:text-justify" dangerouslySetInnerHTML={{ __html: sanitizedDescription }}></p>
+                <p className="p-4 md:p-8 rounded-lg md:text-justify" dangerouslySetInnerHTML={{ __html: sanitizedDescription }}></p>
             </div>
-    
+
             {/* Related Products Section */}
-            <div className="mt-10">
-                <h2 className="mb-6 text-xl md:text-2xl font-bold">Related Products</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                    {products.map((product, i) => (
-                        <ProductCart product={product} key={i} />
-                    ))}
-                </div>
-            </div>
+            {
+                product.category?.products.length > 0 && (
+                    <div className="mt-10">
+                        <h2 className="mb-6 text-xl md:text-2xl font-bold">Related Products</h2>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                            {product.category.products.map((prod, i) => (
+                                <ProductCart product={prod} key={i} />
+                            ))}
+                        </div>
+                    </div>
+                )
+            }
+
         </div>
     );
-    
+
 };
 
 const ProductDetail = ({ product }) => {
