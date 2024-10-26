@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('product_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('coupon_id')->nullable()->constrained()->onDelete('set null');
             $table->json('variants')->nullable();
-            $table->integer('quantity');
+            $table->integer('quantity')->default(1);
             $table->decimal('subtotal', 10, 2)->default(0);
             $table->timestamps();
         });

@@ -18,11 +18,8 @@ class CartTokenMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        // Check if the 'cart_token' cookie exists
         if (!$request->cookie('cart_token')) {
             $cartToken = (string) Str::uuid();
-
-            // Add the token both to the response and the request
             Cookie::queue('cart_token', $cartToken, 60 * 24 * 30);
             $request->cookies->set('cart_token', $cartToken);
         }

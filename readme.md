@@ -3,6 +3,7 @@
 https://www.youtube.com/watch?v=SMa2na3FKsM
 https://www.youtube.com/watch?v=_doFKWa-OvM
 * pixal setup in laravel
+https://www.youtube.com/watch?v=Xf8y09SI8bk
 https://www.youtube.com/watch?v=XNF3Sz8l_vo
 https://www.youtube.com/watch?v=vRBEuzxQVZ8
 

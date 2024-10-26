@@ -17,11 +17,11 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->call(function () {
-            Cart::where('updated_at', '<', now()->subDays(30))->each(function ($cart) {
-                $cart->delete();
-            });
-        })->daily();
+        // $schedule->call(function () {
+        //     Cart::where('updated_at', '<', now()->subDays(30))->each(function ($cart) {
+        //         $cart->delete();
+        //     });
+        // })->daily();
     }
 
     /**

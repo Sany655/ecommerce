@@ -87,7 +87,7 @@ const Index = ({ product }) => {
     useEffect(() => {
         if (cart.cart_items?.length > 0) {
             const matchingCartItem = cart.cart_items.find((item) => {
-                if (item.product_id !== product.id) return false;
+                if (item.product?.id !== product.id) return false;
 
                 if (!item.variants || item.variants === '[]') {
                     // No variants exist in the item, just match by product ID

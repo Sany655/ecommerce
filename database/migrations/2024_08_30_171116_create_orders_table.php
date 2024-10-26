@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('coupon_id')->nullable()->constrained()->onDelete('set null');
+            $table->string('order_token')->unique();
             $table->string('name');
             $table->string('email')->nullable();
             $table->string('address');
@@ -24,6 +25,8 @@ return new class extends Migration
             $table->string('notes')->nullable();
             $table->decimal('total_price', 10, 2);
             $table->enum('status', ['pending', 'processing', 'completed', 'cancelled'])->default('pending');
+            $table->enum('payment_method', ['cash_on_delivery', 'bkash'])->default('cash_on_delivery');
+            $table->enum('payment_status', ['pending', 'paid', 'failed', 'cancelled'])->default('pending');
             $table->timestamps();
         });
     }

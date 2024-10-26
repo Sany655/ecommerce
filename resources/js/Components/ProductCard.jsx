@@ -1,3 +1,4 @@
+
 import useCart from "@/Hooks/useCart";
 import PrimaryButton from "./PrimaryButton";
 import { Link, router } from "@inertiajs/react";
@@ -8,15 +9,12 @@ function ProductCard({ product }) {
     const [loading, setLoading] = useState(false);
     const [productVariants, setProductVariants] = useState([])
     const [cartItem, setCartItem] = useState({});
-
-    // Null check for product and images
-
     useEffect(() => {
         setProductVariants(product?.variants ? JSON.parse(product.variants) : [])
     }, [product])
 
     useEffect(() => {
-        setCartItem(cart.cart_items?.find(item => item.product_id === product.id) || {});
+        setCartItem(cart.cart_items?.find(item => item.product?.id === product.id) || {});
     }, [cart, product.id]);
 
     return (
@@ -41,7 +39,7 @@ function ProductCard({ product }) {
                             <i className="self-center mb-3 text-2xl fa fa-spinner animate-spin"></i>
                         ) : (
                             <i
-                                className={`fa-heart text-blue-500 hover:text-gray-500 text-2xl self-center mb-3 transition-colors cursor-pointer ${Object.keys(cartItem).length > 0 ? 'fa-solid' : 'fa-regular'}`}
+                                className={`fa-heart text-blue-500 hover:text-gray-500 text-2xl self-center mb-3 transition-colors cursor-pointer ${Object.keys(cartItem).length > 0 ? "fa-solid" : "fa-regular"}`}
                                 onClick={() => {
                                     setLoading(true);
                                     if (Object.keys(cartItem).length > 0) {

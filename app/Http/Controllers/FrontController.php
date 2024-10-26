@@ -52,8 +52,6 @@ class FrontController extends Controller
         }
     }
 
-
-
     function search($query)
     {
         $prods = Product::where('name', 'LIKE', '%' . $query . '%')->where('status', true)->get();
@@ -64,8 +62,8 @@ class FrontController extends Controller
     {
         return Inertia::render('Index', [
             'categories' => Category::where('status', true)
-                ->limit(4)
-                ->with('subcategories')
+                // ->limit(4)
+                // ->with('subcategories')
                 ->get()
                 ->map(function ($category) {
                     $category->products = $category->products()->where('status', true)->take(12)->get();
@@ -88,15 +86,13 @@ class FrontController extends Controller
 
     function product_details($prodId)
     {
-        $product = Product::where(['id' => $prodId])->with(['category' => fn($q) => $q->with(['products' => fn($p) => $p->where('id','!=',$prodId)->limit(4)])])->first();
+        $product = Product::where(['id' => $prodId])->with(['category' => fn($q) => $q->with(['products' => fn($p) => $p->where('id', '!=', $prodId)->limit(4)])])->first();
         if (!$product) {
             return abort(404);
         }
+        if (app()->environment('production')) {
+            $product->increment('view_count');
+        }
         return Inertia::render('ProductDetail', compact('product'));
-    }
-
-    function related_products()
-    {
-        return Product::where('category_id', request('catId'))->where('status', true)->limit(8)->get();
     }
 }

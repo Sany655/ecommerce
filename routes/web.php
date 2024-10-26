@@ -32,14 +32,13 @@ Route::get('/cart-show', [CartController::class, 'showCart'])->name('cart.show')
 Route::post('/cart-add', [CartController::class, 'addToCart'])->name('cart.add');
 Route::delete('/cart-remove/{itemId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
 Route::delete('/cart-delete', [CartController::class, 'clearCart'])->name('cart.delete');
-Route::get('/checkout', fn() => Inertia::render("Checkout"))->name('home.checkout');
-Route::post('/place-order', [OrderController::class, 'placeOrder'])->name('home.place_order');
 Route::get('/order-invoice/{orderId}', [OrderController::class, 'orderInvoice'])->name('home.order_invoice');
-Route::get('/download-invoice/{orderId}', [OrderController::class, 'downloadInvoice'])->name('home.download_invoice');
 Route::get('/search/{query}', [FrontController::class, 'search'])->name('home.search');
 Route::post('/apply-coupon', [FrontController::class, 'applyCoupon'])->name('home.apply_coupon');
-
 Route::get('/get-all-categories', [CategoryController::class, 'getAll'])->name('categories.get_all');
+Route::get('/checkout', fn() => Inertia::render("Checkout"))->name('home.checkout');
+Route::post('/place-order', [OrderController::class, 'placeOrder'])->name('home.place_order');
+ROUte::post('/online-payment', [OrderController::class, 'onlinePayment'])->name('home.online_payment')->middleware('bkash_auth');
 
 
 Route::middleware(['auth'])->group(function () {
@@ -57,28 +56,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/get-all-coupons', [CouponController::class, 'getAll'])->name('coupon.get_all');
     Route::put('/order-status/{orderId}', [OrderController::class, 'changeOrderStatus'])->name('home.order_status');
 
-    Route::get('/clear-cache', function () {
+    Route::get('/refresh-cache', function () {
         Artisan::call('config:clear');
         Artisan::call('route:clear');
         Artisan::call('view:clear');
         Artisan::call('cache:clear');
-        Artisan::call('storage:link');
-        return 'all cache cleared and linked storage successfully';
-    });
-    Route::get('/save-cache', function () {
+        Artisan::call('storage:link'); 
+        sleep(5);
         Artisan::call('config:cache');
         Artisan::call('route:cache');
         Artisan::call('view:cache');
-        return 'cached saved';
+        return 'Cache cleared, storage linked, and cache saved successfully';
     });
 });
-
-//  Route::get('/sany654', function () {
-//     Artisan::call('migrate:refresh', ['--force' => true,  '--seed' => true]);
-//     Artisan::call('db:seed', ['--force' => true]);
-//     return 'migration refreshed and seeded';
-// });
-
 
 Route::fallback(function () {
     return Inertia::render('NotFound');

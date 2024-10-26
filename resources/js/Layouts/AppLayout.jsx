@@ -85,7 +85,7 @@ const Header = () => {
                         <div className="container mx-auto flex flex-wrap items-center gap-2 md:gap-4 py-2 capitalize">
                             {
                                 categories.map((category, index) => (
-                                    <NavLink key={index} className={"text-sm font-bold text-gray-400"} href={route(`home.category_products`, category.id)}>{category.name}</NavLink>
+                                    <NavLink key={index} className={"text-sm font-bold text-gray-400"} href={route(`home.category_products`, category.id)} active={route().current(`home.category_products`, category.id)}>{category.name}</NavLink>
                                 ))
                             }
                         </div>

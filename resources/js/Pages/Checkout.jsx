@@ -14,44 +14,97 @@ function Index() {
         division: "",
         mobile: "",
         notes: "",
+        payment_method: "cash_on_delivery",
+        payment_status: "pending",
         shipping_cost: 0,
     }) ?? {}; // Null check on useForm
-
-    const [shipCost, setShipCost] = useState(0);
+    const params = new URLSearchParams(window.location.search)
+    const [error, setError] = useState('')
     const [couponError, setCouponError] = useState('');
     const [couponSuccess, setCouponSuccess] = useState('');
 
     useEffect(() => {
-        switch (data?.division) {
-            case "Chittagong":
-                setShipCost(100);
-                setData("shipping_cost", 100);
-                break;
-            case "":
-                setShipCost(0);
-                setData("shipping_cost", 0);
-                break;
-            default:
-                setShipCost(150);
-                setData("shipping_cost", 150);
-                break;
+        const paymentID = params.get('paymentID');
+        const status = params.get('status');
+        if (paymentID) {
+            switch (status) {
+                case "cancel":
+                    setError("The payment was cancelled.");
+                    break;
+                case "failure":
+                    setError("The payment was failed.");
+                    break;
+                case "success":
+                    setData("payment_status", "paid");
+                    placeOrder();
+                default:
+                    break;
+            }
         }
-    }, [data?.division]);
+        if (props.error) setError(props.error);
+    }, [props])
+
+    useEffect(() => {
+        if (error) {
+            const timer = setTimeout(() => {
+                window.history.replaceState(null, '', window.location.pathname);
+                setError('');
+            }, 5000);
+
+            return () => clearTimeout(timer);
+        }
+    }, []);
+
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+        // if (name === "division") {
+        //     let shipcost = 0
+        //     switch (value) {
+        //         case "Chittagong":
+        //             shipcost = 100;
+        //             break;
+        //         case "":
+        //             shipcost = 0;
+        //             break;
+        //         default:
+        //             shipcost = 150;
+        //             break;
+        //     }
+        //     // setShipCost(shipcost);
+        //     setData(prevData => ({ ...prevData, [name]: value, shipping_cost: shipcost }));
+        // } else {
+        // }
         setData(name, value);
     };
 
     const handlePlaceOrder = (e) => {
+        setError('');
         e.preventDefault();
+        if (data.payment_method === 'bkash') {
+            olinePayment();
+        } else {
+            placeOrder();
+        }
+    };
+
+    function olinePayment() {
+        axios.post(route('home.online_payment'), { total_amount: parseInt(cart.total_amount) + parseInt(data.shipping_cost) }).then(response => {
+            window.location.href = response.data.bkashURL;
+        }).catch(error => {
+            setError(error.response.data.message);
+        })
+    }
+
+    function placeOrder() {
         post(route('home.place_order'), {
             onSuccess: () => {
                 clearErrors();
                 // reset();
             },
         });
-    };
+    }
 
     const applying_coupon_code = useRef(null);
     const applyCoupon = async () => {
@@ -79,9 +132,9 @@ function Index() {
     return (
         <form className="container gap-4 mx-auto lg:flex" onSubmit={handlePlaceOrder}>
             {/* Billing Details */}
-            <div className="p-4 md:p-8 mb-8 bg-white rounded-lg shadow-lg lg:flex-1">
+            <div className="p-4 md:p-8 mb-8 bg-white rounded-lg shadow-lg lg:flex-grow">
                 <h1 className="mb-6 text-2xl font-bold">Billing details</h1>
-                {props?.error && <p className="mb-6 text-center text-red-500">{props.error}</p>}
+                {error && <p className="mb-6 text-center text-red-500 text-wrap">{error}</p>}
                 <div className="grid gap-6">
                     {/* Name */}
                     <div className="col-span-2 md:col-span-1">
@@ -240,7 +293,7 @@ function Index() {
                 {/* Shipping Cost */}
                 <div className="flex justify-between w-full mt-8">
                     <h3>Shipping cost:</h3>
-                    <span>{shipCost} BDT</span>
+                    <span>{data.shipping_cost} BDT</span>
                 </div>
 
                 {/* Applied Coupon */}
@@ -255,10 +308,36 @@ function Index() {
                     </div>
                 )}
 
+                {/* Payment Method */}
+                <div className="">
+                    <h3 className="text-xl font-bold">Payment method:</h3>
+                    <div>
+                        <input
+                            type="radio"
+                            id="cash_on_delivery"
+                            name="payment_method"
+                            value="cash_on_delivery"
+                            checked={data?.payment_method === 'cash_on_delivery'}
+                            onChange={e => setData("payment_method", e.target.value)}
+                        />
+                        <label htmlFor="cash_on_delivery" className="ml-2">Cash on Delivery</label>
+                        <br />
+                        <input
+                            type="radio"
+                            id="bkash"
+                            name="payment_method"
+                            value="bkash"
+                            checked={data?.payment_method === 'bkash'}
+                            onChange={e => setData("payment_method", e.target.value)}
+                        />
+                        <label htmlFor="bkash" className="ml-2">Bkash</label>
+                    </div>
+                </div>
+
                 {/* Total */}
                 <div className="flex justify-between w-full mt-8">
                     <h3>Total:</h3>
-                    <span>{(parseInt(cart?.total_amount) + parseInt(shipCost)) || 0} BDT</span>
+                    <span>{(parseInt(cart?.total_amount) + parseInt(data.shipping_cost)) || 0} BDT</span>
                 </div>
 
                 {/* Place Order Button */}
@@ -266,7 +345,6 @@ function Index() {
                     {processing ? <i className="self-center mb-3 text-2xl fa fa-spinner animate-spin"></i> : "Place Order"}
                 </button>
             </div>
-
         </form>
     );
 }
