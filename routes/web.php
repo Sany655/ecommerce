@@ -55,19 +55,19 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/get-all-coupons', [CouponController::class, 'getAll'])->name('coupon.get_all');
     Route::put('/order-status/{orderId}', [OrderController::class, 'changeOrderStatus'])->name('home.order_status');
+});
 
-    Route::get('/refresh-cache', function () {
-        Artisan::call('config:clear');
-        Artisan::call('route:clear');
-        Artisan::call('view:clear');
-        Artisan::call('cache:clear');
-        Artisan::call('storage:link'); 
-        sleep(5);
-        Artisan::call('config:cache');
-        Artisan::call('route:cache');
-        Artisan::call('view:cache');
-        return 'Cache cleared, storage linked, and cache saved successfully';
-    });
+Route::get('/refresh-cache', function () {
+    Artisan::call('config:clear');
+    Artisan::call('route:clear');
+    Artisan::call('view:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('storage:link');
+    sleep(5);
+    Artisan::call('config:cache');
+    Artisan::call('route:cache');
+    Artisan::call('view:cache');
+    return 'Cache cleared, storage linked, and cache saved successfully';
 });
 
 Route::fallback(function () {

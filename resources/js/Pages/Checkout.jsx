@@ -322,7 +322,7 @@ function Index() {
                         />
                         <label htmlFor="cash_on_delivery" className="ml-2">Cash on Delivery</label>
                         <br />
-                        <input
+                        {/* <input
                             type="radio"
                             id="bkash"
                             name="payment_method"
@@ -330,7 +330,7 @@ function Index() {
                             checked={data?.payment_method === 'bkash'}
                             onChange={e => setData("payment_method", e.target.value)}
                         />
-                        <label htmlFor="bkash" className="ml-2">Bkash</label>
+                        <label htmlFor="bkash" className="ml-2">Bkash</label> */}
                     </div>
                 </div>
 

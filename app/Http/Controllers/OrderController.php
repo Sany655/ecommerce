@@ -26,7 +26,7 @@ class OrderController extends Controller
         $order = Order::where('order_token', $order_token)->with(['orderItems' => function ($q) {
             return $q->with(['product', 'coupon']);
         }])->with('coupon')->first();
-        return Inertia::render('OrderInvoice', ['order' => $order, 'order_token' => $order_token]);
+        return Inertia::render('OrderInvoice', ['order' => $order, 'order_token' => $order_token, 'app_url' => config('app.url')]);
     }
 
     public function index()

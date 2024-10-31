@@ -91,7 +91,7 @@ class FrontController extends Controller
             return abort(404);
         }
         if (app()->environment('production')) {
-            $product->increment('view_count');
+            $product->increment('views');
         }
         return Inertia::render('ProductDetail', compact('product'));
     }

@@ -12,7 +12,7 @@
     - **Address:** {{ $order->address }}, {{ $order->city }}, {{ $order->division }}
 
     ## Order Details
-    - **Order Invoice Link:** <a href="https://hamdaanz.com/order-invoice/{{$order->order_token}}"
+    - **Order Invoice Link:** <a href="{{config('app.url')}}/order-invoice/{{$order->order_token}}"
         style="color: #4A90E2; text-decoration: underline;">View Invoice</a>
     <table style="width: 100%; border-collapse: collapse;">
         <thead>

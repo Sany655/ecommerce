@@ -4,7 +4,7 @@ import { Head } from '@inertiajs/react';
 import React, { useRef } from 'react';
 import html2pdf from 'html2pdf.js';
 
-function OrderInvoice({ order }) {
+function OrderInvoice({ order,app_url }) {
     const invoiceRef = useRef(null)
 
     const downloadInvoice = async () => {
@@ -61,7 +61,7 @@ function OrderInvoice({ order }) {
                             ))}
                         </tbody>
                     </table>
-                    <a className='underline text-blue-500 hover:text-blue-600' href={"http://localhost:8000/order-invoice/" + order.order_token}>Track your order</a>
+                    <a className='underline text-blue-500 hover:text-blue-600' href={app_url + "/order-invoice/" + order.order_token}>Track your order</a>
                 </div>
 
                 {/* Payment Info */}

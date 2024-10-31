@@ -88,7 +88,7 @@ function OrderCard({ order }) {
                     <ul>
                         {order.order_items.map((item, j) => (
                             <li key={j}>
-                                {j + 1}. {item.product.name} x {item.quantity} <br />
+                                {j + 1}. {item.product?.name} x {item.quantity} <br />
                                 {item.variants && (
                                     <span className="text-sm text-gray-500">
                                         Variants: {JSON.parse(item.variants).map((variant, k) => (
