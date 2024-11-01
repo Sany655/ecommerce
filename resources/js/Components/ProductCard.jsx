@@ -45,6 +45,12 @@ function ProductCard({ product }) {
                                     if (Object.keys(cartItem).length > 0) {
                                         removeFromCart(cartItem.id).then(() => setLoading(false));
                                     } else {
+                                        fbq('track', 'AddToCart', {
+                                            content_name: product?.name,
+                                            content_category: product?.category?.name,
+                                            value: product.discount_price || product.price,
+                                            currency: 'BDT'
+                                        });
                                         addToCart(product.id, 1, product.variants).then(() => setLoading(false));
                                     }
                                 }}

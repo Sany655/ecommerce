@@ -129,7 +129,10 @@ const Index = () => {
                 </div>
                 {cart.cart_items?.length > 0 && (
                     <div className="flex flex-col gap-2">
-                        <Link href={route('home.checkout')} className="px-6 py-3 mt-4 text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600">
+                        <Link href={route('home.checkout')} onClick={() => fbq('track', 'InitiateCheckout', {
+                            value: cart.total_amount,
+                            currency: 'BDT'
+                        })} className="px-6 py-3 mt-4 text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600">
                             Proceed to checkout
                         </Link>
                         <button className="px-6 py-3 text-white bg-red-500 rounded-lg hover:bg-red-600" onClick={() => {

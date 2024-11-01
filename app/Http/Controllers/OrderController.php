@@ -9,7 +9,6 @@ use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -22,11 +21,12 @@ class OrderController extends Controller
 {
     function orderInvoice($order_token)
     {
-        // $decyptedOrderId = Crypt::decryptString($orderId);
         $order = Order::where('order_token', $order_token)->with(['orderItems' => function ($q) {
             return $q->with(['product', 'coupon']);
         }])->with('coupon')->first();
-        return Inertia::render('OrderInvoice', ['order' => $order, 'order_token' => $order_token, 'app_url' => config('app.url')]);
+        if ($order) {
+            return Inertia::render('OrderInvoice', ['order' => $order, 'order_token' => $order_token, 'app_url' => config('app.url')]);
+        } else return abort(404);
     }
 
     public function index()
@@ -37,7 +37,7 @@ class OrderController extends Controller
 
     public function placeOrder(Request $request)
     {
-        $validate = $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:30',
             'email' => 'nullable|string|email|max:255|unique:users',
             'address' => 'required|string|max:100',
@@ -45,64 +45,78 @@ class OrderController extends Controller
             'mobile' => ['required', 'string', 'max:15', 'regex:/^(?:\+?88)?01[3-9]\d{8}$/'],
             'notes' => 'nullable|string|max:255',
             'payment_method' => ['required', 'string', 'max:50', Rule::in(['cash_on_delivery', 'bkash'])],
-            'payment_status' => 'string|max:20',
+            'payment_status' => 'nullable|string|max:20',
             'shipping_cost' => 'required|numeric|min:0',
         ]);
+
         $cartToken = $request->cookie('cart_token');
-        $cart = Cart::where('cart_token', $cartToken)->first();
+        $cart = Cart::with('cartItems')->where('cart_token', $cartToken)->first();
+
         if (!$cart || $cart->cartItems->isEmpty()) {
-            return Inertia::render('Checkout')->with(['error' => 'Cart is empty or invalid']);
+            session()->flash('error', 'Cart is empty or invalid');
+            return redirect()->route('home.checkout');
         }
-        if (app()->environment('production')) {
-            $orderToken = $request->cookie('order_token');
-            if ($orderToken) {
-                return Inertia::render('Checkout')->with(['error' => 'if u want any kind of information please call us - 01854846414']);
-            }
+
+        // Check for existing order token if in production
+        if (app()->environment('production') && $request->cookie('order_token') === $cartToken) {
+            session()->flash('error', 'if u want any kind of information please call us - 01854846414');
+            return redirect()->route('home.checkout');
         }
-        $orderToken = $cartToken;
+
         DB::beginTransaction();
         try {
+            // Create Order
             $order = Order::create([
-                'order_token' => $orderToken,
-                'name' => $validate['name'],
-                'email' => $validate['email'],
-                'address' => $validate['address'],
-                'division' => $validate['division'],
-                'mobile' => $validate['mobile'],
-                'notes' => $validate['notes'],
-                'total_price' => $cart->total_amount + $validate['shipping_cost'],
+                'order_token' => $cartToken,
+                'name' => $validatedData['name'],
+                'email' => $validatedData['email'],
+                'address' => $validatedData['address'],
+                'division' => $validatedData['division'],
+                'mobile' => $validatedData['mobile'],
+                'notes' => $validatedData['notes'],
+                'total_price' => $cart->total_amount + $validatedData['shipping_cost'],
                 'coupon_id' => $cart->coupon_id,
-                'payment_method' => $validate['payment_method'],
-                'payment_status' => $validate['payment_status'],
+                'payment_method' => $validatedData['payment_method'],
+                'payment_status' => $validatedData['payment_status'] ?? 'pending',
                 'status' => 'pending',
             ]);
-            foreach ($cart->cartItems as $cartItem) {
-                OrderItem::create([
+
+            // Bulk insert OrderItems
+            $orderItems = $cart->cartItems->map(function ($item) use ($order) {
+                return [
                     'order_id' => $order->id,
-                    'product_id' => $cartItem->product_id,
-                    'coupon_id' => $cartItem->coupon_id,
-                    'variants' => $cartItem->variants,
-                    'quantity' => $cartItem->quantity,
-                    'subtotal' => $cartItem->subtotal,
-                ]);
-            }
-            if (app()->environment('production')) {
-                Cookie::queue('order_token', $orderToken, 15);
-                if (filter_var($order->email, FILTER_VALIDATE_EMAIL)) {
-                    try {
-                        Mail::to($order->email)->send(new OrderInvoiceMail($order));
-                    } catch (\Throwable $th) {
-                        Log::info(['error' => 'Failed to send invoice', 'error' => $th->getMessage()]);
-                    }
-                }
-            }
+                    'product_id' => $item->product_id,
+                    'coupon_id' => $item->coupon_id,
+                    'variants' => $item->variants,
+                    'quantity' => $item->quantity,
+                    'subtotal' => $item->subtotal,
+                ];
+            })->toArray();
+            OrderItem::insert($orderItems);
+            // Clear the cart
             $cart->delete();
             DB::commit();
-            return redirect()->route('home.order_invoice', $orderToken);
         } catch (\Exception $e) {
             DB::rollBack();
-            return Inertia::render('Checkout')->with(['error' => 'Failed to place order, try again later.']);
+            Log::error('Order placement failed', ['error' => $e->getMessage()]);
+            session()->flash('error', 'Failed to place order, try again later.');
+            return redirect()->route('home.checkout');
         }
+
+        // Set order token cookie if in production
+        if (app()->environment('production')) {
+            Cookie::queue('order_token', $cartToken, 15);
+            // if ($order->email) {
+            //     try {
+            //         Mail::to($order->email)->queue(new OrderInvoiceMail($order));
+            //     } catch (\Exception $e) {
+            //         Log::error('Sending email failed', ['error' => $e->getMessage()]);
+            //     }
+            // }
+        }
+
+        $newToken = (string) Str::uuid();
+        return redirect()->route('home.order_invoice', $cartToken)->cookie('cart_token', $newToken, 60 * 24 * 30);;
     }
 
     function onlinePayment(Request $request)
@@ -136,15 +150,16 @@ class OrderController extends Controller
     function changeOrderStatus(Request $request, $orderId)
     {
         try {
-            Order::where('id', $orderId)->update(['status' => $request->status]);
+            $payment_status = $request->status === "completed" ? "paid" : "pending";
+            Order::where('id', $orderId)->update(['status' => $request->status, 'payment_status' => $payment_status]);
             $order = Order::with(['orderItems.product', 'orderItems.coupon', 'coupon'])->find($orderId);
-            if ($order->status === 'processing' && $order->email) {
-                try {
-                    Mail::to($order->email)->send(new OrderInvoiceMail($order));
-                } catch (\Throwable $th) {
-                    Log::info(['message' => 'Failed to send invoice', 'error' => $th->getMessage()]);
-                }
-            }
+            // if ($order->status === 'processing' && $order->email) {
+            //     try {
+            //         Mail::to($order->email)->send(new OrderInvoiceMail($order));
+            //     } catch (\Throwable $th) {
+            //         Log::info(['message' => 'Failed to send invoice after change order status', 'error' => $th->getMessage()]);
+            //     }
+            // }
             return response()->json(['status' => $order->status], 200);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'Failed to update order status', 'error' => $th->getMessage()], 500);

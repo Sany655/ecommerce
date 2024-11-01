@@ -68,7 +68,7 @@ function OrderCard({ order }) {
             .finally(() => setLoading(false));
     };
     return (
-        <div className="p-6 border border-gray-200 rounded-lg shadow-md bg-white flex flex-col justify-between">
+        <div className={`p-6 border border-gray-200 rounded-lg shadow-md flex flex-col justify-between ${order.status === 'pending' ? "bg-white" : (order.status === 'processing' ? "bg-yellow-500" : (order.status === 'completed' ? "bg-green-500" : "bg-red-200"))}`}>
             {/* Order Info */}
             <div className="mb-4">
                 <h3 className="text-lg font-bold mb-2">Order ID: {order.id}</h3>

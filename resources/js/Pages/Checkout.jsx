@@ -5,7 +5,7 @@ import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 
 function Index() {
-    const { props } = usePage() ?? {}; // Null check on usePage
+    const { flash } = usePage().props;
     const { cart, removeFromCart, apply_coupon } = useCart() ?? {}; // Null check on useCart
     const { post, data, reset, setData, errors, clearErrors, processing } = useForm({
         name: "",
@@ -19,9 +19,14 @@ function Index() {
         shipping_cost: 0,
     }) ?? {}; // Null check on useForm
     const params = new URLSearchParams(window.location.search)
-    const [error, setError] = useState('')
+    const [error, setError] = useState()
     const [couponError, setCouponError] = useState('');
     const [couponSuccess, setCouponSuccess] = useState('');
+
+    useEffect(() => {
+        if (flash.error) setError(flash.error);
+    }, [flash])
+    
 
     useEffect(() => {
         const paymentID = params.get('paymentID');
@@ -41,8 +46,7 @@ function Index() {
                     break;
             }
         }
-        if (props.error) setError(props.error);
-    }, [props])
+    }, [])
 
     useEffect(() => {
         if (error) {
@@ -98,6 +102,12 @@ function Index() {
     }
 
     function placeOrder() {
+        fbq('track', 'Purchase', {
+            value: cart.total_amount + parseInt(data.shipping_cost),
+            currency: 'BDT',
+            content_ids: cart.cart_items.map(p => p.product.id),
+            content_type: 'product'
+        })
         post(route('home.place_order'), {
             onSuccess: () => {
                 clearErrors();

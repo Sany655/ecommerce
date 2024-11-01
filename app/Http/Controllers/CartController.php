@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Cart;
 use App\Models\Product;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -121,10 +122,16 @@ class CartController extends Controller
     {
         $cartToken = $request->cookie('cart_token');
         $cart = Cart::where('cart_token', $cartToken)->first();
+
         if (!$cart) {
             return response()->json(['message' => 'Cart not found'], 404);
         }
+
         $cart->delete();
-        return response()->json(['message' => 'Cart cleared']);
+
+        // Return a response with the cookie removed
+        $newToken = (string) Str::uuid();
+        return response()->json(['message' => 'Cart cleared'])
+            ->cookie('cart_token', $newToken, 60 * 24 * 30);
     }
 }

@@ -1,0 +1,1 @@
+## pixel setup: https://developers.facebook.com/docs/meta-pixel/reference
