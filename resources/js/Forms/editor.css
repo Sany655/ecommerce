@@ -1,7 +1,13 @@
-.jodit-status-bar-link{
+.jodit-status-bar-link {
   display: none;
 }
-.jodit-wysiwyg{
-  height: 150px!important;
-  overflow: scroll!important;
+
+.jodit-wysiwyg {
+  height: 150px !important;
+  overflow: scroll !important;
+}
+
+.short_description .jodit-wysiwyg {
+  height: 50px !important;
+  overflow: scroll !important;
 }

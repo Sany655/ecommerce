@@ -14,6 +14,8 @@ function ProductCreateForm({ category }) {
         category_id: category.id,
         name: '',
         description: '',
+        description: '',
+        short_description: '',
         variants: category.attributes ? JSON.stringify(category.attributes.split(',').map((attr) => ({ attribute: attr, values: '' }))) : JSON.stringify([]),
         price: '',
         images: [],
@@ -63,8 +65,21 @@ function ProductCreateForm({ category }) {
                         </div>
 
                         <div className="flex flex-col">
+                            <InputLabel htmlFor="short_description">Product Short Description *</InputLabel>
+                            <JoditEditor
+                                id="short_description"
+                                required
+                                value={data.short_description}
+                                onChange={(value) => setData("short_description", value)}
+                                className="text-black short_description"
+                            />
+                            <InputError message={errors.short_description} className="mt-2" />
+                        </div>
+
+                        <div className="flex flex-col">
                             <InputLabel htmlFor="description">Product Description *</InputLabel>
                             <JoditEditor
+                                id="description"
                                 required
                                 value={data.description}
                                 onChange={(value) => setData("description", value)}

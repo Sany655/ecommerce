@@ -16,6 +16,7 @@ class ProductController extends Controller
         // Validate input data
         $request->validate([
             'name' => 'required|string|max:255|unique:products,name',
+            'short_description' => 'nullable|string|max:40000',
             'description' => 'nullable|string|max:4000000000',
             'variants' => 'nullable|json',
             'price' => [
@@ -49,6 +50,7 @@ class ProductController extends Controller
         // Create the product with image paths as a JSON string (or modify to suit your schema)
         Product::create([
             'name' => $request->input('name'),
+            'short_description' => $request->input('short_description'),
             'description' => $request->input('description'),
             'variants' => $request->input('variants'),
             'price' => $request->input('price'),
@@ -64,6 +66,7 @@ class ProductController extends Controller
         // Validate the request
         $request->validate([
             'name' => 'required|string|max:255|unique:products,name,' . $product->id,
+            'short_description' => 'nullable|string|max:40000',
             'description' => 'nullable|string|max:4000000000',
             'variants' => 'nullable|json',
             'price' => [
@@ -105,6 +108,7 @@ class ProductController extends Controller
         // Update the product with the new data
         $product->update([
             'name' => $request->name,
+            'short_description' => $request->short_description,
             'description' => $request->description,
             'variants' => $request->variants,
             'price' => $request->price,

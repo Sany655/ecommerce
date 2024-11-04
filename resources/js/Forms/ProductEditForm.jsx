@@ -24,6 +24,7 @@ function ProductEditForm({ product }) {
             _method: "PATCH",
             name: product.name,
             description: product.description,
+            short_description: product.short_description,
             category_id: product.category_id,
             variants: (JSON.parse(product.variants)?.length > 0 && product.variants) || (product.category.attributes ? JSON.stringify(product.category.attributes.split(',').map((attr) => ({ attribute: attr, values: '' }))) : JSON.stringify([])),
             images: [],
@@ -90,9 +91,22 @@ function ProductEditForm({ product }) {
                             </div>
                         </div>
 
+                        <div className="flex flex-col">
+                            <InputLabel htmlFor="short_description">Product Short Description *</InputLabel>
+                            <JoditEditor
+                                id="short_description"
+                                required
+                                value={data.short_description}
+                                onChange={(value) => setData("short_description", value)}
+                                className="text-black short_description"
+                            />
+                            <InputError message={errors.short_description} className="mt-2" />
+                        </div>
+
                         <div className="mb-5">
                             <InputLabel htmlFor="description">Product Description *</InputLabel>
                             <JoditEditor
+                                id="description"
                                 required
                                 value={data.description}
                                 onChange={(value) => setData("description", value)}

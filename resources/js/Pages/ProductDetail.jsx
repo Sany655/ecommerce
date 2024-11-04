@@ -79,8 +79,9 @@ const ImageGallery = ({ images }) => {
 
 const Index = ({ product }) => {
     const { cart, addToCart, removeFromCart, cartLoading } = useCart()
-    const { name, description, variants, price, images, discount_price, status } = product;
+    const { name, short_description, description, variants, price, images, discount_price, status } = product;
     const sanitizedDescription = DOMPurify.sanitize(description);
+    const sanitizedshort_description = DOMPurify.sanitize(short_description);
     const [selectedVariants, setSelectedVariants] = useState([])
     const [cartItem, setCartItem] = useState({});
 
@@ -175,6 +176,8 @@ const Index = ({ product }) => {
                             </>
                         )}
                     </div>
+
+                    <p className="my-5" dangerouslySetInnerHTML={{ __html: sanitizedshort_description }}></p>
 
                     <div className="flex items-center mb-4">
                         {
