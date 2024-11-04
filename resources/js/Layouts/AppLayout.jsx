@@ -2,11 +2,17 @@ import ApplicationLogo from "@/Components/ApplicationLogo"
 import NavLink from "@/Components/NavLink"
 import ScrollTop from "@/Components/ScrollTop"
 import useCart, { CartProvider } from "@/Hooks/useCart"
-import { Link, router } from "@inertiajs/react"
+import { Link, router, usePage } from "@inertiajs/react"
 import axios from "axios"
 import { useEffect, useState } from "react"
 
 function AppLayout({ children }) {
+    const { url } = usePage();
+
+    useEffect(() => {
+        fbq('track', 'PageView');
+    }, [url]);
+
 
     return (
         <CartProvider>

@@ -14,7 +14,6 @@ function ProductCreateForm({ category }) {
         category_id: category.id,
         name: '',
         description: '',
-        description: '',
         short_description: '',
         variants: category.attributes ? JSON.stringify(category.attributes.split(',').map((attr) => ({ attribute: attr, values: '' }))) : JSON.stringify([]),
         price: '',
