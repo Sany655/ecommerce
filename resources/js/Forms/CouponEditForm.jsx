@@ -37,7 +37,7 @@ function CouponEditForm({ coupon }) {
                 <div className="p-5">
                     <h3 className='flex items-center justify-between mb-3 text-2xl font-bold'>
                         <span>Edit Coupon</span>
-                        <i className="fa fa-close" onClick={() => setCouponEditModal(false)}></i>
+                        <i className="fa fa-close cursor-pointer" onClick={() => setCouponEditModal(false)}></i>
                     </h3>
                     <form className='flex flex-col gap-5' onSubmit={handleEditCoupon}>
                         <div>

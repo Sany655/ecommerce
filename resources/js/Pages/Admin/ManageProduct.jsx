@@ -81,6 +81,10 @@ function UpdateImages({ id, images }) {
         <>
             <PrimaryButton onClick={() => setIsModalOpen(true)}>Update Images</PrimaryButton>
             <Modal show={isModalOpen} onClose={() => setIsModalOpen(false)} >
+                <h3 className="flex items-center justify-between mb-3 text-lg md:text-2xl font-bold">
+                    <span>Update Product Images</span>
+                    <i className="fa fa-close cursor-pointer" onClick={() => setIsModalOpen(false)}></i>
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
                     {
                         images.map((image, i) => (
@@ -88,7 +92,7 @@ function UpdateImages({ id, images }) {
                                 <div className="absolute inset-0 bg-black opacity-50"></div>
                                 <div className="relative flex items-center justify-center h-full text-white">
                                     <div className="flex flex-col justify-center gap-2 items-between">
-                                        <h1 className="mb-4 text-4xl font-bold">{i + 1}</h1>
+                                        <h1 className="mb-4 text-lg lg:text-4xl font-bold">{i + 1}</h1>
                                         <i className="text-red-500 cursor-pointer fa fa-trash" onClick={() => handleImageDelete(image)}></i>
                                     </div>
                                 </div>

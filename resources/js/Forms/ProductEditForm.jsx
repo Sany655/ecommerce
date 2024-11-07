@@ -55,7 +55,7 @@ function ProductEditForm({ product }) {
                 <div className="p-5">
                     <h3 className="flex items-center justify-between mb-3 text-2xl font-bold">
                         <span>Edit Product</span>
-                        <i className="fa fa-close" onClick={() => setProdEditModal(false)}></i>
+                        <i className="fa fa-close cursor-pointer" onClick={() => setProdEditModal(false)}></i>
                     </h3>
                     <form className="flex flex-col gap-5" onSubmit={UpdateProduct}>
                         <div className="grid-cols-2 gap-2 md:grid">

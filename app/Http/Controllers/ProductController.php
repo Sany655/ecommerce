@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 class ProductController extends Controller
 {
@@ -35,7 +36,7 @@ class ProductController extends Controller
             ],
             'category_id' => 'required|exists:categories,id',
             'images' => 'nullable|array|max:10',
-            'images.*' => 'image|mimes:jpg,png,jpeg,gif|max:2048',
+            'images.*' => 'image|mimes:jpg,png,jpeg,gif|max:5120',
             'status' => 'boolean',
         ]);
 
@@ -43,7 +44,10 @@ class ProductController extends Controller
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $file) {
                 // Store each file in 'public/product' directory and save the path
-                $imagePaths[] = $file->store('product', 'public');
+                $filePath = $file->store('product', 'public');
+                $imagePaths[] = $filePath;
+                $optimizerChain = OptimizerChainFactory::create();
+                $optimizerChain->optimize(storage_path("app/public/{$filePath}"));
             }
         }
 
@@ -85,7 +89,7 @@ class ProductController extends Controller
             ],
             'category_id' => 'required|exists:categories,id',
             'images' => 'nullable|array|max:10',
-            'images.*' => 'image|mimes:jpg,png,jpeg,gif|max:2048',
+            'images.*' => 'image|mimes:jpg,png,jpeg,gif|max:5120',
             'status' => 'boolean',
         ]);
 
@@ -96,11 +100,14 @@ class ProductController extends Controller
         // Check if new images are uploaded
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $file) {
-                // Store each new file in 'public/product' and save the path
-                $newImagePaths[] = $file->store('product', 'public');
+                // Store each file in 'public/product' directory and save the path
+                $filePath = $file->store('product', 'public');
+                $newImagePaths[] = $filePath;
+                $optimizerChain = OptimizerChainFactory::create();
+                $optimizerChain->optimize(storage_path("app/public/{$filePath}"));
             }
         }
-
+        
         // Combine the existing images with the newly uploaded ones (while keeping max of 10 images)
         $allImages = array_merge($existingImages, $newImagePaths);
         $allImages = array_slice($allImages, 0, 10); // Ensure a maximum of 10 images

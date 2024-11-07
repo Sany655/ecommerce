@@ -35,7 +35,7 @@ function CategoryCreateForm({ categories }) {
                 <div className="p-5">
                     <h3 className='mb-3 text-2xl font-bold flex justify-between items-center'>
                         <span>Create Category</span>
-                        <i className="fa fa-close" onClick={() => setCatCreateModal(false)}></i>
+                        <i className="fa fa-close cursor-pointer" onClick={() => setCatCreateModal(false)}></i>
                     </h3>
                     <form
                         className="flex flex-col gap-5"

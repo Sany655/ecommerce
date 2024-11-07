@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 class CategoryController extends Controller
 {
@@ -43,7 +44,7 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255|unique:categories,name',
             'description' => 'nullable|string',
             'attributes' => 'nullable|string|max:100',
-            'banner' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
+            'banner' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:5120',
             'parent_id' => 'nullable|exists:categories,id',
             'status' => 'boolean',
         ]);
@@ -51,6 +52,8 @@ class CategoryController extends Controller
         $bannerPath = null;
         if ($request->hasFile('banner')) {
             $bannerPath = $request->file('banner')->store('category', 'public');
+            $optimizerChain = OptimizerChainFactory::create();
+            $optimizerChain->optimize(storage_path("app/public/{$bannerPath}"));
         }
 
         Category::create([
@@ -60,6 +63,50 @@ class CategoryController extends Controller
             'banner' => $bannerPath,
             'parent_id' => $request->input('parent_id'),
             'status' => $request->input('status'),
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Category  $category
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Category $category)
+    {
+        // Validate the request
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
+            'description' => 'nullable|string',
+            'attributes' => 'nullable|string|max:100',
+            'banner' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:5120',
+            'parent_id' => 'nullable|exists:categories,id',
+            'status' => 'boolean',
+        ]);
+
+        // Handle image upload
+        if ($request->hasFile('banner')) {
+            // Delete the old banner if it exists
+            if ($category->banner) {
+                Storage::disk('public')->delete($category->banner);
+            }
+
+            // Upload the new banner
+            $bannerPath = $request->file('banner')->store('category', 'public');
+            $optimizerChain = OptimizerChainFactory::create();
+            $optimizerChain->optimize(storage_path("app/public/{$bannerPath}"));
+            $category->banner = $bannerPath;
+        }
+
+        // Update the category with the validated data
+        $category->update([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'attributes' => $validated['attributes'] ?? null,
+            'banner' => $category->banner, // New banner or old banner
+            'parent_id' => $validated['parent_id'] ?? null, // Set parent_id to null if not provided
+            'status' => $validated['status'], // Update status field
         ]);
     }
 
@@ -84,48 +131,6 @@ class CategoryController extends Controller
     // {
 
     // }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Category $category)
-    {
-        // Validate the request
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
-            'description' => 'nullable|string',
-            'attributes' => 'nullable|string|max:100',
-            'banner' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
-            'parent_id' => 'nullable|exists:categories,id',
-            'status' => 'boolean',
-        ]);
-
-        // Handle image upload
-        if ($request->hasFile('banner')) {
-            // Delete the old banner if it exists
-            if ($category->banner) {
-                Storage::disk('public')->delete($category->banner);
-            }
-
-            // Upload the new banner
-            $bannerPath = $request->file('banner')->store('category', 'public');
-            $category->banner = $bannerPath;
-        }
-
-        // Update the category with the validated data
-        $category->update([
-            'name' => $validated['name'],
-            'description' => $validated['description'],
-            'attributes' => $validated['attributes'] ?? null,
-            'banner' => $category->banner, // New banner or old banner
-            'parent_id' => $validated['parent_id'] ?? null, // Set parent_id to null if not provided
-            'status' => $validated['status'], // Update status field
-        ]);
-    }
 
     /**
      * Remove the specified resource from storage.

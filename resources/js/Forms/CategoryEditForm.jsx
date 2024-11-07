@@ -46,7 +46,7 @@ function CategoryEditForm({ category, categories }) {
                 <div className="p-5">
                     <h3 className="flex items-center justify-between mb-3 text-2xl font-bold">
                         <span>Edit Category</span>
-                        <i className="fa fa-close" onClick={() => setCatEditModal(false)}></i>
+                        <i className="fa fa-close cursor-pointer" onClick={() => setCatEditModal(false)}></i>
                     </h3>
                     <form className="space-y-6" onSubmit={UpdateCategory} encType="multipart/form-data">
                         {/* Name Input */}

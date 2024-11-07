@@ -37,7 +37,7 @@ function CouponCreateForm() {
                 <div className="p-5">
                     <h3 className='flex items-center justify-between mb-3 text-2xl font-bold'>
                         <span>Create Coupon</span>
-                        <i className="fa fa-close" onClick={() => setCouponCreateModal(false)}></i>
+                        <i className="fa fa-close cursor-pointer" onClick={() => setCouponCreateModal(false)}></i>
                     </h3>
                     <form className='flex flex-col gap-5' onSubmit={handleCreateCoupon} encType="multipart/form-data">
                         <div>
