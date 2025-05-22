@@ -7,6 +7,7 @@ use App\Http\Controllers\FrontController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -38,7 +39,8 @@ Route::post('/apply-coupon', [FrontController::class, 'applyCoupon'])->name('hom
 Route::get('/get-all-categories', [CategoryController::class, 'getAll'])->name('categories.get_all');
 Route::get('/checkout', fn() => Inertia::render("Checkout"))->name('home.checkout');
 Route::post('/place-order', [OrderController::class, 'placeOrder'])->name('home.place_order');
-ROUte::post('/online-payment', [OrderController::class, 'onlinePayment'])->name('home.online_payment')->middleware('bkash_auth');
+Route::post('/online-payment', [OrderController::class, 'onlinePayment'])->name('home.online_payment')->middleware('bkash_auth');
+Route::get('/site-contact-info', [FrontController::class, 'contactInfo'])->name('home.contact_info');
 
 
 Route::middleware(['auth'])->group(function () {
@@ -55,6 +57,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/get-all-coupons', [CouponController::class, 'getAll'])->name('coupon.get_all');
     Route::put('/order-status/{orderId}', [OrderController::class, 'changeOrderStatus'])->name('home.order_status');
+
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::post('/thumbnails-settings', [SettingController::class, 'logoAndFaviconUpload'])->name('settings.logo_and_favicon_upload');
+    Route::post('/company-settings', [SettingController::class, 'companyInfoUpdate'])->name('settings.company_info_update');
+    Route::post('/contact-settings', [SettingController::class, 'contactInfoUpdate'])->name('settings.contact_info_update');
 });
 
 Route::get('/clear-cache', function () {

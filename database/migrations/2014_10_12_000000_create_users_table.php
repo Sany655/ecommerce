@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('role')->default('customer'); // customer or admin
             $table->string('address')->nullable();
             $table->string('phone_number')->nullable();
+            $table->json('public_info')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
