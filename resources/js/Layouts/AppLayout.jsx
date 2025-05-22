@@ -103,6 +103,14 @@ const Header = () => {
 }
 
 const Footer = () => {
+    const [contactInfo, setContactInfo] = useState({})
+    useEffect(() => {
+        axios.get(route('home.contact_info')).then(response => {
+            setContactInfo(response.data)
+            console.log(response.data);
+            
+        }).catch(error => console.log(error.message))
+    }, [])
     return (
         <footer className="py-8 bg-gray-100">
             <div className="container grid grid-cols-1 gap-8 mx-auto text-center md:grid-cols-3 md:text-left">
@@ -112,8 +120,8 @@ const Footer = () => {
                         <ApplicationLogo />
                     </Link>
                     <p className="text-sm text-gray-700">
-                        Online Based Premium Islamic Lifestyle Shop. <br />
-                        Our motto is “Ad dawah bit-teezarah”. Dawah by business.
+                        {contactInfo.company?.description} <br />
+                        Our motto is “{contactInfo.company?.motto}”. Dawah by business.
                     </p>
                 </div>
 
@@ -121,33 +129,32 @@ const Footer = () => {
                 <div className="md:text-center">
                     <div className="mb-4">
                         <h5 className="mb-2 text-lg font-semibold text-gray-800">We Accept</h5>
-                        <div className="flex justify-center space-x-2">
-                            <img src="/images/bkash.jpg" alt="bkash" className="h-8" />
-                        </div>
+                        {contactInfo.payment_methods && contactInfo.payment_methods.map((method, index) => (
+                            <div className="flex justify-center space-x-2">
+                                <img src={`/images/${method}.jpg`} alt="bkash" className="h-8" />
+                            </div>
+                        ))}
                     </div>
                 </div>
 
                 {/* Download App */}
                 <div className="text-sm text-gray-700 md:text-right">
                     <h5 className="mb-2 text-lg font-semibold text-gray-800">Contact Us</h5>
-                    <p>📞 (+88) 01854846414</p>
-                    <p>✉️ Info@hamdaanz.com</p>
+                    {contactInfo.contact?.phone && <p>📞 (+88) {contactInfo.contact?.phone}</p>}
+                    {contactInfo.contact?.email && <p>✉️ {contactInfo.contact?.email}</p>}
+                    {contactInfo.contact?.address && <p>🏢 {contactInfo.contact?.address}</p>}
                 </div>
             </div>
             <div className="container pt-4 mx-auto mt-8 text-center border-t">
                 <div className="flex justify-center mb-4 space-x-4">
-                    <a href="https://www.tiktok.com/@hamdaans1" className="text-gray-600 hover:text-gray-800" target="_blank">
-                        <i className="fab fa-tiktok"></i>
-                    </a>
-                    <a href="https://www.facebook.com/hamdaanzz?mibextid=LQQJ4d" className="text-gray-600 hover:text-gray-800" target="_blank">
-                        <i className="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="https://www.instagram.com/hamdaan_z/profilecard/" target="_blank" className="text-gray-600 hover:text-gray-800">
-                        <i className="fab fa-instagram"></i>
-                    </a>
+                    {contactInfo.social_media?.map((social, index) => (
+                        <a key={index} href={social.link} className="text-gray-600 hover:text-gray-800" target="_blank">
+                            <i className={`fab fa-${social.name}`}></i>
+                        </a>
+                    ))}
                 </div>
                 <p className="text-sm text-gray-700">
-                    Islamic Lifestyle Brand in Bangladesh | hamdaanz.com
+                    {contactInfo.company?.name} | {contactInfo.legal?.domain} {contactInfo.legal?.copyright} | {contactInfo.legal?.all_rights_reserved && "All Rights Reserved"}
                 </p>
             </div>
         </footer>

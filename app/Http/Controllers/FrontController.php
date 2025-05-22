@@ -9,6 +9,7 @@ use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\User;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -16,6 +17,11 @@ use Inertia\Inertia;
 
 class FrontController extends Controller
 {
+    function contactInfo() {
+        $public_info = User::where('role', 'admin')->first('public_info');
+        return response($public_info->public_info);
+    }
+
     public function applyCoupon(Request $request)
     {
         $cartToken = $request->cookie('cart_token');
