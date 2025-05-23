@@ -121,7 +121,7 @@ const Footer = () => {
                     </Link>
                     <p className="text-sm text-gray-700">
                         {contactInfo.company?.description} <br />
-                        Our motto is “{contactInfo.company?.motto}”. Dawah by business.
+                        Our motto is “{contactInfo.company?.motto}”.
                     </p>
                 </div>
 
