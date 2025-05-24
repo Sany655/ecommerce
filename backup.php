@@ -1,5 +1,5 @@
 <?php
-$exclude = ['vendor', 'node_modules','zipper.php','.htaccess','.env','.git']; // files/folders to skip
+$exclude = ['vendor', 'node_modules','backup.php','.env','.git']; // files/folders to skip
 $zipFile = 'backup_' . date('Y-m-d_H-i-s') . '.zip';
 $zip = new ZipArchive();
 
