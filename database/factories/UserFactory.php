@@ -30,35 +30,35 @@ class UserFactory extends Factory
             'phone_number' => $this->faker->phoneNumber,
             'public_info' => json_encode([
                 "company" => [
-                    "name" => "Islamic Lifestyle Brand in Bangladesh",
-                    "description" => "Online Based Premium Islamic Lifestyle Shop.",
-                    "motto" => "Ad dawah bit-teezarah. Dawah by business."
+                    "name" => "Tawaqqul",
+                    "description" => "Shop with Intention. Live with Tawakkul.",
+                    "motto" => "Trust. Live. Flourish."
                 ],
                 "contact" => [
-                    "phone" => "+88 01854846414",
-                    "email" => "Info@hamdaanz.com"
+                    "phone" => "+88 01876626011",
+                    "email" => "Info@mazharulalam.co"
                 ],
                 "payment_methods" => ["bkash"],
                 "social_media" => [
-                    ["name"=>"tiktok","link"=> "https://www.tiktok.com/@hamdaanz"],
-                    ["name"=>"facebook","link"=> "https://www.facebook.com/hamdaanz"],
-                    ["name"=>"instagram","link"=> "https://www.instagram.com/hamdaanz"],
-                    ["name"=>"youtube","link"=> "https://www.youtube.com/@hamdaanz"],
-                    ["name"=>"linkedin","link"=> "https://www.linkedin.com/company/hamdaanz"],
-                    ["name"=>"twitter","link"=> "https://twitter.com/hamdaanz"],
-                    ["name"=>"pinterest","link"=> "https://www.pinterest.com/hamdaanz"],
-                    ["name"=>"website","link"=> "https://hamdaanz.com"],
-                    ["name"=>"blog","link"=> "https://hamdaanz.com/blog"],
+                    ["name"=>"tiktok","link"=> "https://www.tiktok.com/@mazharulalam"],
+                    ["name"=>"facebook","link"=> "https://www.facebook.com/mazharulalam"],
+                    ["name"=>"instagram","link"=> "https://www.instagram.com/mazharulalam"],
+                    ["name"=>"youtube","link"=> "https://www.youtube.com/@mazharulalam"],
+                    ["name"=>"linkedin","link"=> "https://www.linkedin.com/company/mazharulalam"],
+                    ["name"=>"twitter","link"=> "https://twitter.com/mazharulalam"],
+                    ["name"=>"pinterest","link"=> "https://www.pinterest.com/mazharulalam"],
+                    ["name"=>"website","link"=> "https://mazharulalam.com"],
+                    ["name"=>"blog","link"=> "https://mazharulalam.com/blog"],
                     ["name"=>"whatsapp","link"=> "https://wa.me/8801854846414"],
-                    ["name"=>"telegram","link"=> "https://t.me/hamdaanz"],
-                    ["name"=>"snapchat","link"=> "https://www.snapchat.com/add/hamdaanz"],
-                    ["name"=>"twitch","link"=> "https://www.twitch.tv/hamdaanz"],
-                    ["name"=>"discord","link"=> "https://discord.gg/hamdaanz"],
+                    ["name"=>"telegram","link"=> "https://t.me/mazharulalam"],
+                    ["name"=>"snapchat","link"=> "https://www.snapchat.com/add/mazharulalam"],
+                    ["name"=>"twitch","link"=> "https://www.twitch.tv/mazharulalam"],
+                    ["name"=>"discord","link"=> "https://discord.gg/mazharulalam"],
                 ],
                 "legal" => [
                     "copyright" => "© 2025",
                     "all_rights_reserved" => true,
-                    "domain" => "ecommerce.com",
+                    "domain" => "mazharulalam.co",
                 ]
             ]),
             'remember_token' => Str::random(10),
