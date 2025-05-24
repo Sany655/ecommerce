@@ -29,7 +29,6 @@ class SettingController extends Controller
         ];
         $user->public_info = json_encode($publicInfo);
         $user->save();
-        return redirect()->back();
     }
 
     function contactInfoUpdate() {
@@ -48,7 +47,34 @@ class SettingController extends Controller
         ];
         $user->public_info = json_encode($publicInfo);
         $user->save();
-        return redirect()->back();
+    }
+
+    function socialInfoUpdate()
+    {
+        $user = User::where('role', 'admin')->first();
+        $publicInfo = json_decode($user->public_info, true) ?? [];
+        $publicInfo['social_media'] = request()->social_media ?? [];
+        $user->public_info = json_encode($publicInfo);
+        $user->save();
+    }
+
+    function paymentInfoUpdate()
+    {
+        $user = User::where('role', 'admin')->first();
+        $publicInfo = json_decode($user->public_info, true) ?? [];
+        $publicInfo['payment_methods'] = request()->payment_methods ?? [];
+        $user->public_info = json_encode($publicInfo);
+        $user->save();
+        
+    }
+
+    function colorInfoUpdate()
+    {
+        $user = User::where('role', 'admin')->first();
+        $publicInfo = json_decode($user->public_info, true) ?? [];
+        $publicInfo['theme'] = request()->theme ?? [];
+        $user->public_info = json_encode($publicInfo);
+        $user->save();
     }
 
     function logoAndFaviconUpload(Request $request){

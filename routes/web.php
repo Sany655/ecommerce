@@ -62,6 +62,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/thumbnails-settings', [SettingController::class, 'logoAndFaviconUpload'])->name('settings.logo_and_favicon_upload');
     Route::post('/company-settings', [SettingController::class, 'companyInfoUpdate'])->name('settings.company_info_update');
     Route::post('/contact-settings', [SettingController::class, 'contactInfoUpdate'])->name('settings.contact_info_update');
+    Route::post('/social-settings', [SettingController::class, 'socialInfoUpdate'])->name('settings.social_info_update');
+    Route::post('/payment-settings', [SettingController::class, 'paymentInfoUpdate'])->name('settings.payment_info_update');
+    Route::post('/color-settings', [SettingController::class, 'colorInfoUpdate'])->name('settings.color_info_update');
 });
 
 Route::get('/clear-cache', function () {
