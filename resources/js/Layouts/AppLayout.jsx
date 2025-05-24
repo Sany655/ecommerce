@@ -126,24 +126,28 @@ const Footer = () => {
                 </div>
 
                 {/* Payment Methods and Contact Information */}
-                <div className="md:text-center">
-                    <div className="mb-4">
-                        <h5 className="mb-2 text-lg font-semibold text-gray-800">We Accept</h5>
-                        {contactInfo.payment_methods && contactInfo.payment_methods.map((method, index) => (
-                            <div className="flex justify-center space-x-2">
-                                <img src={`/images/${method}.jpg`} alt="bkash" className="h-8" />
-                            </div>
-                        ))}
+                {contactInfo.payment_methods && contactInfo.payment_methods.length > 0 && (
+                    <div className="md:text-center">
+                        <div className="mb-4">
+                            <h5 className="mb-2 text-lg font-semibold text-gray-800">We Accept</h5>
+                            {contactInfo.payment_methods.map((method, index) => (
+                                <div className="flex justify-center space-x-2" key={index}>
+                                    <img src={`/images/${method}.jpg`} alt="bkash" className="h-8" />
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* Download App */}
-                <div className="text-sm text-gray-700 md:text-right">
-                    <h5 className="mb-2 text-lg font-semibold text-gray-800">Contact Us</h5>
-                    {contactInfo.contact?.phone && <p>📞 (+88) {contactInfo.contact?.phone}</p>}
-                    {contactInfo.contact?.email && <p>✉️ {contactInfo.contact?.email}</p>}
-                    {contactInfo.contact?.address && <p>🏢 {contactInfo.contact?.address}</p>}
-                </div>
+                {contactInfo.contact && (
+                    <div className="text-sm text-gray-700 md:text-right">
+                        <h5 className="mb-2 text-lg font-semibold text-gray-800">Contact Us</h5>
+                        {contactInfo.contact?.phone && <p>📞 (+88) {contactInfo.contact?.phone}</p>}
+                        {contactInfo.contact?.email && <p>✉️ {contactInfo.contact?.email}</p>}
+                        {contactInfo.contact?.address && <p>🏢 {contactInfo.contact?.address}</p>}
+                    </div>
+                )}
             </div>
             <div className="container pt-4 mx-auto mt-8 text-center border-t">
                 <div className="flex justify-center mb-4 space-x-4">
