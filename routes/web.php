@@ -65,6 +65,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/social-settings', [SettingController::class, 'socialInfoUpdate'])->name('settings.social_info_update');
     Route::post('/payment-settings', [SettingController::class, 'paymentInfoUpdate'])->name('settings.payment_info_update');
     Route::post('/color-settings', [SettingController::class, 'colorInfoUpdate'])->name('settings.color_info_update');
+
+    Route::get('/ai',fn() => Inertia::render("Admin/ManageWithAi"))->name('ai.index');
 });
 
 Route::get('/clear-cache', function () {

@@ -1,1 +1,0 @@
-import{j as r,a as e}from"./app-a1ac7c39.js";function c(){return r("div",{className:"h-screen flex flex-col gap-8 items-center justify-center",children:[e("h1",{children:"Oops!"}),e("p",{children:"Sorry, an unexpected error has occurred."}),e("p",{children:e("i",{children:"Page Not Found"})})]})}export{c as default};
