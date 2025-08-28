@@ -42,7 +42,6 @@ function OrderInvoice({ order,app_url }) {
                     <table className="min-w-full text-left table-auto">
                         <thead>
                             <tr className="text-sm font-semibold text-gray-700 border-b">
-                                <th>ID</th>
                                 <th className="py-2">Product</th>
                                 <th className="py-2">Quantity</th>
                                 <th className="py-2">Price</th>
@@ -52,11 +51,10 @@ function OrderInvoice({ order,app_url }) {
                         <tbody>
                             {order.order_items.map((item, index) => (
                                 <tr key={index} className="text-sm border-b">
-                                    <td>{item.id}</td>
                                     <td className="py-2 line-clamp-5">{item.product.name}</td>
                                     <td className="py-2">{item.quantity}</td>
-                                    <td className="py-2">{item.product?.discount_price || item.product?.price} <i className="fa-solid fa-bangladeshi-taka-sign"></i></td>
-                                    <td className="py-2">{item.subtotal} <i className="fa-solid fa-bangladeshi-taka-sign"></i></td>
+                                    <td className="py-2">{parseInt(item.product?.discount_price || item.product?.price)} <i className="fa-solid fa-bangladeshi-taka-sign"></i></td>
+                                    <td className="py-2">{parseInt(item.subtotal)} <i className="fa-solid fa-bangladeshi-taka-sign"></i></td>
                                 </tr>
                             ))}
                         </tbody>
@@ -69,7 +67,7 @@ function OrderInvoice({ order,app_url }) {
                     <h3 className="mb-2 text-lg font-semibold">Payment Summary</h3>
                     <div className="flex justify-between text-sm">
                         <p><strong>Subtotal:</strong></p>
-                        <p>{order.total_price} <i className="fa-solid fa-bangladeshi-taka-sign"></i></p>
+                        <p>{parseInt(order.total_price)} <i className="fa-solid fa-bangladeshi-taka-sign"></i></p>
                     </div>
                     {(order.coupon || order.order_items.some(oI => oI.coupon)) && <div className="flex justify-between text-sm">
                         <p><strong>Coupon:</strong></p>
@@ -77,11 +75,11 @@ function OrderInvoice({ order,app_url }) {
                     </div>}
                     <div className="flex justify-between text-sm">
                         <p><strong>Shipping Cost:</strong></p>
-                        <p>{order.division === "Chittagong" ? 100 : 150} <i className="fa-solid fa-bangladeshi-taka-sign"></i></p>
+                        <p>{order.division === "Dhaka" ? 80 : 150} <i className="fa-solid fa-bangladeshi-taka-sign"></i></p>
                     </div>
                     <div className="flex justify-between text-sm">
                         <p><strong>Total:</strong></p>
-                        <p>{parseInt(order.total_price)} <i className="fa-solid fa-bangladeshi-taka-sign"></i></p>
+                        <p>{parseInt(order.total_price) + (order.division == "Dhaka" ? 80 : 150)} <i className="fa-solid fa-bangladeshi-taka-sign"></i></p>
                     </div>
                     <div className="flex justify-between text-sm">
                         <p><strong>Payment Method:</strong></p>

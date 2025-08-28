@@ -2,6 +2,7 @@ import useCart from "@/Hooks/useCart";
 import AppLayout from "@/Layouts/AppLayout";
 import { Head, router, useForm, usePage } from "@inertiajs/react";
 import axios from "axios";
+import { set } from "lodash";
 import React, { useEffect, useRef, useState } from "react";
 
 function Index() {
@@ -20,33 +21,34 @@ function Index() {
     }) ?? {}; // Null check on useForm
     const params = new URLSearchParams(window.location.search)
     const [error, setError] = useState()
-    const [couponError, setCouponError] = useState('');
-    const [couponSuccess, setCouponSuccess] = useState('');
+    const [shippingCost, setShippingCost] = useState([])
+    // const [couponError, setCouponError] = useState('');
+    // const [couponSuccess, setCouponSuccess] = useState('');
+    const [totalAmount, setTotalAmount] = useState(0);
 
     useEffect(() => {
         if (flash.error) setError(flash.error);
     }, [flash])
-    
 
-    useEffect(() => {
-        const paymentID = params.get('paymentID');
-        const status = params.get('status');
-        if (paymentID) {
-            switch (status) {
-                case "cancel":
-                    setError("The payment was cancelled.");
-                    break;
-                case "failure":
-                    setError("The payment was failed.");
-                    break;
-                case "success":
-                    setData("payment_status", "paid");
-                    placeOrder();
-                default:
-                    break;
-            }
-        }
-    }, [])
+    // useEffect(() => {
+    //     const paymentID = params.get('paymentID');
+    //     const status = params.get('status');
+    //     if (paymentID) {
+    //         switch (status) {
+    //             case "cancel":
+    //                 setError("The payment was cancelled.");
+    //                 break;
+    //             case "failure":
+    //                 setError("The payment was failed.");
+    //                 break;
+    //             case "success":
+    //                 setData("payment_status", "paid");
+    //                 placeOrder();
+    //             default:
+    //                 break;
+    //         }
+    //     }
+    // }, [])
 
     useEffect(() => {
         if (error) {
@@ -63,23 +65,17 @@ function Index() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        // if (name === "division") {
-        //     let shipcost = 0
-        //     switch (value) {
-        //         case "Chittagong":
-        //             shipcost = 100;
-        //             break;
-        //         case "":
-        //             shipcost = 0;
-        //             break;
-        //         default:
-        //             shipcost = 150;
-        //             break;
-        //     }
-        //     // setShipCost(shipcost);
-        //     setData(prevData => ({ ...prevData, [name]: value, shipping_cost: shipcost }));
-        // } else {
-        // }
+        if (name === "division") {
+            let shipcost = 0
+            if (value === "Dhaka") {
+                shipcost = 80;
+            } else {
+                shipcost = 150;
+            }
+            setTotalAmount(parseInt(cart.total_amount) + parseInt(shipcost));
+            setData(prevData => ({ ...prevData, [name]: value, shipping_cost: shipcost }));
+        } else {
+        }
         setData(name, value);
     };
 
@@ -102,12 +98,12 @@ function Index() {
     }
 
     function placeOrder() {
-        fbq('track', 'Purchase', {
-            value: cart.total_amount + parseInt(data.shipping_cost),
-            currency: 'BDT',
-            content_ids: cart.cart_items.map(p => p.product.id),
-            content_type: 'product'
-        })
+        // fbq('track', 'Purchase', {
+        //     value: cart.total_amount + parseInt(data.shipping_cost),
+        //     currency: 'BDT',
+        //     content_ids: cart.cart_items.map(p => p.product.id),
+        //     content_type: 'product'
+        // })
         post(route('home.place_order'), {
             onSuccess: () => {
                 clearErrors();
@@ -116,28 +112,28 @@ function Index() {
         });
     }
 
-    const applying_coupon_code = useRef(null);
-    const applyCoupon = async () => {
-        setCouponError('');
-        setCouponSuccess('');
+    // const applying_coupon_code = useRef(null);
+    // const applyCoupon = async () => {
+    //     setCouponError('');
+    //     setCouponSuccess('');
 
-        try {
-            const response = await axios.post(route('home.apply_coupon'), {
-                coupon_code: applying_coupon_code.current?.value ?? "", // Null check on coupon code
-            });
+    //     try {
+    //         const response = await axios.post(route('home.apply_coupon'), {
+    //             coupon_code: applying_coupon_code.current?.value ?? "", // Null check on coupon code
+    //         });
 
-            if (response?.status === 200) {
-                setCouponSuccess(response.data?.message ?? ""); // Null check on response data
-                apply_coupon(
-                    response.data?.coupon_id ?? "", // Null check on coupon_id
-                    response.data?.discount ?? 0, // Null check on discount
-                    response.data?.coupon ?? "" // Null check on coupon
-                );
-            }
-        } catch (error) {
-            setCouponError(error?.response?.data?.message ?? 'An unexpected error occurred'); // Null check on error response
-        }
-    };
+    //         if (response?.status === 200) {
+    //             setCouponSuccess(response.data?.message ?? ""); // Null check on response data
+    //             apply_coupon(
+    //                 response.data?.coupon_id ?? "", // Null check on coupon_id
+    //                 response.data?.discount ?? 0, // Null check on discount
+    //                 response.data?.coupon ?? "" // Null check on coupon
+    //             );
+    //         }
+    //     } catch (error) {
+    //         setCouponError(error?.response?.data?.message ?? 'An unexpected error occurred'); // Null check on error response
+    //     }
+    // };
 
     return (
         <form className="container gap-4 mx-auto lg:flex" onSubmit={handlePlaceOrder}>
@@ -263,7 +259,7 @@ function Index() {
                                     </div>
                                 </div>
                                 <div className="text-red-500 font-semibold">
-                                    {item?.subtotal ?? 0} BDT
+                                    {window.Math.round(item?.subtotal) ?? 0} BDT
                                 </div>
                             </div>
 
@@ -280,7 +276,7 @@ function Index() {
                 </div>
 
                 {/* Coupon Input */}
-                <div className="flex mt-8">
+                {/* <div className="flex mt-8">
                     <input
                         type="text"
                         placeholder="Coupon code"
@@ -296,18 +292,20 @@ function Index() {
                     </button>
                 </div>
 
-                {/* Coupon Feedback */}
                 {couponError && <p className="mt-4 text-center text-red-500">{couponError}</p>}
-                {couponSuccess && <p className="mt-4 text-center text-green-500">{couponSuccess}</p>}
+                {couponSuccess && <p className="mt-4 text-center text-green-500">{couponSuccess}</p>} */}
 
                 {/* Shipping Cost */}
-                <div className="flex justify-between w-full mt-8">
+                <div className="flex flex-col w-full mt-8 gap-2 mb-5">
                     <h3>Shipping cost:</h3>
-                    <span>{data.shipping_cost} BDT</span>
+                    <ul>
+                        <li>Inside Dhaka: 80 BDT</li>
+                        <li>Out of Dhaka: 150 BDT</li>
+                    </ul>
                 </div>
 
                 {/* Applied Coupon */}
-                {(cart.coupon || cart.cart_items.some(cI => cI.coupon)) && (
+                {/* {(cart.coupon || cart.cart_items.some(cI => cI.coupon)) && (
                     <div className="flex justify-between my-4">
                         <span className="font-semibold">Applied coupon</span>
                         <span className="font-bold text-red-500">
@@ -316,7 +314,7 @@ function Index() {
                             ) : cart.coupon?.value} BDT
                         </span>
                     </div>
-                )}
+                )} */}
 
                 {/* Payment Method */}
                 <div className="">
@@ -347,7 +345,7 @@ function Index() {
                 {/* Total */}
                 <div className="flex justify-between w-full mt-8">
                     <h3>Total:</h3>
-                    <span>{(parseInt(cart?.total_amount) + parseInt(data.shipping_cost)) || 0} BDT</span>
+                    <span>{totalAmount ? totalAmount : parseInt(cart.total_amount) || 0} BDT</span>
                 </div>
 
                 {/* Place Order Button */}

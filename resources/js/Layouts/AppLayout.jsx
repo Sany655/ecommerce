@@ -9,9 +9,9 @@ import { useEffect, useState } from "react"
 function AppLayout({ children }) {
     const { url } = usePage();
 
-    useEffect(() => {
-        fbq('track', 'PageView');
-    }, [url]);
+    // useEffect(() => {
+    //     fbq('track', 'PageView');
+    // }, [url]);
 
 
     return (
@@ -78,7 +78,7 @@ const Header = () => {
 
                     {/* Total Amount */}
                     <p className="line-clamp-2 text-xs md:text-sm font-bold">
-                        Total: {cart.total_amount} BDT
+                        Total: {parseInt(cart.total_amount)} BDT
                     </p>
                 </div>
 
@@ -107,7 +107,6 @@ const Footer = () => {
     useEffect(() => {
         axios.get(route('home.contact_info')).then(response => {
             setContactInfo(response.data)
-            console.log(response.data);
             
         }).catch(error => console.log(error.message))
     }, [])

@@ -232,21 +232,23 @@ const Index = ({ product }) => {
                                     </>
                                 ) : (
                                     <>
-                                        <button className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600" onClick={() => (addToCart(product.id, 1, JSON.stringify(selectedVariants)), fbq('track', 'AddToCart', {
-                                            content_name: product.name,
-                                            content_category: product.category.name,
-                                            value: product.discount_price || product.price,
-                                            currency: 'BDT'
-                                        }))}>
+                                        <button className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600" onClick={() => (addToCart(product.id, 1, JSON.stringify(selectedVariants)) 
+                                        // fbq('track', 'AddToCart', {
+                                        //     content_name: product.name,
+                                        //     content_category: product.category.name,
+                                        //     value: product.discount_price || product.price,
+                                        //     currency: 'BDT'
+                                        // })
+                                        )}>
                                             Add to Cart
                                         </button>
                                         <button className="px-4 py-2 text-gray-700 bg-yellow-500 rounded-lg hover:bg-yellow-600" onClick={() => {
-                                            fbq('track', 'AddToCart', {
-                                                content_name: product.name,
-                                                content_category: product.category.name,
-                                                value: product.discount_price || product.price,
-                                                currency: 'BDT'
-                                            })
+                                            // fbq('track', 'AddToCart', {
+                                            //     content_name: product.name,
+                                            //     content_category: product.category.name,
+                                            //     value: product.discount_price || product.price,
+                                            //     currency: 'BDT'
+                                            // })
                                             addToCart(product.id, 1, JSON.stringify(selectedVariants)).then(() => router.visit(route('home.checkout')));
                                         }}>
                                             Order Now

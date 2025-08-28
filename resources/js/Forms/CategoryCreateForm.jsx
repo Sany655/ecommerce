@@ -61,7 +61,6 @@ function CategoryCreateForm({ categories }) {
                         <div>
                             <InputLabel htmlFor="description">Description</InputLabel>
                             <TextArea
-                                required
                                 id="description"
                                 name="description"
                                 placeholder="Enter category description"
@@ -107,7 +106,7 @@ function CategoryCreateForm({ categories }) {
                                 type="file"
                                 id="banner"
                                 name="banner"
-                                required
+                                // required
                                 onChange={(e) => setData('banner', e.target.files[0])}
                                 accept="image/*"
                                 className="w-full px-4 py-2 border rounded-md focus:ring focus:ring-indigo-200 focus:outline-none"

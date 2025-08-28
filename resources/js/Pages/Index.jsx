@@ -18,7 +18,7 @@ function Index({ categories, banner }) {
 const Child = ({ categories, banner }) => {
     return (
         <>
-            {banner.length > 0 ? <Carousel categories={banner} interval={3000} /> : <p className='text-center my-60'>Site is under maintanance, visit later!</p>}
+            {/* {banner.length > 0 ? <Carousel categories={banner} interval={3000} /> : <p className='text-center my-60'>Site is under maintanance, visit later!</p>} */}
             {
                 categories.filter(cat => cat.products.length > 0 && cat).map((category, index) => (
                     <div className="my-12" key={index}>

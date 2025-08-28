@@ -36,7 +36,7 @@ class ProductController extends Controller
             ],
             'category_id' => 'required|exists:categories,id',
             'images' => 'nullable|array|max:10',
-            'images.*' => 'image|mimes:jpg,png,jpeg,gif|max:5120',
+            'images.*' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:5120',
             'status' => 'boolean',
         ]);
 

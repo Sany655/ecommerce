@@ -39,7 +39,7 @@ export default function Authenticated({ auth, header, children }) {
                                 <NavLink href={route('settings.index')} active={route().current('settings.index')}>
                                     Manage Site
                                 </NavLink>
-                                <NavLink href={route('ai.index')} active={route().current('settings.index')}>
+                                <NavLink href={route('ai.index')} active={route().current('ai.index')}>
                                     Manage With AI
                                 </NavLink>
                             </div>

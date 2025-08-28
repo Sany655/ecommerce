@@ -2,11 +2,16 @@ import SelectInput from '@/Components/SelectInput';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import axios from 'axios';
-import { useState } from 'react';
+import { parse } from 'postcss';
+import { useEffect, useState } from 'react';
 
 function ManageOrder(props) {
     const { orders } = props;
-
+    useEffect(() => {
+        // Any side effects or data fetching can go here
+        console.log(orders);
+        
+    }, []);
     return (
         <AuthenticatedLayout
             auth={props.auth}
@@ -95,13 +100,13 @@ function OrderCard({ order }) {
                                             <span key={k}>{variant.attribute}: {variant.value}, </span>
                                         ))}
                                     </span>
-                                )} <br /> Subtotal: {item.subtotal} BDT
+                                )} <br /> Subtotal: {parseInt(item.subtotal)} BDT
                             </li>
                         ))}
                     </ul>
                 </div>
                 <div className="text-md text-gray-600 mb-2">
-                    <strong>Total Price: </strong>{order.total_price} BDT
+                    <strong>Total Price: </strong>{parseInt(order.total_price) + (order.division === "Dhaka" ? 80 : 150)} BDT
                 </div>
                 <div className="text-md text-gray-600 mb-2">
                     <strong>Coupon ID: </strong>{order.coupon_id || 'N/A'}

@@ -72,7 +72,6 @@ function CategoryEditForm({ category, categories }) {
                                 Description
                             </label>
                             <TextArea
-                                required
                                 id="description"
                                 name="description"
                                 placeholder="Enter category description"

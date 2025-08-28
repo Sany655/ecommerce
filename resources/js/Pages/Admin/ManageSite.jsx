@@ -24,7 +24,8 @@ function ManageSite(props) {
             primary_color: '',
             secondary_color: '',
             accent_color: '',
-        }
+        },
+        shippingCostForm: []
     });
 
     const logoForm = useForm({ logo: null, favicon: null });
@@ -52,7 +53,8 @@ function ManageSite(props) {
                         primary_color: data.theme?.primary_color || '#000000',
                         secondary_color: data.theme?.secondary_color || '#FFFFFF',
                         accent_color: data.theme?.accent_color || '#FF0000',
-                    }
+                    },
+                    shippingCostForm: data.shipping_cost || []
                 });
             });
         setLogoPreview('storage/setting/logo.png');
@@ -100,7 +102,7 @@ function ManageSite(props) {
         }).catch(error => {
             console.error(error);
         });
-        
+
     }
 
     function saveCompanyInfo(e) {
@@ -395,7 +397,7 @@ function ManageSite(props) {
                                                 updatedPayments[index] = e.target.value;
                                                 return { ...prev, paymentForm: updatedPayments };
                                             });
-                                        }}/>
+                                        }} />
                                         <button onClick={() => {
                                             setInputs(prev => ({
                                                 ...prev,

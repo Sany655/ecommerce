@@ -39,7 +39,7 @@ class OrderController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:30',
-            'email' => 'nullable|string|email|max:255|unique:users',
+            'email' => 'nullable|string|email|max:255',
             'address' => 'required|string|max:100',
             'division' => 'required|string|max:50',
             'mobile' => ['required', 'string', 'max:15', 'regex:/^(?:\+?88)?01[3-9]\d{8}$/'],

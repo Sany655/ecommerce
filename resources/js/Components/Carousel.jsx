@@ -9,7 +9,9 @@ const Carousel = ({ categories: items, interval = 3000 }) => {
             setCurrentIndex((prevIndex) => (prevIndex + 1) % items.length);
         }, interval);
 
+        console.log(items);
         return () => clearInterval(slideInterval); // Clear interval on component unmount
+        
     }, [items.length, interval]);
 
     return (
@@ -19,7 +21,7 @@ const Carousel = ({ categories: items, interval = 3000 }) => {
                 className="flex transition-transform ease-in-out duration-1000"
                 style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
-                {items.map((item, index) => (
+                {items.filter(item => item.status == 1).map((item, index) => (
                     <div key={index} className="w-full flex-shrink-0 relative">
                         {/* Flex container for the image and content */}
                         <div className="object-contain">
