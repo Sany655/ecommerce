@@ -36,13 +36,13 @@ const Header = () => {
         e.preventDefault();
         router.visit(route('home.search', searchInput))
     }
-    const [categories, setcategories] = useState([])
-    useEffect(() => {
-        axios.get(route('categories.get_all')).then(response => setcategories(response.data)).catch(error => console.log(error.message))
-    }, [])
+    // const [categories, setcategories] = useState([])
+    // useEffect(() => {
+    //     axios.get(route('categories.get_all')).then(response => setcategories(response.data)).catch(error => console.log(error.message))
+    // }, [])
 
     return (
-        <header className="sticky top-0 z-50 capitalize bg-white shadow-md">
+        <header className="capitalize bg-white shadow-md">
             <div className="container flex flex-col items-center justify-between gap-5 pt-8 pb-8 mx-auto text-blue-500 md:flex-row">
                 <div className="flex items-center">
                     <Link href="/">
@@ -84,7 +84,7 @@ const Header = () => {
 
 
             </div>
-            {
+            {/* {
                 categories.length > 0 && (
                     <div className="">
                         <hr />
@@ -97,7 +97,7 @@ const Header = () => {
                         </div>
                     </div>
                 )
-            }
+            } */}
         </header>
     )
 }
@@ -107,7 +107,7 @@ const Footer = () => {
     useEffect(() => {
         axios.get(route('home.contact_info')).then(response => {
             setContactInfo(response.data)
-            console.log(response.data);
+            // console.log(response.data);
             
         }).catch(error => console.log(error.message))
     }, [])

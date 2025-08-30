@@ -12,6 +12,10 @@ use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 class ProductController extends Controller
 {
+    function index() {
+        return Inertia::render('Admin/ManageProduct', ["products" => Product::all()]);
+    }
+
     public function store(Request $request)
     {
         // Validate input data
@@ -34,35 +38,41 @@ class ProductController extends Controller
                     }
                 },
             ],
-            'category_id' => 'required|exists:categories,id',
-            'images' => 'nullable|array|max:10',
-            'images.*' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:5120',
+            'category_id' => 'nullable|exists:categories,id',
+            'images' => 'nullable|array|max:15',
+            'images.*' => 'nullable|image|mimes:jpg,png,jpeg,gif,tif|max:5120',
             'status' => 'boolean',
         ]);
 
-        $imagePaths = []; // Array to store image paths
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $file) {
-                // Store each file in 'public/product' directory and save the path
-                $filePath = $file->store('product', 'public');
-                $imagePaths[] = $filePath;
-                $optimizerChain = OptimizerChainFactory::create();
-                $optimizerChain->optimize(storage_path("app/public/{$filePath}"));
-            }
-        }
+        try {
+            $imagePaths = []; // Array to store image paths
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $file) {
+                    // Store each file in 'public/product' directory and save the path
+                    $filePath = $file->store('product', 'public');
+                    $imagePaths[] = $filePath;
+                    // $optimizerChain = OptimizerChainFactory::create();
+                    // $optimizerChain->optimize(storage_path("app/public/{$filePath}"));
 
-        // Create the product with image paths as a JSON string (or modify to suit your schema)
-        Product::create([
-            'name' => $request->input('name'),
-            'short_description' => $request->input('short_description'),
-            'description' => $request->input('description'),
-            'variants' => $request->input('variants'),
-            'price' => $request->input('price'),
-            'discount_price' => $request->input('discount_price'),
-            'category_id' => $request->input('category_id'),
-            'images' => json_encode($imagePaths),
-            'status' => $request->input('status'),
-        ]);
+                }
+            }
+
+            // Create the product with image paths as a JSON string (or modify to suit your schema)
+            Product::create([
+                'name' => $request->input('name'),
+                'short_description' => $request->input('short_description'),
+                'description' => $request->input('description'),
+                'variants' => $request->input('variants'),
+                'price' => $request->input('price'),
+                'discount_price' => $request->input('discount_price'),
+                'category_id' => $request->input('category_id'),
+                'images' => json_encode($imagePaths),
+                'status' => $request->input('status'),
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error creating product: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to create product: ' . $e->getMessage(). ' maybe something wrong with image'], 500);
+        }
     }
 
     public function update(Request $request, Product $product)
@@ -87,9 +97,9 @@ class ProductController extends Controller
                     }
                 },
             ],
-            'category_id' => 'required|exists:categories,id',
-            'images' => 'nullable|array|max:10',
-            'images.*' => 'image|mimes:jpg,png,jpeg,gif|max:5120',
+            'category_id' => 'nullable|exists:categories,id',
+            'images' => 'nullable|array|max:15',
+            'images.*' => 'nullable|image|mimes:jpg,png,jpeg,gif,tiff|max:5120',
             'status' => 'boolean',
         ]);
 

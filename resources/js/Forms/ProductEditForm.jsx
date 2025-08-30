@@ -26,13 +26,13 @@ function ProductEditForm({ product }) {
             description: product.description,
             short_description: product.short_description,
             category_id: product.category_id,
-            variants: (JSON.parse(product.variants)?.length > 0 && product.variants) || (product.category.attributes ? JSON.stringify(product.category.attributes.split(',').map((attr) => ({ attribute: attr, values: '' }))) : JSON.stringify([])),
+            // variants: (JSON.parse(product.variants)?.length > 0 && product.variants) || (product.category?.attributes ? JSON.stringify(product.category.attributes.split(',').map((attr) => ({ attribute: attr, values: '' }))) : JSON.stringify([])),
             images: [],
             price: product.price,
             discount_price: product.discount_price || '',
             status: product.status
         });
-        console.log(product);
+        // console.log(product);
     }, [product]);
 
 
@@ -42,6 +42,9 @@ function ProductEditForm({ product }) {
             forceFormData: true,
             onSuccess: () => {
                 setProdEditModal(false);
+            },
+            onError: e => {
+                alert('Failed to update product: ' + e.message + ' maybe something wrong with image');
             },
             preserveScroll: true
         });
@@ -80,9 +83,12 @@ function ProductEditForm({ product }) {
                                     className="w-full"
                                     id="category_id"
                                     name="category_id"
-                                    value={data.category_id}
+                                    defaultValue={data.category_id}
                                     onChange={(e) => setData("category_id", e.target.value)}
                                 >
+                                    <option value={""}>
+                                        Select a category (optional)
+                                    </option>
                                     {categories.map((category) => (
                                         <option key={category.id} value={category.id} defaultValue={product.category_id}>
                                             {category.name}
@@ -116,7 +122,7 @@ function ProductEditForm({ product }) {
                             <InputError message={errors.description} className="mt-2" />
                         </div>
 
-                        <div className="flex flex-col">
+                        {/* <div className="flex flex-col">
                             <InputLabel htmlFor="variants">Product Variants <small>(variant1,variant2,variant3,etc)</small></InputLabel>
                             <div className="grid grid-cols-2 gap-5 space-5">
                                 {data.variants?.length > 0 ? JSON.parse(data.variants).map((variant, i) => (
@@ -134,10 +140,10 @@ function ProductEditForm({ product }) {
                                 )) : null}
                             </div>
                             <InputError message={errors.variants} className="mt-2 text-sm text-red-500" />
-                        </div>
+                        </div> */}
 
                         <div className="flex flex-col">
-                            <InputLabel htmlFor="images">Product Images</InputLabel>
+                            <InputLabel htmlFor="images">Product Images <small>(max 15)</small></InputLabel>
                             <input
                                 type="file"
                                 name="images"

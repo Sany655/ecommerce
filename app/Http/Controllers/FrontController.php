@@ -67,15 +67,16 @@ class FrontController extends Controller
     public function index()
     {
         return Inertia::render('Index', [
-            'categories' => Category::where('status', true)
+            // 'categories' => Category::where('status', true)
                 // ->limit(4)
                 // ->with('subcategories')
-                ->get()
-                ->map(function ($category) {
-                    $category->products = $category->products()->where('status', true)->take(12)->get();
-                    return $category;
-                }),
-            'banner' => Category::all(),
+            //     ->get()
+            //     ->map(function ($category) {
+            //         $category->products = $category->products()->where('status', true)->take(12)->get();
+            //         return $category;
+            //     }),
+            // 'banner' => Category::all(),
+            'products' => Product::orderBy('views', 'desc')->paginate(25)
         ]);
     }
 

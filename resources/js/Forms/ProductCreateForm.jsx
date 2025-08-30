@@ -9,13 +9,13 @@ import { useState } from "react"
 import JoditEditor from "jodit-react"
 import './editor.css'
 
-function ProductCreateForm({ category }) {
+function ProductCreateForm() {
     const { data, setData, post, processing, errors, reset } = useForm({
-        category_id: category.id,
+        category_id: '',
         name: '',
         description: '',
         short_description: '',
-        variants: category.attributes ? JSON.stringify(category.attributes.split(',').map((attr) => ({ attribute: attr, values: '' }))) : JSON.stringify([]),
+        // variants: JSON.stringify([]),
         price: '',
         images: [],
         discount_price: '',
@@ -25,17 +25,19 @@ function ProductCreateForm({ category }) {
 
     const handleCreateProduct = (e) => {
         e.preventDefault();
-        if (!data.category_id) {
-            alert('Please select a category for the product.');
-        } else {
+        // if (!data.category_id) {
+        //     alert('Please select a category for the product.');
+        // } else {
             post(route('product.store'), {
                 onSuccess: () => {
                     reset();
-                    setProdCreateModal(false);
+                    setProdCreateModal(!prodCreateModal);
                 },
-                onError: e => console.log(e)
+                onError: e => {
+                    alert('Failed to create product: ' + e.message + ' maybe something wrong with image');
+                }
             });
-        }
+        // }
     };
 
     return (
@@ -87,7 +89,7 @@ function ProductCreateForm({ category }) {
                             <InputError message={errors.description} className="mt-2" />
                         </div>
 
-                        <div className="flex flex-col">
+                        {/* <div className="flex flex-col">
                             <InputLabel htmlFor="variants">Product Variants <small>(variant1,variant2,variant3,etc)</small></InputLabel>
                             <div className="grid grid-cols-2 gap-5 space-5">
                                 {(data.variants.length > 0) ? JSON.parse(data.variants).map((variant, i) => (
@@ -105,10 +107,10 @@ function ProductCreateForm({ category }) {
                                 )) : null}
                             </div>
                             <InputError message={errors.variants} className="mt-2 text-sm text-red-500" />
-                        </div>
+                        </div> */}
 
                         <div className="flex flex-col">
-                            <InputLabel htmlFor="images">Product Images</InputLabel>
+                            <InputLabel htmlFor="images">Product Images <small>(max 15)</small></InputLabel>
                             <input
                                 type="file"
                                 name="images"

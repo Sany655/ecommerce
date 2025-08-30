@@ -8,9 +8,7 @@ import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 
 function ManageProduct(props) {
-    const { category } = props;
-    const products = category.products;
-
+    const { products } = props;
     const handleDelProd = (id) => {
         if (window.confirm("Are you sure you want to delete this product?")) {
             router.delete(`/product/${id}`, { preserveScroll: true });
@@ -21,7 +19,7 @@ function ManageProduct(props) {
         <AdminLayout
             auth={props.auth}
             errors={props.errors}
-            header={<h2 className="text-xl font-semibold leading-tight text-gray-800">{category.name}</h2>}
+            // header={<h2 className="text-xl font-semibold leading-tight text-gray-800">{category.name}</h2>}
         >
             <Head title="Manage Products" />
 
@@ -29,9 +27,9 @@ function ManageProduct(props) {
                 <div className="container mx-auto">
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex flex-wrap items-center gap-2">
-                            <h2 className="text-lg font-semibold">{category.name} products</h2>
+                            <h2 className="text-lg font-semibold">Products</h2>
                         </div>
-                        <ProductCreateForm category={_.omit(category, 'products')} />
+                        <ProductCreateForm />
                     </div>
                     {products.length > 0 ? (
                         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

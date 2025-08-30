@@ -53,8 +53,13 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth','role:admin'])->group(function () {
     Route::get('/dashboard', fn() => Inertia::render('Admin/Dashboard'))->name('dashboard');
-    Route::resource('/category', CategoryController::class)->except(['edit', 'create']);
-    Route::resource('/product', ProductController::class)->except(['index', 'edit', 'show', 'create']);
+    // Route::resource('/category', CategoryController::class)->except(['edit', 'create']);
+    Route::resource('/product', ProductController::class)->except(['edit', 'show', 'create'])->name('product',[
+        'index' => 'product.index',
+        'store' => 'product.store',
+        'update' => 'product.update',
+        'destroy' => 'product.destroy',
+    ]);
     // Route::resource('/coupon', CouponController::class)->except(['edit', 'show', 'create']);
     Route::delete('/product/{id}/image', [ProductController::class, 'deleteImage'])->name('product.delete_image');
     Route::resource('/order', OrderController::class)->except(['edit', 'show', 'create', 'update']);
