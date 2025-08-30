@@ -107,20 +107,21 @@ const Footer = () => {
     useEffect(() => {
         axios.get(route('home.contact_info')).then(response => {
             setContactInfo(response.data)
+            console.log(response.data);
             
         }).catch(error => console.log(error.message))
     }, [])
     return (
         <footer className="py-8 bg-gray-100">
-            <div className="container grid grid-cols-1 gap-8 mx-auto text-center md:grid-cols-3 md:text-left">
+            <div className="container flex items-center justify-between gap-8 mx-auto text-center">
                 {/* Logo and Motto */}
                 <div className="flex items-center md:items-start flex-col gap-2">
                     <Link className="text-xl font-bold text-blue-500" href="/">
                         <ApplicationLogo />
                     </Link>
                     <p className="text-sm text-gray-700">
-                        {contactInfo.company?.description} <br />
-                        Our motto is “{contactInfo.company?.motto}”.
+                        {contactInfo.company?.description && contactInfo.company?.description} <br />
+                        {contactInfo.company?.motto && `Our motto is “${contactInfo.company?.motto}”.`}
                     </p>
                 </div>
 
@@ -138,7 +139,6 @@ const Footer = () => {
                     </div>
                 )}
 
-                {/* Download App */}
                 {contactInfo.contact && (
                     <div className="text-sm text-gray-700 md:text-right">
                         <h5 className="mb-2 text-lg font-semibold text-gray-800">Contact Us</h5>
@@ -157,7 +157,7 @@ const Footer = () => {
                     ))}
                 </div>
                 <p className="text-sm text-gray-700">
-                    {contactInfo.company?.name} | {contactInfo.legal?.domain} {contactInfo.legal?.copyright} | {contactInfo.legal?.all_rights_reserved && "All Rights Reserved"}
+                    {contactInfo.company?.name && contactInfo.company?.name + " |"} simplibazaar.hamdaanz.com | "Simplibazaar All Rights Reserved"
                 </p>
             </div>
         </footer>
