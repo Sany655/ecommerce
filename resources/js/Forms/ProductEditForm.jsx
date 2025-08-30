@@ -32,6 +32,7 @@ function ProductEditForm({ product }) {
             discount_price: product.discount_price || '',
             status: product.status
         });
+        console.log(product);
     }, [product]);
 
 

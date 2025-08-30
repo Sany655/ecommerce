@@ -8,6 +8,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\HandlerController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -35,28 +36,30 @@ Route::delete('/cart-remove/{itemId}', [CartController::class, 'removeFromCart']
 Route::delete('/cart-delete', [CartController::class, 'clearCart'])->name('cart.delete');
 Route::get('/order-invoice/{orderId}', [OrderController::class, 'orderInvoice'])->name('home.order_invoice');
 Route::get('/search/{query}', [FrontController::class, 'search'])->name('home.search');
-Route::post('/apply-coupon', [FrontController::class, 'applyCoupon'])->name('home.apply_coupon');
+// Route::post('/apply-coupon', [FrontController::class, 'applyCoupon'])->name('home.apply_coupon');
 Route::get('/get-all-categories', [CategoryController::class, 'getAll'])->name('categories.get_all');
 Route::get('/checkout', fn() => Inertia::render("Checkout"))->name('home.checkout');
 Route::post('/place-order', [OrderController::class, 'placeOrder'])->name('home.place_order');
-Route::post('/online-payment', [OrderController::class, 'onlinePayment'])->name('home.online_payment')->middleware('bkash_auth');
+// Route::post('/online-payment', [OrderController::class, 'onlinePayment'])->name('home.online_payment')->middleware('bkash_auth');
 Route::get('/site-contact-info', [FrontController::class, 'contactInfo'])->name('home.contact_info');
 
-
-Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', fn() => Inertia::render('Admin/Dashboard'))->name('dashboard');
+Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::put('/order-status/{orderId}', [OrderController::class, 'changeOrderStatus'])->name('home.order_status');
+});
+
+Route::middleware(['auth','role:admin'])->group(function () {
+    Route::get('/dashboard', fn() => Inertia::render('Admin/Dashboard'))->name('dashboard');
     Route::resource('/category', CategoryController::class)->except(['edit', 'create']);
     Route::resource('/product', ProductController::class)->except(['index', 'edit', 'show', 'create']);
-    Route::resource('/coupon', CouponController::class)->except(['edit', 'show', 'create']);
+    // Route::resource('/coupon', CouponController::class)->except(['edit', 'show', 'create']);
     Route::delete('/product/{id}/image', [ProductController::class, 'deleteImage'])->name('product.delete_image');
     Route::resource('/order', OrderController::class)->except(['edit', 'show', 'create', 'update']);
 
-    Route::get('/get-all-coupons', [CouponController::class, 'getAll'])->name('coupon.get_all');
-    Route::put('/order-status/{orderId}', [OrderController::class, 'changeOrderStatus'])->name('home.order_status');
+    // Route::get('/get-all-coupons', [CouponController::class, 'getAll'])->name('coupon.get_all');
 
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::post('/thumbnails-settings', [SettingController::class, 'logoAndFaviconUpload'])->name('settings.logo_and_favicon_upload');
@@ -66,7 +69,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/payment-settings', [SettingController::class, 'paymentInfoUpdate'])->name('settings.payment_info_update');
     Route::post('/color-settings', [SettingController::class, 'colorInfoUpdate'])->name('settings.color_info_update');
 
-    Route::get('/ai',fn() => Inertia::render("Admin/ManageWithAi"))->name('ai.index');
+    Route::get('/order-handlers', [HandlerController::class, 'getAllOrderHandlers'])->name('order-handler.index');
+    Route::post('/order-handlers', [HandlerController::class, 'storeOrderHandlers'])->name('order-handler.store');
+    // Route::get('/ai',fn() => Inertia::render("Admin/ManageWithAi"))->name('ai.index');
+});
+
+Route::middleware(['auth','role:order_handler'])->prefix('handler-dashboard')->group(function () {
+    Route::get('/', [HandlerController::class, 'index'])->name('handler-dashboard.index');
+
 });
 
 Route::get('/clear-cache', function () {

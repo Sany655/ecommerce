@@ -5,7 +5,7 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link } from '@inertiajs/react';
 
-export default function Authenticated({ auth, header, children }) {
+export default function AdminLayout({ auth, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
 
     return (
@@ -30,18 +30,21 @@ export default function Authenticated({ auth, header, children }) {
                                 {/* <NavLink href={route('product.index')} active={route().current('product.index')}>
                                     Manage Products
                                 </NavLink> */}
-                                <NavLink href={route('coupon.index')} active={route().current('coupon.index')}>
+                                {/* <NavLink href={route('coupon.index')} active={route().current('coupon.index')}>
                                     Manage Coupons
-                                </NavLink>
+                                </NavLink> */}
                                 <NavLink href={route('order.index')} active={route().current('order.index')}>
                                     Manage Orders
+                                </NavLink>
+                                <NavLink href={route('order-handler.index')} active={route().current('order-handler.index')}>
+                                    Manage Order Handlers
                                 </NavLink>
                                 <NavLink href={route('settings.index')} active={route().current('settings.index')}>
                                     Manage Site
                                 </NavLink>
-                                <NavLink href={route('ai.index')} active={route().current('ai.index')}>
+                                {/* <NavLink href={route('ai.index')} active={route().current('ai.index')}>
                                     Manage With AI
-                                </NavLink>
+                                </NavLink> */}
                             </div>
                         </div>
 
@@ -116,8 +119,11 @@ export default function Authenticated({ auth, header, children }) {
                         <ResponsiveNavLink href={route('category.index')} active={route().current('category.index')}>
                             Manage Categories & Products
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('coupon.index')} active={route().current('coupon.index')}>
+                        {/* <ResponsiveNavLink href={route('coupon.index')} active={route().current('coupon.index')}>
                             Manage Coupons
+                        </ResponsiveNavLink> */}
+                        <ResponsiveNavLink href={route('order-handler.index')} active={route().current('order-handler.index')}>
+                            Manage Order Handlers
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('order.index')} active={route().current('order.index')}>
                             Manage Orders

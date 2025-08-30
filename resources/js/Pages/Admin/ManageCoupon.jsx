@@ -1,7 +1,7 @@
 import DangerButton from '@/Components/DangerButton';
 import CouponCreateForm from '@/Forms/CouponCreateForm';
 import CouponEditForm from '@/Forms/CouponEditForm';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, Link, router } from '@inertiajs/react';
 
 function ManageCoupon(props) {
@@ -11,7 +11,7 @@ function ManageCoupon(props) {
     }
 
     return (
-        <AuthenticatedLayout
+        <AdminLayout
             auth={props.auth}
             errors={props.errors}
             header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Coupons</h2>}
@@ -98,7 +98,7 @@ function ManageCoupon(props) {
                 </div>
             </div>
 
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head } from '@inertiajs/react';
 import aiRequest from '@/Services/aiRequest';
 function ManageWithAi(props) {
@@ -15,7 +15,7 @@ function ManageWithAi(props) {
     }
 
     return (
-        <AuthenticatedLayout
+        <AdminLayout
             auth={props.auth}
             errors={props.errors}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Settings</h2>}
@@ -55,7 +55,7 @@ function ManageWithAi(props) {
                     )
                 }
             </div>
-        </AuthenticatedLayout>
+        </AdminLayout>
     )
 }
 

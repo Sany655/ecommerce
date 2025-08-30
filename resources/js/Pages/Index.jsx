@@ -7,6 +7,8 @@ import React from 'react'
 import ProductCard from '@/Components/ProductCard'
 
 function Index({ categories, banner }) {
+    console.log(categories, banner);
+    
     return (
         <AppLayout>
             <Head title='Home' />
@@ -20,7 +22,7 @@ const Child = ({ categories, banner }) => {
         <>
             {/* {banner.length > 0 ? <Carousel categories={banner} interval={3000} /> : <p className='text-center my-60'>Site is under maintanance, visit later!</p>} */}
             {
-                categories.filter(cat => cat.products.length > 0 && cat).map((category, index) => (
+                categories.filter(cat => cat.products.length > 0).map((category, index) => (
                     <div className="my-12" key={index}>
                         <div className="flex items-center justify-between pb-4 mb-5 border-b border-1">
                             <h1 className="texl-2xl md:text-4xl font-bold capitalize">{category.name}</h1>

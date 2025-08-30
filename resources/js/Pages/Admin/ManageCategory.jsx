@@ -1,7 +1,7 @@
 import DangerButton from '@/Components/DangerButton';
 import CategoryCreateForm from '@/Forms/CategoryCreateForm';
 import CategoryEditForm from '@/Forms/CategoryEditForm';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 
 function ManageCategory(props) {
@@ -14,7 +14,7 @@ function ManageCategory(props) {
     };
 
     return (
-        <AuthenticatedLayout
+        <AdminLayout
             auth={props.auth}
             errors={props.errors}
             header={<h2 className="text-xl font-semibold leading-tight text-gray-800">Categories/Subcategories</h2>}
@@ -46,7 +46,7 @@ function ManageCategory(props) {
                     )) : <p className="my-40 text-center">No category availabe</p>}
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </AdminLayout>
     );
 }
 

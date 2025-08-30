@@ -3,7 +3,7 @@ import Modal from '@/Components/Modal';
 import PrimaryButton from '@/Components/PrimaryButton';
 import ProductCreateForm from '@/Forms/ProductCreateForm';
 import ProductEditForm from '@/Forms/ProductEditForm';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 
@@ -18,7 +18,7 @@ function ManageProduct(props) {
     };
 
     return (
-        <AuthenticatedLayout
+        <AdminLayout
             auth={props.auth}
             errors={props.errors}
             header={<h2 className="text-xl font-semibold leading-tight text-gray-800">{category.name}</h2>}
@@ -68,7 +68,7 @@ function ManageProduct(props) {
                     ) : <p className="my-40 text-center">No product availabe</p>}
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </AdminLayout>
     )
 }
 

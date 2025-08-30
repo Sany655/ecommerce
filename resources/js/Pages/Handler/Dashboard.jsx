@@ -1,11 +1,11 @@
 import SelectInput from '@/Components/SelectInput';
-import AdminLayout from '@/Layouts/AdminLayout';
+import OrderAdminLayout from '@/Layouts/OrderAdminLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import axios from 'axios';
 import { parse } from 'postcss';
 import { useEffect, useState } from 'react';
 
-function ManageOrder(props) {
+function Dashboard(props) {
     const { orders } = props;
     useEffect(() => {
         // Any side effects or data fetching can go here
@@ -13,7 +13,7 @@ function ManageOrder(props) {
         
     }, []);
     return (
-        <AdminLayout
+        <OrderAdminLayout
             auth={props.auth}
             errors={props.errors}
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Orders</h2>}
@@ -54,7 +54,7 @@ function ManageOrder(props) {
                     </div>
                 </div>
             </div>
-        </AdminLayout>
+        </OrderAdminLayout>
     );
 }
 
@@ -155,4 +155,4 @@ function OrderCard({ order }) {
     )
 }
 
-export default ManageOrder;
+export default Dashboard;
