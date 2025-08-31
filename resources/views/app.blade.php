@@ -40,7 +40,8 @@
 
     {{-- favicon --}}
     <!-- <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon"> -->
-    <link rel="shortcut icon" href="/images/favicon-removebg-preview.jpg" type="image/x-icon">
+    <!-- <link rel="shortcut icon" href="/images/favicon-removebg-preview.jpg" type="image/x-icon"> -->
+    <link rel="shortcut icon" href="/images/logo-sb.jpg" type="image/x-icon">
 
     <!-- Scripts -->
     @routes
