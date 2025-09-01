@@ -43,12 +43,10 @@ const Header = () => {
 
     return (
         <header className="capitalize bg-white shadow-md">
-            <div className="container flex flex-col items-center justify-between gap-5 pt-8 pb-8 mx-auto text-blue-500 md:flex-row">
-                <div className="flex items-center">
-                    <Link href="/">
-                        <ApplicationLogo />
-                    </Link>
-                </div>
+            <div className="container flex flex-col items-center justify-between gap-5 p-5 mx-auto text-blue-500 md:flex-row">
+                <Link href="/">
+                    <ApplicationLogo />
+                </Link>
                 <div className="flex items-center justify-between gap-4">
                     {/* Search Bar */}
                     <form className="relative flex-shrink" onSubmit={handleSearch}>
@@ -108,7 +106,7 @@ const Footer = () => {
         axios.get(route('home.contact_info')).then(response => {
             setContactInfo(response.data)
             // console.log(response.data);
-            
+
         }).catch(error => console.log(error.message))
     }, [])
     return (

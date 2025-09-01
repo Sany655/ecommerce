@@ -5,6 +5,6 @@ export default function ApplicationLogo({className}) {
         // </svg>
         // <img src="/storage/setting/logo.png" alt={'Logo'} className={"w-48 "+className}/>
         // <img src={"images/logo.png"} alt={'Logo'} className={"w-48 "+className}/>
-        <img src={"images/logo-sb.jpg"} alt={'Logo'} className={"w-48 "+className}/>
+        <img src={"/images/logo_sb.png"} alt={'Logo'} className={""+className}/>
     );
 }
