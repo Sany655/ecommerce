@@ -145,6 +145,7 @@ function OrderCard({ order }) {
                         onChange={(e) => changeStatus(order.id, e.target.value)}
                     >
                         <option value="pending">Pending</option>
+                        <option value="hold">On Hold</option>
                         <option value="processing">Processing</option>
                         <option value="completed">Completed</option>
                         <option value="cancelled">Cancelled</option>

@@ -1,13 +1,12 @@
 import useCart from "@/Hooks/useCart";
 import AppLayout from "@/Layouts/AppLayout";
-import { Head, router, useForm, usePage } from "@inertiajs/react";
-import axios from "axios";
-import { set } from "lodash";
+import { Head, useForm, usePage } from "@inertiajs/react";
 import React, { useEffect, useRef, useState } from "react";
 
 function Index() {
+    const { cart, removeFromCart } = useCart() ?? {}; // Null check on useCart
+    // Redirect to previous page if no items in cart
     const { flash } = usePage().props;
-    const { cart, removeFromCart, apply_coupon } = useCart() ?? {}; // Null check on useCart
     const { post, data, reset, setData, errors, clearErrors, processing } = useForm({
         name: "",
         email: "",
@@ -19,36 +18,24 @@ function Index() {
         payment_status: "pending",
         shipping_cost: 0,
     }) ?? {}; // Null check on useForm
-    const params = new URLSearchParams(window.location.search)
-    const [error, setError] = useState()
-    const [shippingCost, setShippingCost] = useState([])
-    // const [couponError, setCouponError] = useState('');
-    // const [couponSuccess, setCouponSuccess] = useState('');
+    const [error, setError] = useState();
     const [totalAmount, setTotalAmount] = useState(0);
+
+    useEffect(() => {
+        // Sync shipping cost and total amount with division selection
+        let shipcost = 0;
+        if (data.division === "Dhaka") {
+            shipcost = 80;
+        } else if (data.division) {
+            shipcost = 150;
+        }
+        setTotalAmount((parseInt(cart?.total_amount) || 0) + shipcost);
+        setData(prevData => ({ ...prevData, shipping_cost: shipcost }));
+    }, [cart, data.division]);
 
     useEffect(() => {
         if (flash.error) setError(flash.error);
     }, [flash])
-
-    // useEffect(() => {
-    //     const paymentID = params.get('paymentID');
-    //     const status = params.get('status');
-    //     if (paymentID) {
-    //         switch (status) {
-    //             case "cancel":
-    //                 setError("The payment was cancelled.");
-    //                 break;
-    //             case "failure":
-    //                 setError("The payment was failed.");
-    //                 break;
-    //             case "success":
-    //                 setData("payment_status", "paid");
-    //                 placeOrder();
-    //             default:
-    //                 break;
-    //         }
-    //     }
-    // }, [])
 
     useEffect(() => {
         if (error) {
@@ -65,75 +52,31 @@ function Index() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        if (name === "division") {
-            let shipcost = 0
-            if (value === "Dhaka") {
-                shipcost = 80;
-            } else {
-                shipcost = 150;
-            }
-            setTotalAmount(parseInt(cart.total_amount) + parseInt(shipcost));
-            setData(prevData => ({ ...prevData, [name]: value, shipping_cost: shipcost }));
-        } else {
-        }
         setData(name, value);
     };
 
     const handlePlaceOrder = (e) => {
         setError('');
         e.preventDefault();
-        if (data.payment_method === 'bkash') {
-            olinePayment();
-        } else {
-            placeOrder();
+        if (cart.cart_items.length === 0) {
+            setError("Your cart is empty");
+            return;
         }
-    };
 
-    function olinePayment() {
-        axios.post(route('home.online_payment'), { total_amount: parseInt(cart.total_amount) + parseInt(data.shipping_cost) }).then(response => {
-            window.location.href = response.data.bkashURL;
-        }).catch(error => {
-            setError(error.response.data.message);
-        })
-    }
-
-    function placeOrder() {
-        // fbq('track', 'Purchase', {
-        //     value: cart.total_amount + parseInt(data.shipping_cost),
-        //     currency: 'BDT',
-        //     content_ids: cart.cart_items.map(p => p.product.id),
-        //     content_type: 'product'
-        // })
         post(route('home.place_order'), {
             onSuccess: () => {
+                fbq('track', 'Purchase', {
+                    value: cart.total_amount + parseInt(data.shipping_cost),
+                    currency: 'BDT',
+                    content_ids: cart.cart_items.map(p => p.product.id),
+                    content_type: 'product'
+                })
                 clearErrors();
-                // reset();
+                reset();
             },
         });
-    }
+    };
 
-    // const applying_coupon_code = useRef(null);
-    // const applyCoupon = async () => {
-    //     setCouponError('');
-    //     setCouponSuccess('');
-
-    //     try {
-    //         const response = await axios.post(route('home.apply_coupon'), {
-    //             coupon_code: applying_coupon_code.current?.value ?? "", // Null check on coupon code
-    //         });
-
-    //         if (response?.status === 200) {
-    //             setCouponSuccess(response.data?.message ?? ""); // Null check on response data
-    //             apply_coupon(
-    //                 response.data?.coupon_id ?? "", // Null check on coupon_id
-    //                 response.data?.discount ?? 0, // Null check on discount
-    //                 response.data?.coupon ?? "" // Null check on coupon
-    //             );
-    //         }
-    //     } catch (error) {
-    //         setCouponError(error?.response?.data?.message ?? 'An unexpected error occurred'); // Null check on error response
-    //     }
-    // };
 
     return (
         <form className="container gap-4 mx-auto lg:flex" onSubmit={handlePlaceOrder}>
@@ -275,25 +218,6 @@ function Index() {
                     ))}
                 </div>
 
-                {/* Coupon Input */}
-                {/* <div className="flex mt-8">
-                    <input
-                        type="text"
-                        placeholder="Coupon code"
-                        className="flex-1 p-2 mr-2 border rounded"
-                        ref={applying_coupon_code}
-                    />
-                    <button
-                        type="button"
-                        onClick={applyCoupon}
-                        className="p-2 text-white bg-indigo-500 rounded hover:bg-indigo-700 text-sm"
-                    >
-                        Apply Coupon
-                    </button>
-                </div>
-
-                {couponError && <p className="mt-4 text-center text-red-500">{couponError}</p>}
-                {couponSuccess && <p className="mt-4 text-center text-green-500">{couponSuccess}</p>} */}
 
                 {/* Shipping Cost */}
                 <div className="flex flex-col w-full mt-8 gap-2 mb-5">
@@ -304,17 +228,6 @@ function Index() {
                     </ul>
                 </div>
 
-                {/* Applied Coupon */}
-                {/* {(cart.coupon || cart.cart_items.some(cI => cI.coupon)) && (
-                    <div className="flex justify-between my-4">
-                        <span className="font-semibold">Applied coupon</span>
-                        <span className="font-bold text-red-500">
-                            {cart.cart_items.some(cI => cI.coupon) ? (
-                                cart.cart_items.reduce((sum, item) => sum + parseInt(item.coupon?.value || 0), 0)
-                            ) : cart.coupon?.value} BDT
-                        </span>
-                    </div>
-                )} */}
 
                 {/* Payment Method */}
                 <div className="">
@@ -329,29 +242,19 @@ function Index() {
                             onChange={e => setData("payment_method", e.target.value)}
                         />
                         <label htmlFor="cash_on_delivery" className="ml-2">Cash on Delivery</label>
-                        <br />
-                        {/* <input
-                            type="radio"
-                            id="bkash"
-                            name="payment_method"
-                            value="bkash"
-                            checked={data?.payment_method === 'bkash'}
-                            onChange={e => setData("payment_method", e.target.value)}
-                        />
-                        <label htmlFor="bkash" className="ml-2">Bkash</label> */}
                     </div>
                 </div>
 
                 {/* Total */}
                 <div className="flex justify-between w-full mt-8">
                     <h3>Total:</h3>
-                    <span>{totalAmount ? totalAmount : parseInt(cart.total_amount) || 0} BDT</span>
+                    <span>{totalAmount ? parseInt(totalAmount) : parseInt(cart.total_amount) || 0} BDT</span>
                 </div>
 
                 {/* Place Order Button */}
-                <button type="submit" className="w-full p-2 mt-8 text-white bg-indigo-500 rounded hover:bg-indigo-700">
+                {cart.cart_items && cart.cart_items.length > 0 && <button type={data.address !== "" && data.division !== "" && data.name !== ""  && data.mobile ? "submit" : "disabled"} className="w-full p-2 mt-8 text-white bg-indigo-500 rounded hover:bg-indigo-700">
                     {processing ? <i className="self-center mb-3 text-2xl fa fa-spinner animate-spin"></i> : "Place Order"}
-                </button>
+                </button>}
             </div>
         </form>
     );

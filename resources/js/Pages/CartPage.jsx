@@ -78,7 +78,7 @@ const Index = () => {
 
                                     {/* Subtotal */}
                                     <div className="text-red-500 font-bold">
-                                        Subtotal: {Math.round(parseFloat(item.subtotal))} BDT
+                                        Subtotal: {parseInt(item.subtotal)} BDT
                                     </div>
 
                                     {/* Remove Button */}
@@ -125,7 +125,7 @@ const Index = () => {
                 }
                 <div className="flex justify-between mb-6">
                     <span className="font-semibold">Total</span>
-                    <span className="font-bold text-red-500">{cart.total_amount} BDT</span>
+                    <span className="font-bold text-red-500">{parseInt(cart.total_amount)} BDT</span>
                 </div>
                 {cart.cart_items?.length > 0 && (
                     <div className="flex flex-col gap-2">

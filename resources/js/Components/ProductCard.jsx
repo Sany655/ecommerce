@@ -49,12 +49,12 @@ function ProductCard({ product }) {
                                     if (Object.keys(cartItem).length > 0) {
                                         removeFromCart(cartItem.id).then(() => setLoading(false));
                                     } else {
-                                        // fbq('track', 'AddToCart', {
-                                        //     content_name: product?.name,
-                                        //     content_category: product?.category?.name,
-                                        //     value: product.discount_price || product.price,
-                                        //     currency: 'BDT'
-                                        // });
+                                        fbq('track', 'AddToCart', {
+                                            content_name: product?.name,
+                                            content_category: product?.category?.name,
+                                            value: product.discount_price || product.price,
+                                            currency: 'BDT'
+                                        });
                                         addToCart(product.id, 1, product.variants).then(() => setLoading(false));
                                     }
                                 }}
@@ -63,17 +63,36 @@ function ProductCard({ product }) {
                     )}
 
                 <div className="flex justify-center gap-3">
-                    {/* Handle the Order Now button */}
-                    {(product.variants && Array.isArray(JSON.parse(product.variants)) && JSON.parse(product.variants).some(v => v.values.split(',').length > 1))
-                        ? null : (
+                    {/* Order Now button */}
+                    {productVariants.some(v => v.values?.split(',').length > 1)
+                        ? null
+                        : (
                             <PrimaryButton
                                 className="px-4 py-2 text-white transition-colors bg-yellow-600 rounded-lg hover:bg-yellow-700"
-                                onClick={() => cartItem?.id ? router.visit(route('home.checkout')) : addToCart(product.id, 1, product.variants).then(() => router.visit(route('home.checkout'))).catch(error => alert('Something went wrong, try again!'))}
+                                onClick={() => {
+                                    if (cartItem?.id) {
+                                        router.visit(route('home.checkout'));
+                                    } else {
+                                        setLoading(true);
+                                        addToCart(product.id, 1, product.variants)
+                                            .then(() => {
+                                                fbq('track', 'InitiateCheckout', {
+                                                    value: product.discount_price || product.price,
+                                                    currency: 'BDT'
+                                                })
+                                                router.visit(route('home.checkout'))
+                                            })
+                                            .catch(() => alert('Something went wrong, try again!'))
+                                            .finally(() => {
+                                                setLoading(false)
+                                            });
+                                    }
+                                }}
                             >
                                 Order Now
                             </PrimaryButton>
-                        )}
-                    {/* View Details button */}
+                        )
+                    }
                     <Link href={route('home.product', product?.id)}>
                         <PrimaryButton className="px-4 py-2 text-white transition-colors bg-gray-700 rounded-lg hover:bg-gray-600">
                             View Details
