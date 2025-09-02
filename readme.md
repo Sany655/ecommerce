@@ -1,5 +1,5 @@
 # ecommerce app in laravel
-visit [tawakkul](http://shop.mazharulalam.co)
+visit [barakah](http://shop.mazharulalam.co)
 
 # phase 1
 1. delete order handlers account
