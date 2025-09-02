@@ -10,7 +10,7 @@ function OrderInvoice({ order,app_url }) {
     const downloadInvoice = async () => {
         var opt = {
             margin: 1,
-            filename: `hamdaanz-order-invoice.pdf`,
+            filename: `simplibazaar-order-invoice.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2 },
             jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
@@ -26,6 +26,7 @@ function OrderInvoice({ order,app_url }) {
                     <ApplicationLogo className={"w-1/2 mx-auto mb-5"} />
                     <hr />
                 </div>
+                <h1 className="mb-8 text-xl font-bold text-center">Simplibazaar</h1>
                 <h2 className="mb-8 text-xl font-bold text-center">Order Invoice</h2>
 
                 {/* User Info */}
