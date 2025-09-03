@@ -1,17 +1,9 @@
 import HandlerCreateForm from '@/Forms/HandlerCreateForm';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, Link, router } from '@inertiajs/react';
-import axios from 'axios';
-import { parse } from 'postcss';
-import { useEffect, useState } from 'react';
 
 function ManageOrderHandlers(props) {
     const { orderHandler } = props;
-    useEffect(() => {
-        // Any side effects or data fetching can go here
-        console.log(orderHandler);
-
-    }, []);
     return (
         <AdminLayout
             auth={props.auth}
@@ -37,9 +29,9 @@ function ManageOrderHandlers(props) {
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Email
                                 </th>
-                                {/* <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Actions
-                                </th> */}
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -51,30 +43,20 @@ function ManageOrderHandlers(props) {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                         {handler.email}
                                     </td>
-                                    {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        <Link href={`/order-handlers/${handler.id}/edit`} className="text-blue-600 hover:text-blue-900">
-                                            Edit
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        <Link
+                                            href={route('order-handler.destroy', handler.id)}
+                                            method="delete"
+                                            as="button"
+                                            className="text-blue-600 hover:text-blue-900"
+                                        >
+                                            Delete
                                         </Link>
-                                    </td> */}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-
-                    {/* Pagination */}
-                    {/* <div className="mt-4 flex justify-center">
-                        {orderHandler.links.map((link, index) => (
-                            <Link
-                                key={index}
-                                href={link.url}
-                                as="button"
-                                type="button"
-                                className={`px-4 py-2 mx-1 rounded border ${link.active ? 'bg-black text-white' : 'bg-white text-black'}`}
-                                disabled={!link.url}
-                                dangerouslySetInnerHTML={{ __html: link.label }}
-                            />
-                        ))}
-                    </div> */}
                 </div>
             </div>
         </AdminLayout>

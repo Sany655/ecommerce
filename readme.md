@@ -2,7 +2,7 @@
 visit [barakah](http://shop.mazharulalam.co)
 
 # phase 1
-1. delete order handlers account
+1. delete order handlers account - done
 2. note on changing in order status from order handlers 
 3. track order handlers records
 4. hold in order status

@@ -9,6 +9,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\HandlerController;
+use App\Http\Controllers\ManageHandlerController;
+
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -74,8 +76,11 @@ Route::middleware(['auth','role:admin'])->group(function () {
     Route::post('/payment-settings', [SettingController::class, 'paymentInfoUpdate'])->name('settings.payment_info_update');
     Route::post('/color-settings', [SettingController::class, 'colorInfoUpdate'])->name('settings.color_info_update');
 
-    Route::get('/order-handlers', [HandlerController::class, 'getAllOrderHandlers'])->name('order-handler.index');
-    Route::post('/order-handlers', [HandlerController::class, 'storeOrderHandlers'])->name('order-handler.store');
+    Route::resource('/order-handler', ManageHandlerController::class)->except(['edit', 'show', 'create'])->name('order-handler',[
+        'index' => 'order-handler.index',
+        'store' => 'order-handler.store',
+        'destroy' => 'order-handler.destroy',
+    ]);
     // Route::get('/ai',fn() => Inertia::render("Admin/ManageWithAi"))->name('ai.index');
 });
 
