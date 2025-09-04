@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ApplicationLogo from './ApplicationLogo';
 
-const Carousel = ({ categories: items, interval = 3000 }) => {
+const Carousel = ({ categories: items, interval = 3000, children }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
@@ -21,23 +21,7 @@ const Carousel = ({ categories: items, interval = 3000 }) => {
                 className="flex transition-transform ease-in-out duration-1000"
                 style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
-                {items.filter(item => item.status == 1).map((item, index) => (
-                    <div key={index} className="w-full flex-shrink-0 relative">
-                        {/* Flex container for the image and content */}
-                        <div className="object-contain">
-                            <img
-                                src={'storage/' + item.banner}
-                                alt={`Slide ${index}`}
-                                className="w-full object-cover"
-                            />
-                            {/* <div className="bg-black bg-opacity-50 p-4 flex flex-col items-center justify-center text-white gap-2">
-                                <ApplicationLogo className="my-5"/>
-                                <h2 className="text-xl font-bold">{item.name}</h2>
-                                <p className="text-md">{item.description}</p>
-                            </div> */}
-                        </div>
-                    </div>
-                ))}
+                {children}
             </div>
 
             {/* Left and Right Buttons */}

@@ -197,8 +197,7 @@ function Index() {
                                         &#10005;
                                     </button>
                                     <div>
-                                        <span className="block font-medium">{item?.product?.name ?? "Unnamed product"}</span>
-                                        <span className="block text-sm text-gray-500">x {item?.quantity ?? 1}</span>
+                                        <span className="block font-medium">{item?.product?.name ?? "Unnamed product"} x {item?.quantity ?? 1}</span>
                                     </div>
                                 </div>
                                 <div className="text-red-500 font-semibold">
@@ -210,7 +209,7 @@ function Index() {
                             {item?.variants && Array.isArray(JSON.parse(item.variants)) && (
                                 <div className="mt-2 text-sm text-gray-700">
                                     {JSON.parse(item.variants)?.map((v, i) => (
-                                        v?.values && <span key={i} className="block">{v?.values}</span>
+                                        (v?.attribute && v?.values) && <span key={i} className="block">{v?.attribute}: {v?.values}</span>
                                     ))}
                                 </div>
                             )}
@@ -252,7 +251,7 @@ function Index() {
                 </div>
 
                 {/* Place Order Button */}
-                {cart.cart_items && cart.cart_items.length > 0 && <button type={data.address !== "" && data.division !== "" && data.name !== ""  && data.mobile ? "submit" : "disabled"} className="w-full p-2 mt-8 text-white bg-indigo-500 rounded hover:bg-indigo-700">
+                {cart.cart_items && cart.cart_items.length > 0 && <button type={data.address !== "" && data.division !== "" && data.name !== "" && data.mobile ? "submit" : "disabled"} className="w-full p-2 mt-8 text-white bg-indigo-500 rounded hover:bg-indigo-700">
                     {processing ? <i className="self-center mb-3 text-2xl fa fa-spinner animate-spin"></i> : "Place Order"}
                 </button>}
             </div>

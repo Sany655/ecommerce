@@ -22,10 +22,25 @@ function ManageOrder(props) {
                     </div>
 
                     {orders.data.length > 0 ? (
-                        <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                            {orders.data.map((order, i) => (
-                                <OrderCard key={i} order={order} user={props.auth.user} />
-                            ))}
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full bg-white border">
+                                <thead>
+                                    <tr>
+                                        <th className="px-4 py-2 border">Order ID</th>
+                                        <th className="px-4 py-2 border">Customer</th>
+                                        <th className="px-4 py-2 border">Products</th>
+                                        <th className="px-4 py-2 border">Status</th>
+                                        <th className="px-4 py-2 border">Notes</th>
+                                        <th className="px-4 py-2 border">Date</th>
+                                        <th className="px-4 py-2 border">Total</th>
+                                        <th className="px-4 py-2 border">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {orders.data.map((order, i) =>  <OrderCard key={i} order={order} user={props.auth.user} />
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
                     ) : (
                         <p className="my-40 text-center">No Orders available</p>

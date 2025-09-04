@@ -1,4 +1,5 @@
 import ApplicationLogo from "@/Components/ApplicationLogo"
+import FloatingIcons from "@/Components/FloatingIcons"
 import NavLink from "@/Components/NavLink"
 import ScrollTop from "@/Components/ScrollTop"
 import useCart, { CartProvider } from "@/Hooks/useCart"
@@ -12,15 +13,16 @@ function AppLayout({ children }) {
     // useEffect(() => {
     //     fbq('track', 'PageView');
     // }, [url]);
-
-
     return (
         <CartProvider>
             <div className="min-h-screen bg-gray-50">
                 <Header />
                 <main className="container relative px-4 py-6 mx-auto">
                     {children}
-                    <ScrollTop />
+                    <div className="fixed bottom-[2rem] right-2 md:right-0 flex flex-col items-center">
+                        <ScrollTop />
+                        <FloatingIcons />
+                    </div>
                 </main>
                 <Footer />
             </div>
@@ -105,22 +107,24 @@ const Footer = () => {
     useEffect(() => {
         axios.get(route('home.contact_info')).then(response => {
             setContactInfo(response.data)
-            // console.log(response.data);
-
         }).catch(error => console.log(error.message))
     }, [])
     return (
         <footer className="py-8 bg-gray-100">
-            <div className="container flex items-center justify-between gap-8 mx-auto text-center">
+            <div className="container flex items-center justify-between px-5 md:mx-auto text-center ">
                 {/* Logo and Motto */}
                 <div className="flex items-center md:items-start flex-col gap-2">
                     <Link className="text-xl font-bold text-blue-500" href="/">
                         <ApplicationLogo />
                     </Link>
-                    <p className="text-sm text-gray-700">
-                        {contactInfo.company?.description && contactInfo.company?.description} <br />
-                        {contactInfo.company?.motto && `Our motto is “${contactInfo.company?.motto}”.`}
-                    </p>
+                    {
+                        contactInfo.company?.description || contactInfo.company?.motto ? (
+                            <p className="text-sm text-gray-700">
+                                {contactInfo.company?.description && contactInfo.company?.description} <br />
+                                {contactInfo.company?.motto && `Our motto is “${contactInfo.company?.motto}”.`}
+                            </p>
+                        ) : null
+                    }
                 </div>
 
                 {/* Payment Methods and Contact Information */}
@@ -138,7 +142,7 @@ const Footer = () => {
                 )}
 
                 {contactInfo.contact && (
-                    <div className="text-sm text-gray-700 md:text-right">
+                    <div className="text-sm text-gray-700 text-right">
                         <h5 className="mb-2 text-lg font-semibold text-gray-800">Contact Us</h5>
                         {contactInfo.contact?.phone && <p>📞 (+88) {contactInfo.contact?.phone}</p>}
                         {contactInfo.contact?.email && <p>✉️ {contactInfo.contact?.email}</p>}

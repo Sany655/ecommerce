@@ -44,6 +44,7 @@ function OrderInvoice({ order,app_url }) {
                         <thead>
                             <tr className="text-sm font-semibold text-gray-700 border-b">
                                 <th className="py-2">Product</th>
+                                <th className="py-2">Variant</th>
                                 <th className="py-2">Quantity</th>
                                 <th className="py-2">Price</th>
                                 <th className="py-2">Subtotal</th>
@@ -53,6 +54,9 @@ function OrderInvoice({ order,app_url }) {
                             {order.order_items.map((item, index) => (
                                 <tr key={index} className="text-sm border-b">
                                     <td className="py-2 line-clamp-5">{item.product.name}</td>
+                                    <td className="py-2">{item.variants ? JSON.parse(item.variants).map((variant, k) => (
+                                        <span key={k}>{variant.attribute}: {variant.values} </span>
+                                    )) : 'N/A'}</td>
                                     <td className="py-2">{item.quantity}</td>
                                     <td className="py-2">{parseInt(item.product?.discount_price || item.product?.price)} <i className="fa-solid fa-bangladeshi-taka-sign"></i></td>
                                     <td className="py-2">{parseInt(item.subtotal)} <i className="fa-solid fa-bangladeshi-taka-sign"></i></td>

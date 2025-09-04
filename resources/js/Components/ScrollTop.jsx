@@ -28,23 +28,10 @@ function ScrollTop() {
     }, []);
 
     return (
-        isVisible && <button onClick={scrollToTop} className="bg-blue-500 rounded-full text-white w-10 h-10 fixed bottom-10 right-0 xl:right-40">
-            <i className="fa fa-arrow-up"></i>
+        isVisible && <button onClick={scrollToTop} className="bg-blue-500 rounded-full text-white">
+            <i className="fa fa-arrow-up text-2xl p-3"></i>
         </button>
     )
 }
 
-const styles = {
-    position: 'fixed',
-    bottom: '20px',
-    right: '20px',
-    background: 'blue',
-    color: 'white',
-    border: 'none',
-    borderRadius: '10px',
-    padding: '10px 20px',
-    cursor: 'pointer',
-    fontSize: '16px',
-    zIndex: 1000
-};
 export default ScrollTop

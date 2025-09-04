@@ -1,12 +1,14 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import axios from 'axios';
 import { useState } from 'react';
 import SelectInput from '@/Components/SelectInput';
 import { router } from '@inertiajs/react';
+import Modal from './Modal';
 
 function OrderCard({ order, user }) {
     const [showNotes, setShowNotes] = useState(false);
     const [loading, setLoading] = useState(false);
+
     const changeStatus = (orderId, status) => {
         setLoading(true);
         const note = prompt("Please provide a reason for changing the order status:");
@@ -20,119 +22,102 @@ function OrderCard({ order, user }) {
             })
             .finally(() => setLoading(false));
     };
+
+    const deleteOrder = (orderId) => {
+        if (confirm("Are you sure you want to delete this order?")) {
+            axios.post(route('home.delete_order'), { orderId })
+                .then(() => {
+                    router.reload();
+                })
+                .catch(error => {
+                    console.log(error.response.data);
+                    alert(error.response.data.message);
+                });
+        }
+    };
+
     return (
-        <div className={`p-6 border border-gray-200 rounded-lg shadow-md flex flex-col justify-between ${order.status === 'pending' ? "bg-white" : (order.status === 'processing' ? "bg-yellow-500" : (order.status === 'completed' ? "bg-green-500" : order.status === 'hold' ? "bg-blue-300" : "bg-red-200"))}`}>
-            {/* Order Info */}
-            <div className="mb-4">
-                <h3 className="text-lg font-bold mb-2">Order ID: {order.id}</h3>
-                <div className="text-md text-gray-600 mb-2">
-                    <strong>User Info:</strong> <br />
-                    <strong>Name: </strong> {order.name} <br />
-                    <strong>Email: </strong> {order.email} <br />
-                    <strong>Mobile: </strong> {order.mobile} <br />
-                    <strong>Address: </strong> {order.address} <br />
-                    <strong>Division: </strong> {order.division}
-                </div>
-                <div className="text-md text-gray-600 mb-2">
-                    <strong>Note: </strong>{order.notes || 'N/A'}
-                </div>
-                <div className="text-md text-gray-600 mb-2">
-                    <strong>Order Items: </strong>
-                    <ul>
-                        {order.order_items.map((item, j) => (
-                            <li key={j}>
-                                {j + 1}. {item.product?.name} x {item.quantity} <br />
-                                {item.variants && (
-                                    <span className="text-sm text-gray-500">
-                                        Variants: {JSON.parse(item.variants).map((variant, k) => (
-                                            <span key={k}>{variant.attribute}: {variant.value}, </span>
-                                        ))}
-                                    </span>
-                                )} <br /> Subtotal: {parseInt(item.subtotal)} BDT
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                <div className="text-md text-gray-600 mb-2">
-                    <strong>Total Price: </strong>{parseInt(order.total_price) + (order.division === "Dhaka" ? 80 : 150)} BDT
-                </div>
-                <div className="text-md text-gray-600 mb-2">
-                    <strong>Coupon ID: </strong>{order.coupon_id || 'N/A'}
-                </div>
-                <div className="text-md text-gray-600 mb-2">
-                    <strong>Ordered Date: </strong>
-                    {new Date(order.created_at).toLocaleString('en-GB', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true,
-                    })}
-                </div>
-                <div className="text-md text-gray-600 mb-2">
-                    <strong>Updated Date: </strong>
-                    {new Date(order.updated_at).toLocaleString('en-GB', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true,
-                    })}
-                </div>
-                {/* Order Notes Carousel */}
-                {order?.order_notes?.length > 0 && (
-                    <div className="text-md text-gray-600 mb-2">
-                        <button
-                            type="button"
-                            className="font-bold underline text-gray-700 cursor-pointer mb-2"
-                            onClick={() => setShowNotes((prev) => !prev)}
-                        >
-                            Order Notes {showNotes ? '▲' : '▼'}
-                        </button>
-                        {showNotes && (
-                            <div className="mt-2 border rounded p-2 bg-gray-50">
-                                <ul>
-                                    {order?.order_notes?.map((note, index) => (
-                                        <li key={index} className="mb-2">
-                                            [
-                                            {new Date(note.created_at).toLocaleString('en-GB', {
-                                                day: '2-digit',
-                                                month: '2-digit',
-                                                year: 'numeric',
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                                hour12: true,
-                                            })}
-                                            ] {note.user.name} changed status to {note.status}
-                                            <br />
-                                            Note: {note.note}
-                                        </li>
+        <tr className={"text-center border-b" + (order.status === 'confirm' ? " bg-white hover:bg-gray-100" : (order.status === 'pending' ? " bg-yellow-100 hover:bg-yellow-200" : (order.status === 'followup' ? " bg-green-100 hover:bg-green-200" : order.status === 'inprogress' ? " bg-blue-100 hover:bg-blue-200" : order.status === 'fake_order' ? " bg-red-100 hover:bg-red-200" : order.status === 'exchange' ? " bg-purple-100 hover:bg-purple-200" : order.status === 'delivered' ? " bg-teal-100 hover:bg-teal-200" : order.status === 'cancelled' ? " bg-orange-100 hover:bg-orange-200" : order.status === 'cx_busy' ? " bg-pink-100 hover:bg-pink-200" : " bg-gray-100 hover:bg-gray-200")))}>
+            <td className="px-4 py-2 border">{order.id}</td>
+            <td className="px-4 py-2 border text-left">{order.name} <br /> {order.mobile} <br /> {order.address}</td>
+            <td className="px-4 py-2 border text-left">
+                <ul>
+                    {order.order_items.map((item, j) => (
+                        <li key={j}>
+                            {j + 1}. {item.product?.name} x {item.quantity},
+                            {item.variants && item.variants.length > 0 && (
+                                <span className="text-sm text-gray-500">
+                                    {JSON.parse(item.variants).map((variant, k) => (
+                                        <span key={k}> {variant.attribute}: {variant.values},</span>
                                     ))}
-                                </ul>
-                            </div>
-                        )}
-                    </div>
+                                </span>
+                            )} {parseInt(item.subtotal)} BDT
+                        </li>
+                    ))}
+                </ul>
+            </td>
+            <td className="px-4 py-2 border">
+                {loading ? (
+                    <i className="fa fa-spinner animate-spin"></i>
+                ) : (
+                    <SelectInput
+                        value={order.status}
+                        onChange={(e) => changeStatus(order.id, e.target.value)}
+                    >
+                        <option value="confirm">Confirm</option>
+                        <option value="pending">Pending</option>
+                        <option value="followup">Follow Up</option>
+                        <option value="inprogress">In Progress</option>
+                        <option value="fake_order">Fake Order</option>
+                        <option value="exchange">Exchange</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                        <option value="cx_busy">Cx Busy</option>
+                        <option value="phone_off">Phone Off</option>
+                    </SelectInput>
                 )}
-                <div className="mt-4">
-                    {loading ? (
-                        <i className="fa fa-spinner animate-spin"></i>
-                    ) : (
-                        <SelectInput
-                            value={order.status}
-                            onChange={(e) => changeStatus(order.id, e.target.value)}
-                        >
-                            <option value="pending">Pending</option>
-                            <option value="hold">On Hold</option>
-                            <option value="processing">Processing</option>
-                            <option value="completed">Completed</option>
-                            <option value="cancelled">Cancelled</option>
-                        </SelectInput>
-                    )}
-                </div>
-            </div>
-        </div>
+            </td>
+            <td className="px-4 py-2 border text-left">
+                {order?.order_notes.length > 0 ? order?.order_notes?.length > 0 && (
+                    <div className="text-md text-gray-600 mt-2">
+                        <button type="button" className="underline" onClick={() => setShowNotes(!showNotes)}>
+                            {showNotes ? "Hide Notes" : "Show Notes"}
+                        </button>
+                        <Modal show={showNotes} maxWidth="md">
+                            <div className="flex justify-between items-center mb-4">
+                                <h2 className="text-lg font-semibold">Order Notes</h2>
+                                <button className="text-red-500 hover:underline" onClick={() => setShowNotes(false)}>X</button>
+                            </div>
+                            <ul className="list-disc list-inside">
+                                {order?.order_notes?.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).map((note, index) => (
+                                    <li key={index} className="mb-2"><span className="font-bold">[{new Date(note.created_at).toLocaleString('en-GB', {
+                                            day: '2-digit',
+                                            month: '2-digit',
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            hour12: true,
+                                        })}]</span> <span className="text-blue-500">{note.user.name}</span> changed status to <span className="font-semibold">{note.status}</span>.
+                                        <br />
+                                        <span className="text-blue-500">Note: {note.note}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                            <button className="text-red-500 hover:underline" onClick={() => setShowNotes(false)}>Close</button>
+                        </Modal>
+                    </div>
+                ) : (
+                    'N/A'
+                )}
+            </td>
+            <td className="px-4 py-2 border">{new Date(order.created_at).toLocaleDateString('en-UK')}</td>
+            <td className="px-4 py-2 border">{order.total_price}</td>
+            <td className="px-4 py-2 border">
+                <button type="button" className="text-red-500 hover:underline" onClick={() => deleteOrder(order.id)}>
+                    Delete
+                </button>
+            </td>
+        </tr>
     )
 }
 export default OrderCard

@@ -43,4 +43,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'public_info' => 'array',
     ];
+
+    public function order_notes() {
+        return $this->hasMany(OrderStatusNote::class, 'user_id');
+    }
 }

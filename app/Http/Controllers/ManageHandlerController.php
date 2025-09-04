@@ -12,7 +12,7 @@ class ManageHandlerController extends Controller
 {
     function index() {
         return inertia('Admin/ManageOrderHandlers', [
-            'orderHandler' => User::where('role', 'order_handler')->get()
+            'orderHandler' => User::where('role', 'order_handler')->with(['order_notes', 'order_notes.order'])->get()
         ]);
     }
 

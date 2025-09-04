@@ -22,21 +22,22 @@ function ProductCreateForm() {
         status: true,
     });
     const [prodCreateModal, setProdCreateModal] = useState(false)
+    const [newVariant, setNewVariant] = useState({ attribute: '', values: '' });
 
     const handleCreateProduct = (e) => {
         e.preventDefault();
         // if (!data.category_id) {
         //     alert('Please select a category for the product.');
         // } else {
-            post(route('product.store'), {
-                onSuccess: () => {
-                    reset();
-                    setProdCreateModal(!prodCreateModal);
-                },
-                onError: e => {
-                    alert('Failed to create product: ' + e.message + ' maybe something wrong with image');
-                }
-            });
+        post(route('product.store'), {
+            onSuccess: () => {
+                reset();
+                setProdCreateModal(!prodCreateModal);
+            },
+            onError: e => {
+                alert('Failed to create product: ' + e.message + ' maybe something wrong with image');
+            }
+        });
         // }
     };
 
@@ -89,7 +90,7 @@ function ProductCreateForm() {
                             <InputError message={errors.description} className="mt-2" />
                         </div>
 
-                        <div className="flex flex-col">
+                        {/* <div className="flex flex-col">
                             <InputLabel htmlFor="variants">Product Variants <small>(variant1,variant2,variant3,etc)</small></InputLabel>
                             <div className="grid grid-cols-2 gap-5 space-5">
                                 {(data.variants.length > 0) ? JSON.parse(data.variants).map((variant, i) => (
@@ -105,6 +106,57 @@ function ProductCreateForm() {
                                         />
                                     </div>
                                 )) : null}
+                            </div>
+                            <InputError message={errors.variants} className="mt-2 text-sm text-red-500" />
+                        </div> */}
+                        <div className="flex flex-col">
+                            <InputLabel htmlFor="variants">Product Variants <small>(e.g. Color, Size)</small></InputLabel>
+                            <div className="flex gap-2 mb-2">
+                                <input
+                                    type="text"
+                                    placeholder="Attribute (e.g. Color)"
+                                    value={newVariant.attribute}
+                                    onChange={e => setNewVariant({ ...newVariant, attribute: e.target.value })}
+                                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Values (e.g. Red,Blue)"
+                                    value={newVariant.values}
+                                    onChange={e => setNewVariant({ ...newVariant, values: e.target.value })}
+                                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
+                                />
+                                <button
+                                    type="button"
+                                    className="px-3 py-2 bg-indigo-600 text-white rounded-md"
+                                    onClick={() => {
+                                        if (newVariant.attribute && newVariant.values) {
+                                            const updatedVariants = [...JSON.parse(data.variants), { ...newVariant }];
+                                            setData('variants', JSON.stringify(updatedVariants));
+                                            setNewVariant({ attribute: '', values: '' });
+                                        }
+                                    }}
+                                >
+                                    Add
+                                </button>
+                            </div>
+                            <div className="grid grid-cols-2 gap-5 space-5">
+                                {JSON.parse(data.variants).map((variant, i) => (
+                                    <div key={i} className="flex gap-2 items-center">
+                                        <span className="font-semibold">{variant.attribute}:</span>
+                                        <span>{variant.values}</span>
+                                        <button
+                                            type="button"
+                                            className="ml-2 text-red-500"
+                                            onClick={() => {
+                                                const updatedVariants = JSON.parse(data.variants).filter((_, idx) => idx !== i);
+                                                setData('variants', JSON.stringify(updatedVariants));
+                                            }}
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
+                                ))}
                             </div>
                             <InputError message={errors.variants} className="mt-2 text-sm text-red-500" />
                         </div>

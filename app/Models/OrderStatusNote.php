@@ -19,4 +19,14 @@ class OrderStatusNote extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get the order that owns the OrderStatusNote
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }
