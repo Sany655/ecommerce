@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
-            $table->enum('status', ['pending', 'processing', 'completed', 'cancelled', 'hold']);
+            $table->text('status')->nullable()->default('pending');
             $table->text('note')->nullable();
             $table->timestamps();
         });

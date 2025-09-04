@@ -5,6 +5,7 @@ import useCart from "@/Hooks/useCart"
 import ProductCart from "@/Components/ProductCard";
 import axios from "axios";
 import DOMPurify from "dompurify";
+import Carousel from "@/Components/Carousel";
 
 const ImageGallery = ({ images }) => {
     const [selectedImage, setSelectedImage] = useState(images && images[0]);
@@ -179,15 +180,6 @@ const Index = ({ product }) => {
 
                     <p className="my-5" dangerouslySetInnerHTML={{ __html: sanitizedshort_description }}></p>
 
-                    <div className="flex items-center mb-4">
-                        {
-                            status ? (
-                                <span className="px-4 py-2 font-medium text-white bg-green-500">Available</span>
-                            ) :
-                                <span className="px-4 py-2 font-medium text-white bg-red-500">Unavailable</span>
-                        }
-                    </div>
-
                     <div className="space-y-4">
                         {(variants && variants.length > 0) &&
                             JSON.parse(variants).map((variant, index) => (
@@ -216,7 +208,7 @@ const Index = ({ product }) => {
                     {/* Buttons */}
                     <div className="flex flex-col md:flex-row gap-2 items-center my-6 space-x-4">
                         {
-                            cartLoading ? <i className="self-center mb-3 text-2xl fa fa-spinner animate-spin"></i> :
+                            !status ? <p className="text-red-500 font-bold text-2xl">Stockout</p> : cartLoading ? <i className="self-center mb-3 text-2xl fa fa-spinner animate-spin"></i> :
                                 (Object.keys(cartItem).length > 0 && cartItem.quantity > 0) ? (
                                     <>
                                         <input
@@ -232,13 +224,13 @@ const Index = ({ product }) => {
                                     </>
                                 ) : (
                                     <>
-                                        <button className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600" onClick={() => (addToCart(product.id, 1, JSON.stringify(selectedVariants)) 
-                                        // fbq('track', 'AddToCart', {
-                                        //     content_name: product.name,
-                                        //     content_category: product.category.name,
-                                        //     value: product.discount_price || product.price,
-                                        //     currency: 'BDT'
-                                        // })
+                                        <button className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600" onClick={() => (addToCart(product.id, 1, JSON.stringify(selectedVariants))
+                                            // fbq('track', 'AddToCart', {
+                                            //     content_name: product.name,
+                                            //     content_category: product.category.name,
+                                            //     value: product.discount_price || product.price,
+                                            //     currency: 'BDT'
+                                            // })
                                         )}>
                                             Add to Cart
                                         </button>
@@ -268,11 +260,23 @@ const Index = ({ product }) => {
                 product.category?.products.length > 0 && (
                     <div className="mt-10">
                         <h2 className="mb-6 text-xl md:text-2xl font-bold">Related Products</h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                            {product.category.products.map((prod, i) => (
-                                <ProductCart product={prod} key={i} />
-                            ))}
-                        </div>
+                        {
+                            window.innerWidth < 768 ? (
+                                <Carousel categories={product.category?.products || []} interval={5000}>
+                                    {product.category?.products.map((prod, i) => (
+                                        <div className="w-full flex-shrink-0" key={i}>
+                                            <ProductCart product={prod} />
+                                        </div>
+                                    ))}
+                                </Carousel>
+                            ) : (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                                    {product.category.products.map((prod, i) => (
+                                        <ProductCart product={prod} key={i} />
+                                    ))}
+                                </div>
+                            )
+                        }
                     </div>
                 )
             }

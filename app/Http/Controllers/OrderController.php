@@ -40,6 +40,25 @@ class OrderController extends Controller
         return Inertia::render('Admin/ManageOrder', ['orders' => $orders]);
     }
 
+    public function deleteOrder(Request $request)
+    {
+        try {
+            $orderId = $request->orderId;
+            $order = Order::find($orderId);
+            if ($order) {
+                $order->orderItems()->delete();
+                $order->order_notes()->delete();
+                $order->delete();
+                return response()->json(['message' => 'Order deleted successfully'], 200);
+            } else {
+                return response()->json(['message' => 'Order not found'], 404);
+            }
+        } catch (\Throwable $th) {
+            Log::info(['message' => 'Failed to delete order', 'error' => $th->getMessage()]);
+            return response()->json(['message' => 'Failed to delete order', 'error' => $th->getMessage()], 500);
+        }
+    }
+
     public function placeOrder(Request $request)
     {
         $validatedData = $request->validate([

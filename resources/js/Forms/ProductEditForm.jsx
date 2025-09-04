@@ -15,6 +15,7 @@ function ProductEditForm({ product }) {
     const [prodEditModal, setProdEditModal] = useState(false);
     const { data, setData, post, processing, errors } = useForm({});
     const [categories, setCategories] = useState([])
+    const [newVariant, setNewVariant] = useState({ attribute: '', values: '' });
 
     useEffect(() => {
         axios.get(route('categories.get_all')).then(response => {
@@ -26,7 +27,7 @@ function ProductEditForm({ product }) {
             description: product.description,
             short_description: product.short_description,
             category_id: product.category_id,
-            // variants: (JSON.parse(product.variants)?.length > 0 && product.variants) || (product.category?.attributes ? JSON.stringify(product.category.attributes.split(',').map((attr) => ({ attribute: attr, values: '' }))) : JSON.stringify([])),
+            variants: (JSON.parse(product?.variants)?.length > 0 && product.variants) || (product.category?.attributes ? JSON.stringify(product.category.attributes.split(',').map((attr) => ({ attribute: attr, values: '' }))) : JSON.stringify([])),
             images: [],
             price: product.price,
             discount_price: product.discount_price || '',
@@ -122,25 +123,57 @@ function ProductEditForm({ product }) {
                             <InputError message={errors.description} className="mt-2" />
                         </div>
 
-                        {/* <div className="flex flex-col">
-                            <InputLabel htmlFor="variants">Product Variants <small>(variant1,variant2,variant3,etc)</small></InputLabel>
+                        <div className="flex flex-col">
+                            <InputLabel htmlFor="variants">Product Variants <small>(e.g. Color, Size)</small></InputLabel>
+                            <div className="flex gap-2 mb-2">
+                                <input
+                                    type="text"
+                                    placeholder="Attribute (e.g. Color)"
+                                    value={newVariant.attribute}
+                                    onChange={e => setNewVariant({ ...newVariant, attribute: e.target.value })}
+                                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Values (e.g. Red,Blue)"
+                                    value={newVariant.values}
+                                    onChange={e => setNewVariant({ ...newVariant, values: e.target.value })}
+                                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
+                                />
+                                <button
+                                    type="button"
+                                    className="px-3 py-2 bg-indigo-600 text-white rounded-md"
+                                    onClick={() => {
+                                        if (newVariant.attribute && newVariant.values) {
+                                            const updatedVariants = [...JSON.parse(data.variants), { ...newVariant }];
+                                            setData('variants', JSON.stringify(updatedVariants));
+                                            setNewVariant({ attribute: '', values: '' });
+                                        }
+                                    }}
+                                >
+                                    Add
+                                </button>
+                            </div>
                             <div className="grid grid-cols-2 gap-5 space-5">
-                                {data.variants?.length > 0 ? JSON.parse(data.variants).map((variant, i) => (
-                                    <div key={i} className="flex gap-2">
-                                        {variant.attribute}: <input
-                                            type="text"
-                                            placeholder={`Enter value for ${variant.attribute}`}
-                                            className="flex-grow px-3 py-2 border border-gray-300 rounded-md focus:outline-none"
-                                            value={variant.values}
-                                            onChange={(e) =>
-                                                setData('variants', JSON.stringify(JSON.parse(data.variants).map((v, index) => (index === i ? { ...v, values: e.target.value } : v))))
-                                            }
-                                        />
+                                {data?.variants&&JSON.parse(data?.variants).map((variant, i) => (
+                                    <div key={i} className="flex gap-2 items-center">
+                                        <span className="font-semibold">{variant.attribute}:</span>
+                                        <span>{variant.values}</span>
+                                        <button
+                                            type="button"
+                                            className="ml-2 text-red-500"
+                                            onClick={() => {
+                                                const updatedVariants = JSON.parse(data.variants).filter((_, idx) => idx !== i);
+                                                setData('variants', JSON.stringify(updatedVariants));
+                                            }}
+                                        >
+                                            Remove
+                                        </button>
                                     </div>
-                                )) : null}
+                                ))}
                             </div>
                             <InputError message={errors.variants} className="mt-2 text-sm text-red-500" />
-                        </div> */}
+                        </div>
 
                         <div className="flex flex-col">
                             <InputLabel htmlFor="images">Product Images <small>(max 15)</small></InputLabel>

@@ -1,9 +1,11 @@
 import HandlerCreateForm from '@/Forms/HandlerCreateForm';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
+import OrderHandlerList from './Components/OrderHandlerList';
 
 function ManageOrderHandlers(props) {
     const { orderHandler } = props;
+
     return (
         <AdminLayout
             auth={props.auth}
@@ -30,30 +32,16 @@ function ManageOrderHandlers(props) {
                                     Email
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    History
+                                </th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Actions
                                 </th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {orderHandler.map((handler) => (
-                                <tr key={handler.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {handler.name}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {handler.email}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        <Link
-                                            href={route('order-handler.destroy', handler.id)}
-                                            method="delete"
-                                            as="button"
-                                            className="text-blue-600 hover:text-blue-900"
-                                        >
-                                            Delete
-                                        </Link>
-                                    </td>
-                                </tr>
+                                <OrderHandlerList key={handler.id} handler={handler} />
                             ))}
                         </tbody>
                     </table>

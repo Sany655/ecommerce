@@ -34,8 +34,6 @@ function ManageSite(props) {
         fetch('/site-contact-info')
             .then(response => response.json())
             .then(data => {
-                console.log(data);
-
                 setInputs({
                     companyForm: {
                         name: data.company.name,

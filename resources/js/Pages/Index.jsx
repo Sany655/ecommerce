@@ -22,7 +22,7 @@ const Child = ({ products }) => {
             {/* {banner.length > 0 ? <Carousel categories={banner} interval={3000} /> : <p className='text-center my-60'>Site is under maintanance, visit later!</p>} */}
             <div className="">
                 <img
-                    src="images/banner.jpg"
+                    src="./images/banner.jpg"
                     alt={`Banner image Simplibazaar, variety of products`}
                     className="w-full object-cover"
                 />
