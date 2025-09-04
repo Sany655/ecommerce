@@ -1,3 +1,4 @@
+import OrderCard from '@/Components/OrderCard';
 import SelectInput from '@/Components/SelectInput';
 import OrderAdminLayout from '@/Layouts/OrderAdminLayout';
 import { Head, Link, router } from '@inertiajs/react';
@@ -31,7 +32,7 @@ function Dashboard(props) {
                     {orders.data.length > 0 ? (
                         <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                             {orders.data.map((order, i) => (
-                                <OrderCard key={i} order={order} />
+                                <OrderCard key={i} order={order} user={props.auth.user} />
                             ))}
                         </div>
                     ) : (
@@ -58,101 +59,102 @@ function Dashboard(props) {
     );
 }
 
-function OrderCard({ order }) {
-    const [loading, setLoading] = useState(false);
-    const changeStatus = (orderId, status) => {
-        setLoading(true);
-        axios.put(route('home.order_status', orderId), { status })
-            .then(() => {
-                router.reload(); // Reload to reflect the updated status
-            })
-            .catch(error => {
-                alert(error.response.data.message);
-                console.log(error.response.data);
-            })
-            .finally(() => setLoading(false));
-    };
-    return (
-        <div className={`p-6 border border-gray-200 rounded-lg shadow-md flex flex-col justify-between ${order.status === 'pending' ? "bg-white" : (order.status === 'processing' ? "bg-yellow-500" : (order.status === 'completed' ? "bg-green-500" : "bg-red-200"))}`}>
-            {/* Order Info */}
-            <div className="mb-4">
-                <h3 className="text-lg font-bold mb-2">Order ID: {order.id}</h3>
-                <div className="text-md text-gray-600 mb-2">
-                    <strong>User Info:</strong> <br />
-                    <strong>Name: </strong> {order.name} <br />
-                    <strong>Email: </strong> {order.email} <br />
-                    <strong>Mobile: </strong> {order.mobile} <br />
-                    <strong>Address: </strong> {order.address} <br />
-                    <strong>Division: </strong> {order.division}
-                </div>
-                <div className="text-md text-gray-600 mb-2">
-                    <strong>Note: </strong>{order.notes || 'N/A'}
-                </div>
-                <div className="text-md text-gray-600 mb-2">
-                    <strong>Order Items: </strong>
-                    <ul>
-                        {order.order_items.map((item, j) => (
-                            <li key={j}>
-                                {j + 1}. {item.product?.name} x {item.quantity} <br />
-                                {item.variants && (
-                                    <span className="text-sm text-gray-500">
-                                        Variants: {JSON.parse(item.variants).map((variant, k) => (
-                                            <span key={k}>{variant.attribute}: {variant.value}, </span>
-                                        ))}
-                                    </span>
-                                )} <br /> Subtotal: {parseInt(item.subtotal)} BDT
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                <div className="text-md text-gray-600 mb-2">
-                    <strong>Total Price: </strong>{parseInt(order.total_price) + (order.division === "Dhaka" ? 80 : 150)} BDT
-                </div>
-                <div className="text-md text-gray-600 mb-2">
-                    <strong>Coupon ID: </strong>{order.coupon_id || 'N/A'}
-                </div>
-                <div className="text-md text-gray-600 mb-2">
-                    <strong>Ordered Date: </strong>
-                    {new Date(order.created_at).toLocaleString('en-GB', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true,
-                    })}
-                </div>
-                <div className="text-md text-gray-600 mb-2">
-                    <strong>Updated Date: </strong>
-                    {new Date(order.updated_at).toLocaleString('en-GB', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true,
-                    })}
-                </div>
-            </div>
+// function OrderCard({ order }) {
+//     const [loading, setLoading] = useState(false);
+//     const changeStatus = (orderId, status) => {
+//         setLoading(true);
+//         axios.put(route('home.order_status', orderId), { status })
+//             .then(() => {
+//                 router.reload(); // Reload to reflect the updated status
+//             })
+//             .catch(error => {
+//                 alert(error.response.data.message);
+//                 console.log(error.response.data);
+//             })
+//             .finally(() => setLoading(false));
+//     };
+//     return (
+//         <div className={`p-6 border border-gray-200 rounded-lg shadow-md flex flex-col justify-between ${order.status === 'pending' ? "bg-white" : (order.status === 'processing' ? "bg-yellow-500" : (order.status === 'completed' ? "bg-green-500" : "bg-red-200"))}`}>
+//             {/* Order Info */}
+//             <div className="mb-4">
+//                 <h3 className="text-lg font-bold mb-2">Order ID: {order.id}</h3>
+//                 <div className="text-md text-gray-600 mb-2">
+//                     <strong>User Info:</strong> <br />
+//                     <strong>Name: </strong> {order.name} <br />
+//                     <strong>Email: </strong> {order.email} <br />
+//                     <strong>Mobile: </strong> {order.mobile} <br />
+//                     <strong>Address: </strong> {order.address} <br />
+//                     <strong>Division: </strong> {order.division}
+//                 </div>
+//                 <div className="text-md text-gray-600 mb-2">
+//                     <strong>Note: </strong>{order.notes || 'N/A'}
+//                 </div>
+//                 <div className="text-md text-gray-600 mb-2">
+//                     <strong>Order Items: </strong>
+//                     <ul>
+//                         {order.order_items.map((item, j) => (
+//                             <li key={j}>
+//                                 {j + 1}. {item.product?.name} x {item.quantity} <br />
+//                                 {item.variants && (
+//                                     <span className="text-sm text-gray-500">
+//                                         Variants: {JSON.parse(item.variants).map((variant, k) => (
+//                                             <span key={k}>{variant.attribute}: {variant.value}, </span>
+//                                         ))}
+//                                     </span>
+//                                 )} <br /> Subtotal: {parseInt(item.subtotal)} BDT
+//                             </li>
+//                         ))}
+//                     </ul>
+//                 </div>
+//                 <div className="text-md text-gray-600 mb-2">
+//                     <strong>Total Price: </strong>{parseInt(order.total_price) + (order.division === "Dhaka" ? 80 : 150)} BDT
+//                 </div>
+//                 <div className="text-md text-gray-600 mb-2">
+//                     <strong>Coupon ID: </strong>{order.coupon_id || 'N/A'}
+//                 </div>
+//                 <div className="text-md text-gray-600 mb-2">
+//                     <strong>Ordered Date: </strong>
+//                     {new Date(order.created_at).toLocaleString('en-GB', {
+//                         day: '2-digit',
+//                         month: '2-digit',
+//                         year: 'numeric',
+//                         hour: '2-digit',
+//                         minute: '2-digit',
+//                         hour12: true,
+//                     })}
+//                 </div>
+//                 <div className="text-md text-gray-600 mb-2">
+//                     <strong>Updated Date: </strong>
+//                     {new Date(order.updated_at).toLocaleString('en-GB', {
+//                         day: '2-digit',
+//                         month: '2-digit',
+//                         year: 'numeric',
+//                         hour: '2-digit',
+//                         minute: '2-digit',
+//                         hour12: true,
+//                     })}
+//                 </div>
+//             </div>
 
-            {/* Status Update */}
-            <div className="mt-4">
-                {loading ? (
-                    <i className="fa fa-spinner animate-spin"></i>
-                ) : (
-                    <SelectInput
-                        value={order.status}
-                        onChange={(e) => changeStatus(order.id, e.target.value)}
-                    >
-                        <option value="pending">Pending</option>
-                        <option value="processing">Processing</option>
-                        <option value="completed">Completed</option>
-                        <option value="cancelled">Cancelled</option>
-                    </SelectInput>
-                )}
-            </div>
-        </div>
-    )
-}
+//             {/* Status Update */}
+//             <div className="mt-4">
+//                 {loading ? (
+//                     <i className="fa fa-spinner animate-spin"></i>
+//                 ) : (
+//                     <SelectInput
+//                         value={order.status}
+//                         onChange={(e) => changeStatus(order.id, e.target.value)}
+//                     >
+//                         <option value="pending">Pending</option>
+//                         <option value="hold">On Hold</option>
+//                         <option value="processing">Processing</option>
+//                         <option value="completed">Completed</option>
+//                         <option value="cancelled">Cancelled</option>
+//                     </SelectInput>
+//                 )}
+//             </div>
+//         </div>
+//     )
+// }
 
 export default Dashboard;

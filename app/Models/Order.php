@@ -19,4 +19,8 @@ class Order extends Model
     {
         return $this->belongsTo(Coupon::class);
     }
+
+    function order_notes() {
+        return $this->hasMany(OrderStatusNote::class);
+    }
 }

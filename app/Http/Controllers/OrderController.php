@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Mail\OrderInvoiceMail;
+
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OrderStatusNote;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Cookie;
@@ -31,7 +34,9 @@ class OrderController extends Controller
 
     public function index()
     {
-        $orders = Order::with('orderItems.product')->orderBy('created_at', 'desc')->paginate(10);
+        $orders = Order::with(['orderItems.product', 'order_notes.user'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
         return Inertia::render('Admin/ManageOrder', ['orders' => $orders]);
     }
 
@@ -147,12 +152,20 @@ class OrderController extends Controller
         }
     }
 
-    function changeOrderStatus(Request $request, $orderId)
+    function changeOrderStatus(Request $request)
     {
         try {
+            $orderId = $request->orderId;
             $payment_status = $request->status === "completed" ? "paid" : "pending";
-            Order::where('id', $orderId)->update(['status' => $request->status, 'payment_status' => $payment_status]);
-            $order = Order::with(['orderItems.product', 'orderItems.coupon', 'coupon'])->find($orderId);
+            $order = Order::find($orderId);
+            $order->update(['status' => $request->status, 'payment_status' => $payment_status]);
+            OrderStatusNote::create([
+                'order_id' => $orderId,
+                'user_id' => $request->user,
+                'status' => $request->status,
+                'note' => $request->note,
+            ]);
+            // $order = Order::with(['orderItems.product', 'orderItems.coupon', 'coupon'])->find($orderId);
             // if ($order->status === 'processing' && $order->email) {
             //     try {
             //         Mail::to($order->email)->send(new OrderInvoiceMail($order));
@@ -160,8 +173,9 @@ class OrderController extends Controller
             //         Log::info(['message' => 'Failed to send invoice after change order status', 'error' => $th->getMessage()]);
             //     }
             // }
-            return response()->json(['status' => $order->status], 200);
+            // return response()->json(['status' => $order->status], 200);
         } catch (\Throwable $th) {
+            Log::info(['message' => 'Failed to update order status', 'error' => $th->getMessage()]);
             return response()->json(['message' => 'Failed to update order status', 'error' => $th->getMessage()], 500);
         }
     }

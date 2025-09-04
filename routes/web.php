@@ -45,12 +45,12 @@ Route::post('/place-order', [OrderController::class, 'placeOrder'])->name('home.
 // Route::post('/online-payment', [OrderController::class, 'onlinePayment'])->name('home.online_payment')->middleware('bkash_auth');
 Route::get('/site-contact-info', [FrontController::class, 'contactInfo'])->name('home.contact_info');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth','role:admin,order_handler'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::put('/order-status/{orderId}', [OrderController::class, 'changeOrderStatus'])->name('home.order_status');
+    Route::post('/order-status', [OrderController::class, 'changeOrderStatus'])->name('home.order_status');
 });
 
 Route::middleware(['auth','role:admin'])->group(function () {
@@ -82,6 +82,30 @@ Route::middleware(['auth','role:admin'])->group(function () {
         'destroy' => 'order-handler.destroy',
     ]);
     // Route::get('/ai',fn() => Inertia::render("Admin/ManageWithAi"))->name('ai.index');
+
+
+    Route::get('/clear-cache', function () {
+        Artisan::call('config:clear');
+        Artisan::call('route:clear');
+        Artisan::call('view:clear');
+        Artisan::call('cache:clear');
+        Artisan::call('storage:link');
+        return 'Cache cleared';
+    });
+    Route::get('/save-cache', function () {
+        Artisan::call('config:cache');
+        Artisan::call('route:cache');
+        Artisan::call('view:cache');
+        return 'cache saved successfully';
+    });
+    Route::get('/storage-link', function () {
+        Artisan::call('storage:link');
+        return 'storage linked';
+    });
+    Route::get('/migrate', function () {
+        Artisan::call('migrate');
+        return 'Migration completed';
+    });
 });
 
 Route::middleware(['auth','role:order_handler'])->prefix('handler-dashboard')->group(function () {
@@ -89,24 +113,6 @@ Route::middleware(['auth','role:order_handler'])->prefix('handler-dashboard')->g
 
 });
 
-Route::get('/clear-cache', function () {
-    Artisan::call('config:clear');
-    Artisan::call('route:clear');
-    Artisan::call('view:clear');
-    Artisan::call('cache:clear');
-    Artisan::call('storage:link');
-    return 'Cache cleared';
-});
-Route::get('/save-cache', function () {
-    Artisan::call('config:cache');
-    Artisan::call('route:cache');
-    Artisan::call('view:cache');
-    return 'cache saved successfully';
-});
-Route::get('/storage-link', function () {
-    Artisan::call('storage:link');
-    return 'storage linked';
-});
 
 Route::fallback(function () {
     return Inertia::render('NotFound');

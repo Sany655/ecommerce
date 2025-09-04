@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'pixel_id' => env('PIXEL_ID'),
+    'pixel_id' => env('TIKTOK_PIXEL_ID'),
 ];

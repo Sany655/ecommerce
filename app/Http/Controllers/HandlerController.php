@@ -10,7 +10,7 @@ class HandlerController extends Controller
 {
     public function index()
     {
-        $orders = Order::with('orderItems.product')->orderBy('created_at', 'desc')->paginate(10);
+        $orders = Order::with(['orderItems.product', 'order_notes.user'])->orderBy('created_at', 'desc')->paginate(10);
         return Inertia::render('Handler/Dashboard', [
             'orders' => $orders
         ]);
