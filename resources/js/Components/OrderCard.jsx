@@ -5,7 +5,6 @@ import SelectInput from '@/Components/SelectInput';
 import { router } from '@inertiajs/react';
 
 function OrderCard({ order, user }) {
-    console.log(order);
     const [showNotes, setShowNotes] = useState(false);
     const [loading, setLoading] = useState(false);
     const changeStatus = (orderId, status) => {

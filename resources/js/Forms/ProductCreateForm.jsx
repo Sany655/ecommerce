@@ -15,7 +15,7 @@ function ProductCreateForm() {
         name: '',
         description: '',
         short_description: '',
-        // variants: JSON.stringify([]),
+        variants: JSON.stringify([]),
         price: '',
         images: [],
         discount_price: '',
@@ -89,7 +89,7 @@ function ProductCreateForm() {
                             <InputError message={errors.description} className="mt-2" />
                         </div>
 
-                        {/* <div className="flex flex-col">
+                        <div className="flex flex-col">
                             <InputLabel htmlFor="variants">Product Variants <small>(variant1,variant2,variant3,etc)</small></InputLabel>
                             <div className="grid grid-cols-2 gap-5 space-5">
                                 {(data.variants.length > 0) ? JSON.parse(data.variants).map((variant, i) => (
@@ -107,7 +107,7 @@ function ProductCreateForm() {
                                 )) : null}
                             </div>
                             <InputError message={errors.variants} className="mt-2 text-sm text-red-500" />
-                        </div> */}
+                        </div>
 
                         <div className="flex flex-col">
                             <InputLabel htmlFor="images">Product Images <small>(max 15)</small></InputLabel>
