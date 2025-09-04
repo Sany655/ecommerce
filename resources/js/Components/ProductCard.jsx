@@ -76,10 +76,10 @@ function ProductCard({ product }) {
                                         setLoading(true);
                                         addToCart(product.id, 1, product.variants)
                                             .then(() => {
-                                                fbq('track', 'InitiateCheckout', {
-                                                    value: product.discount_price || product.price,
-                                                    currency: 'BDT'
-                                                })
+                                                // fbq('track', 'InitiateCheckout', {
+                                                //     value: product.discount_price || product.price,
+                                                //     currency: 'BDT'
+                                                // })
                                                 router.visit(route('home.checkout'))
                                             })
                                             .catch(() => alert('Something went wrong, try again!'))
