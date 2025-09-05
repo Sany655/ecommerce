@@ -8,7 +8,7 @@ import Modal from './Modal';
 function OrderCard({ order, user }) {
     const [showNotes, setShowNotes] = useState(false);
     const [loading, setLoading] = useState(false);
-
+    
     const changeStatus = (orderId, status) => {
         setLoading(true);
         const note = prompt("Please provide a reason for changing the order status:");
@@ -39,19 +39,19 @@ function OrderCard({ order, user }) {
     return (
         <tr className={"text-center border-b" + (order.status === 'confirm' ? " bg-white hover:bg-gray-100" : (order.status === 'pending' ? " bg-yellow-100 hover:bg-yellow-200" : (order.status === 'followup' ? " bg-green-100 hover:bg-green-200" : order.status === 'inprogress' ? " bg-blue-100 hover:bg-blue-200" : order.status === 'fake_order' ? " bg-red-100 hover:bg-red-200" : order.status === 'exchange' ? " bg-purple-100 hover:bg-purple-200" : order.status === 'delivered' ? " bg-teal-100 hover:bg-teal-200" : order.status === 'cancelled' ? " bg-orange-100 hover:bg-orange-200" : order.status === 'cx_busy' ? " bg-pink-100 hover:bg-pink-200" : " bg-gray-100 hover:bg-gray-200")))}>
             <td className="px-4 py-2 border">{order.id}</td>
-            <td className="px-4 py-2 border text-left">{order.name} <br /> {order.mobile} <br /> {order.address}</td>
+            <td className="px-4 py-2 border text-left">{order.name} <br /> {order.mobile} <br /> {order.email} <br /> <b>Address:</b> {order.address} <br /> <b>Note:</b> {order.notes}</td>
             <td className="px-4 py-2 border text-left">
                 <ul>
                     {order.order_items.map((item, j) => (
                         <li key={j}>
-                            {j + 1}. {item.product?.name} x {item.quantity},
+                            {j + 1}. {item.product?.name}
                             {item.variants && item.variants.length > 0 && (
                                 <span className="text-sm text-gray-500">
                                     {JSON.parse(item.variants).map((variant, k) => (
                                         <span key={k}> {variant.attribute}: {variant.values},</span>
                                     ))}
                                 </span>
-                            )} {parseInt(item.subtotal)} BDT
+                            )} x {item.quantity}, {parseInt(item.subtotal)} BDT
                         </li>
                     ))}
                 </ul>

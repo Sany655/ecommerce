@@ -104,15 +104,41 @@ Route::middleware(['auth','role:admin'])->group(function () {
         Artisan::call('storage:link');
         return 'storage linked';
     });
-    Route::get('/migrate', function () {
-        Artisan::call('migrate');
-        return 'Migration completed';
-    });
 });
 
 Route::middleware(['auth','role:order_handler'])->prefix('handler-dashboard')->group(function () {
     Route::get('/', [HandlerController::class, 'index'])->name('handler-dashboard.index');
 
+});
+
+// use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Artisan;
+// use Illuminate\Support\Facades\Route;
+
+Route::prefix('secure')->group(function () {
+    Route::get('maintenance-up/{security}', function ($security) {
+        if ($security !== env('SECURITY_KEY')) {
+            abort(404);
+        }
+        Artisan::call('up');
+        return 'Application is live';
+    });
+
+    Route::get('maintenance-down/{security}', function ($security) {
+        if ($security !== env('SECURITY_KEY')) {
+            abort(404);
+        }
+        Artisan::call('down --secret=' . env('SECURITY_KEY'));
+        return 'Application is in maintenance mode';
+    });
+
+    Route::get('migrate/{security}', function ($security) {
+        if ($security !== env('SECURITY_KEY')) {
+            abort(404);
+        }
+        Artisan::call('migrate', ['--force' => true]);
+        return 'Migration completed';
+    });
 });
 
 

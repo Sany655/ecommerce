@@ -65,12 +65,12 @@ function Index() {
 
         post(route('home.place_order'), {
             onSuccess: () => {
-                fbq('track', 'Purchase', {
-                    value: cart.total_amount + parseInt(data.shipping_cost),
-                    currency: 'BDT',
-                    content_ids: cart.cart_items.map(p => p.product.id),
-                    content_type: 'product'
-                })
+                // fbq('track', 'Purchase', {
+                //     value: cart.total_amount + parseInt(data.shipping_cost),
+                //     currency: 'BDT',
+                //     content_ids: cart.cart_items.map(p => p.product.id),
+                //     content_type: 'product'
+                // })
                 clearErrors();
                 reset();
             },
