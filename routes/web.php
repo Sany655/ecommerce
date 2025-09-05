@@ -27,14 +27,6 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('migrate/{security}', function ($security) {
-    if ($security !== env('SECURITY_KEY')) {
-        abort(404);
-    }
-    Artisan::call('migrate', ['--force' => true]);
-    return 'Migration completed';
-});
-
 Route::get('/', [FrontController::class, 'index'])->name('home');;
 Route::get('/cat/{catId}', [FrontController::class, 'show'])->name('home.category_products');
 Route::get('/prod/{prodId}', [FrontController::class, 'product_details'])->name('home.product');

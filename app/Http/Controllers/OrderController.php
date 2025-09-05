@@ -175,7 +175,7 @@ class OrderController extends Controller
     {
         try {
             $orderId = $request->orderId;
-            $payment_status = $request->status === "completed" ? "paid" : "pending";
+            $payment_status = $request->status === "delivered" ? "paid" : "pending";
             $order = Order::find($orderId);
             $order->update(['status' => $request->status, 'payment_status' => $payment_status]);
             OrderStatusNote::create([

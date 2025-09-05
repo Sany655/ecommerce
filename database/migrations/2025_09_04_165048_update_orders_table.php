@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -16,8 +17,10 @@ return new class extends Migration
         Schema::table('orders', function (Blueprint $table) {
             $table->text('status')->change();
             $table->softDeletes();
-            DB::update("UPDATE orders SET status = 'delivered' WHERE status = 'completed'");
         });
+        DB::table('orders')
+        ->where('status', 'completed')
+    ->update(['status' => 'delivered']);
     }
 
     /**
