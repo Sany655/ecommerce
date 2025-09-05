@@ -14,13 +14,13 @@ function FloatingIcons() {
             <div className="flex flex-col items-center my-3">
                 {/* Dropdown Menu */}
                 <div className={`${isOpen ? 'block' : 'hidden'} flex flex-col gap-4 mb-3`}>
-                    <a className="bg-green-500 rounded-full text-white" href="sms:+8801234567890" target='_blank' rel='noreferrer'>
+                    <a className="bg-green-500 rounded-full text-white" href="sms:+8801898942366" target='_blank' rel='noreferrer'>
                         <i className="fa fa-message text-2xl p-3"></i>
                     </a>
-                    <a className="bg-green-500 rounded-full text-white" href="tel:+8801234567890" target='_blank' rel='noreferrer'>
+                    <a className="bg-green-500 rounded-full text-white" href="tel:+8801898942366" target='_blank' rel='noreferrer'>
                         <i className="fa fa-phone text-2xl p-3"></i>
                     </a>
-                    <a className="bg-green-500 rounded-full text-white" href='https://wa.me/8801234567890' target='_blank' rel='noreferrer'>
+                    <a className="bg-green-500 rounded-full text-white" href='https://wa.me/+8801898942366' target='_blank' rel='noreferrer'>
                         <i className="fa fa-whatsapp text-2xl p-3"></i>
                     </a>
                 </div>
