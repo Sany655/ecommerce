@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\HandlerController;
 use App\Http\Controllers\ManageHandlerController;
+use App\Http\Controllers\DashboardController;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Artisan;
@@ -26,6 +27,13 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('migrate/{security}', function ($security) {
+    if ($security !== env('SECURITY_KEY')) {
+        abort(404);
+    }
+    Artisan::call('migrate', ['--force' => true]);
+    return 'Migration completed';
+});
 
 Route::get('/', [FrontController::class, 'index'])->name('home');;
 Route::get('/cat/{catId}', [FrontController::class, 'show'])->name('home.category_products');
@@ -56,7 +64,7 @@ Route::middleware(['auth','role:admin,order_handler'])->group(function () {
 });
 
 Route::middleware(['auth','role:admin'])->group(function () {
-    Route::get('/dashboard', fn() => Inertia::render('Admin/Dashboard'))->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     // Route::resource('/category', CategoryController::class)->except(['edit', 'create']);
     Route::resource('/product', ProductController::class)->except(['edit', 'show', 'create'])->name('product',[
         'index' => 'product.index',
@@ -131,16 +139,10 @@ Route::prefix('secure')->group(function () {
         Artisan::call('down --secret=' . env('SECURITY_KEY'));
         return 'Application is in maintenance mode';
     });
-
-    Route::get('migrate/{security}', function ($security) {
-        if ($security !== env('SECURITY_KEY')) {
-            abort(404);
-        }
-        Artisan::call('migrate', ['--force' => true]);
-        return 'Migration completed';
-    });
+    
 });
 
+    
 
 Route::fallback(function () {
     return Inertia::render('NotFound');

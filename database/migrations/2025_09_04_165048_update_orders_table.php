@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::table('orders', function (Blueprint $table) {
             $table->text('status')->change();
             $table->softDeletes();
+            DB::update("UPDATE orders SET status = 'delivered' WHERE status = 'completed'");
         });
     }
 
