@@ -1,9 +1,16 @@
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { useState } from 'react';
-
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
 export default function Dashboard(props) {
     const data = props;
+    const chartData = data.samples.map((s, i) => ({
+        division: s[0],
+        priceBucket: s[1],
+        status: data.labels[i],
+    }));
+    console.log(chartData);
+
     return (
         <AdminLayout
             auth={props.auth}
@@ -15,7 +22,7 @@ export default function Dashboard(props) {
             <Head title="Dashboard" />
 
             <div className="py-12 min-h-screen">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div className="container mx-auto">
                     {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
                         <div className="shadow-lg rounded-2xl p-4 bg-white">
                             <div>
@@ -97,6 +104,29 @@ export default function Dashboard(props) {
                             <div className="text-sm font-medium text-gray-500">Pending Shipments</div>
                             <div className="mt-1 text-3xl font-bold text-gray-900">{props.pending_shipments}</div>
                         </div> */}
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+                        <div className="bg-white shadow-sm p-5">
+                            <h1 className='text-lg font-semibold text-center'>Chart of Orders by Division and Price Range</h1>
+                            <BarChart width={500} height={300} data={chartData}>
+                                <XAxis dataKey="division" />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
+                                <Bar dataKey="priceBucket" fill="#8884d8" />
+                            </BarChart>
+                            <p>The chart shows how orders are distributed across divisions and price ranges, helping you see where most orders fall.</p>
+                        </div>
+                        <div className="bg-white shadow-sm p-5">
+                            <h1 className='text-lg font-semibold text-center'>Chart of Orders by Address Length and Status</h1>
+                            <BarChart width={500} height={300} data={data.chartData}>
+                                <XAxis dataKey="status" />
+                                <YAxis />
+                                <Tooltip />
+                                <Bar dataKey="addressLength" fill="#82ca9d" />
+                            </BarChart>
+                            <p>The chart uses address length vs status, showing whether shorter or longer addresses are more likely to be delivered or cancelled.</p>
+                        </div>
                     </div>
                 </div>
             </div>
