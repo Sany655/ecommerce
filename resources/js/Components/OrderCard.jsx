@@ -8,7 +8,7 @@ import Modal from './Modal';
 function OrderCard({ order, user }) {
     const [showNotes, setShowNotes] = useState(false);
     const [loading, setLoading] = useState(false);
-    
+
     const changeStatus = (orderId, status) => {
         setLoading(true);
         const note = prompt("Please provide a reason for changing the order status:");
@@ -32,6 +32,18 @@ function OrderCard({ order, user }) {
                 .catch(error => {
                     console.log(error.response.data);
                     alert(error.response.data.message);
+                });
+        }
+    };
+
+    const predictOrder = (orderId) => {
+        if (confirm("Are you sure you want to predict this order?")) {
+            axios.post(route('home.predict_order'), { orderId })
+                .then((res) => {
+                    alert(`This order is going to be ${res.data.prediction}`);
+                })
+                .catch(error => {
+                    console.log(error.response.data);
                 });
         }
     };
@@ -91,13 +103,13 @@ function OrderCard({ order, user }) {
                             <ul className="list-disc list-inside">
                                 {order?.order_notes?.sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).map((note, index) => (
                                     <li key={index} className="mb-2"><span className="font-bold">[{new Date(note.created_at).toLocaleString('en-GB', {
-                                            day: '2-digit',
-                                            month: '2-digit',
-                                            year: 'numeric',
-                                            hour: '2-digit',
-                                            minute: '2-digit',
-                                            hour12: true,
-                                        })}]</span> <span className="text-blue-500">{note.user?.name}</span> changed status to <span className="font-semibold">{note.status}</span>.
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: true,
+                                    })}]</span> <span className="text-blue-500">{note.user?.name}</span> changed status to <span className="font-semibold">{note.status}</span>.
                                         <br />
                                         <span className="text-blue-500">Note: {note.note}</span>
                                     </li>
@@ -116,6 +128,14 @@ function OrderCard({ order, user }) {
                 <button type="button" className="text-red-500 hover:underline" onClick={() => deleteOrder(order.id)}>
                     Delete
                 </button>
+                {
+                    order.status !== 'delivered' && order.status !== 'cancelled' && (
+                        <button type="button" className="text-blue-500 hover:underline" onClick={() => predictOrder(order.id)}>
+                            Predict
+                        </button>
+                    )
+                }
+
             </td>
         </tr>
     )

@@ -177,6 +177,12 @@ class OrderController extends Controller
             $orderId = $request->orderId;
             $payment_status = $request->status === "delivered" ? "paid" : "pending";
             $order = Order::find($orderId);
+            if (!$order) {
+                return response()->json(['message' => 'Order not found'], 404);
+            }
+            if (app()->environment('production') && $request->status === 'delivered') {
+                $order->increment(['sold']);
+            }
             $order->update(['status' => $request->status, 'payment_status' => $payment_status]);
             OrderStatusNote::create([
                 'order_id' => $orderId,
@@ -196,6 +202,32 @@ class OrderController extends Controller
         } catch (\Throwable $th) {
             Log::info(['message' => 'Failed to update order status', 'error' => $th->getMessage()]);
             return response()->json(['message' => 'Failed to update order status', 'error' => $th->getMessage()], 500);
+        }
+    }
+
+    function predictOrder(Request $request)
+    {
+        try {
+            $orderId = $request->orderId;
+            $order = Order::find($orderId);
+            if (!$order) {
+                return response()->json(['message' => 'Order not found'], 404);
+            }
+            if (file_exists(storage_path('app/ml_model.phpml'))) {
+                $classifier = unserialize(file_get_contents(storage_path('app/ml_model.phpml')));
+
+                $divisionNum = $order->division == 'Dhaka' ? 1 : ($order->division == 'Chittagong' ? 2 : ($order->division == 'Khulna' ? 3 : ($order->division == 'Rajshahi' ? 4 : ($order->division == 'Barisal' ? 5 : ($order->division == 'Sylhet' ? 6 : ($order->division == 'Rangpur' ? 7 : ($order->division == 'Mymensingh' ? 8 : 9)))))));
+
+                $priceBucket = floor($order->total_price / 1000);
+                $prediction = $classifier->predict([$divisionNum, $priceBucket, strlen($order->address)]);
+                Log::info(['message' => 'Order prediction', 'order_id' => $orderId, 'prediction' => $prediction]);
+                return response()->json(['prediction' => $prediction], 200);
+            } else {
+                return response()->json(['message' => 'Model not found'], 500);
+            }
+        } catch (\Throwable $th) {
+            Log::info(['message' => 'Failed to predict order', 'error' => $th->getMessage()]);
+            return response()->json(['message' => 'Failed to predict order', 'error' => $th->getMessage()], 500);
         }
     }
 }

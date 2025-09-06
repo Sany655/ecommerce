@@ -52,6 +52,7 @@ Route::middleware(['auth','role:admin,order_handler'])->group(function () {
 
     Route::post('/order-status', [OrderController::class, 'changeOrderStatus'])->name('home.order_status');
     Route::post('/order-delete', [OrderController::class, 'deleteOrder'])->name('home.delete_order');
+    Route::post('/order-predict', [OrderController::class, 'predictOrder'])->name('home.predict_order');
 
 });
 

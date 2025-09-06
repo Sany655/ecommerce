@@ -9,7 +9,6 @@ export default function Dashboard(props) {
         priceBucket: s[1],
         status: data.labels[i],
     }));
-    console.log(chartData);
 
     return (
         <AdminLayout
@@ -95,15 +94,23 @@ export default function Dashboard(props) {
                             {/* <div className="text-sm font-medium text-gray-500">Revenue</div>
                             <div className="mt-1 text-3xl font-bold text-gray-900">{parseInt(props.revenue)} BDT</div> */}
                         </div>
-                        {/* <div className="bg-white shadow-lg rounded-2xl p-6 flex flex-col items-center hover:scale-105 transition-transform duration-200">
+                        <div className="bg-white shadow-lg rounded-2xl p-6 flex flex-col items-center hover:scale-105 transition-transform duration-200">
                             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mb-4">
                                 <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 17v-2a4 4 0 018 0v2m-4-6a4 4 0 100-8 4 4 0 000 8zm6 6v2a2 2 0 01-2 2H7a2 2 0 01-2-2v-2a6 6 0 0112 0z" />
                                 </svg>
                             </div>
-                            <div className="text-sm font-medium text-gray-500">Pending Shipments</div>
-                            <div className="mt-1 text-3xl font-bold text-gray-900">{props.pending_shipments}</div>
-                        </div> */}
+                            <div>
+                                <h2 className="text-lg font-semibold">Top 3 Products</h2>
+                                <ul>
+                                    {data.topProducts.map((product, index) => (
+                                        <li key={index} className="text-gray-700">* {product.name}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                            {/* <div className="text-sm font-medium text-gray-500">Top</div>
+                            <div className="mt-1 text-3xl font-bold text-gray-900">{props.pending_shipments}</div> */}
+                        </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
                         <div className="bg-white shadow-sm p-5">
